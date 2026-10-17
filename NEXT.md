@@ -2,7 +2,7 @@
 
 ## ▶ Next session (Shane, on the Mac): review branch `phase-1`, then finish 1.9 / 1.12 and gate Phase 1
 
-**2026-10-17 (unattended Phase 1 build, branch `phase-1`, not pushed):** tasks 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.10, 1.11 and the 1.1 npm scripts are built and committed in small commits (`git log --oneline main..phase-1`). Nothing touched the database, Prisma, the UI, `fixtures/`, `src/core/**`, `tests/invariants/**` or `.github/workflows`.
+**2026-10-17 (unattended Phase 1 build, branch `phase-1`, pushed; PR open, not merged):** tasks 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.10, 1.11 and the 1.1 npm scripts are built and committed in small commits (`git log --oneline main..phase-1`). Nothing touched the database, Prisma, the UI, `fixtures/`, `src/core/**`, `tests/invariants/**` or `.github/workflows`.
 
 **What was built**
 - `src/lib/`: `money.ts` (LoanBook port + new `parseCents`), `canonical.ts` (Adjuster port + `sha256Bytes`), `fold.ts`.
@@ -99,3 +99,5 @@ Kickoff measurements (reference matcher on the frozen fixtures, thresholds 70/45
 Kit was reviewed by a product owner and a CRM data-quality specialist before handoff; see `docs/decisions.md` §Review log. Open items O-1..O-9 have defaults in force.
 
 Not verified from this workspace: the donor repos' file paths named in `docs/portfolio-overlap.md` (read the donors before porting); whether `reuse-scan.py` parses a checkbox task list; whether saas-foundation v1.2.1 has a module switch for billing and share links (D-5 says what to do either way).
+
+**2026-10-17 review fixes (independent review, no blockers):** `import:dry-run --after` now refuses (it planned field changes against a mix of the committed CRM and an uncommitted batch); `crm_gifts` loader rejects blank `amount_cents` instead of reading 0; `model:lint` scans `src/import` too and ignores comments; snapshot tests are labelled and listed apart from oracle agreement in `docs/EVAL.md`. Left as nits: two commits mix concerns (8352899, 0e5a191); the dated D-16 hash line sits after D-21 in `docs/decisions.md`; EVAL.md's percentages are arithmetic on `import:eval` counts.

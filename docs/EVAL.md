@@ -81,7 +81,7 @@ are byte-identical (`cmp` of the two outputs: identical, 2026-10-17).
 | field changes on existing constituents 52; alternates kept 18; aliases 63 | 38; 10; 79 |
 | beforeHash `dcd67106e94405e05fa1cbd01dc37292567b390136cceaf1e890b0db12fc23b5` | same (same CRM fixture) |
 
-File B with `--after fixtures/import_a.csv` gives 166 / 33 / 37 / 14, the `decisions_b.csv` figures (D-34).
+`import:dry-run --after` was removed after review (2026-10-17): it planned against a state that never exists. The A-then-B sequence is measured by `import:eval` only (D-34).
 `FUND_UNKNOWN` is not implemented in Phase 1; the report says so.
 
 ## Fixture hashes — `sha256sum fixtures/*.csv` and `npm run fixtures:check`
@@ -114,3 +114,9 @@ on 2026-10-17: schema valid, hash equal, no forbidden token under `src/matching/
 `fixtures/decisions_a.csv` blind (D-31); then the eval prints agreement with the key (count and share), how
 many he would have merged that the model held, how many he would have kept separate, and the score of each,
 and O-2 / O-3 get a dated entry. Until then every number on this page is synthetic-only.
+
+## Which tests are oracle agreement and which are snapshots
+
+Oracle agreement (expected values come from `tools/` or the brief, not from this code): GN-01..GN-20, GA-01..GA-20, `expected_validation` on 650 rows, and the byte-for-byte match of `import:eval` with `fixtures/samples/reference_matcher.output.txt` plus 0-row drift against `fixtures/decisions_*.csv`.
+
+Snapshots (expected values were measured by this TypeScript and have no independent reference): the 10-row A→B carry-over list and `rows_review 32` (`tests/unit/import/eval.test.ts`), the tie-break score of 50, and every dry-run figure in `tests/unit/import/preview.test.ts`. They catch change, not error; they are not counted toward "matches the reference".
