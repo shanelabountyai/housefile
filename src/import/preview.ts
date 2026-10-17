@@ -43,7 +43,8 @@ export type Preview = {
 export function stateHash(constituents: CrmConstituent[], gifts: CrmGift[]): string {
   const cons = constituents
     .map((c) => {
-      const { created_at: _createdAt, ...fields } = c.fields;
+      const fields = { ...c.fields };
+      delete fields.created_at; // D-11 excludes createdAt
       return { id: c.id, ...fields };
     })
     .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
