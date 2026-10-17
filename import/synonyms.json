@@ -1,0 +1,22 @@
+{
+  "_comment": "D-16: header synonyms for the column mapper (brief §4). Matching is case-insensitive with punctuation treated as spaces. `middle`, `suffix` and `donor last name` are additions over the brief's list (decision PROVISIONAL, see docs/decisions.md) so fixture file A maps without hand edits.",
+  "fields": {
+    "first": ["first", "first name", "donor first name", "fname", "given"],
+    "last": ["last", "last name", "donor last name", "surname", "lname", "family"],
+    "middle": ["middle", "middle name", "middle initial", "mi"],
+    "suffix": ["suffix", "name suffix"],
+    "full": ["name", "donor name", "full name", "donor"],
+    "email": ["email", "e-mail", "email address"],
+    "phone": ["phone", "phone #", "telephone", "mobile", "cell"],
+    "line1": ["address", "address 1", "street", "street address", "addr1"],
+    "line2": ["address 2", "apt", "apt/unit", "unit", "suite"],
+    "city": ["city"],
+    "state": ["state", "st", "province"],
+    "zip": ["zip", "zip code", "postal", "postal code", "zipcode"],
+    "dob": ["dob", "birth date", "birthdate", "date of birth"],
+    "gift_date": ["gift date", "date", "gift dt", "transaction date"],
+    "amount": ["amount", "gift amount", "amt", "total", "donation"],
+    "fund": ["fund", "designation", "program"],
+    "external_ref": ["transaction id", "txn", "reference", "confirmation"]
+  }
+}
