@@ -15,3 +15,5 @@ uploads/
 next-env.d.ts
 .DS_Store
 spikes/**/generated/
+
+tools/__pycache__/
