@@ -1,0 +1,63 @@
+{
+  "counts": {
+    "crm_constituents": 286,
+    "crm_gifts": 878,
+    "expected_link": {
+      "DUP_IN_FILE": 123,
+      "EXISTING": 420,
+      "NEW": 107
+    },
+    "households": 312,
+    "import_a_rows": 400,
+    "import_b_rows": 250,
+    "persons": 405,
+    "traps": {
+      "T1_JR_SR": 8,
+      "T2_SAME_NAME": 8,
+      "T3_SHARED_EMAIL": 31
+    }
+  },
+  "defects_applied": {
+    "D-ADDRESS-MISSING": 30,
+    "D-AMOUNT-INVALID": 7,
+    "D-AMOUNT-MISSING": 17,
+    "D-AMOUNT-NEGATIVE": 6,
+    "D-CASE": 45,
+    "D-DATE-EXCEL": 32,
+    "D-DATE-FUTURE": 3,
+    "D-DUPROW": 65,
+    "D-DUPROW-EXACT": 29,
+    "D-EMAIL-CASE": 62,
+    "D-EMAIL-INVALID": 9,
+    "D-EMAIL-MISSING": 101,
+    "D-EMAIL-PLUSTAG": 32,
+    "D-FIRST-INITIAL": 25,
+    "D-GIFTDUP": 19,
+    "D-MAIDEN": 35,
+    "D-MIDDLE-IN-FIRST": 36,
+    "D-MOVED": 50,
+    "D-NAME-MISSING": 2,
+    "D-NICK": 45,
+    "D-PHONE-MISSING": 117,
+    "D-POBOX": 45,
+    "D-STATE-FULL": 50,
+    "D-SUFFIX-DROPPED": 6,
+    "D-TRANSPOSE": 13,
+    "D-TYPO": 38,
+    "D-UNITFMT": 127,
+    "D-WHITESPACE": 71,
+    "D-ZIP-LOSTZERO": 129,
+    "D-ZIP-PLUS4": 53
+  },
+  "generator": "tools/build_fixtures.py",
+  "seed": 20261014,
+  "sha256": {
+    "answer_key_a.csv": "87c9946619f76f32818a93da4abd35cf9c70b44e327ed28cadc79218d4a35b1a",
+    "answer_key_b.csv": "03bda5b76e73e53b066f5b39071e79047b0c2b38ce78a097a250c42ec0cdb825",
+    "crm_constituents.csv": "dea6cf1e28d0dc320be23ea4c5748ecdf9eb0a4d2cab43330de88281fb913aa4",
+    "crm_gifts.csv": "5a02baa0fe140783d4a8211a0cf5af8924caf46ab54c9fd64dc29f2bec11906c",
+    "import_a.csv": "a4d3e08af9606d75dcc396e247e444342eccade6ee060af378975485ce6792bb",
+    "import_b.csv": "a4e0df19787138089b4daf78cec0ba4a1c612d1e2c73a02a32d97f263d0f1aa6",
+    "truth_persons.csv": "9e25059c772bbe98583fe977c8163aef34d6c0fb7240315d1296bfdc0a3eef5f"
+  }
+}

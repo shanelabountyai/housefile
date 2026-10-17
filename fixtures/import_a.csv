@@ -1,0 +1,401 @@
+﻿Donor First Name,Donor Last Name,Middle,Suffix,Email Address,Phone #,Street Address,Apt/Unit,City,ST,Zip Code,Birth Date,Gift Date,Gift Amount,Designation,Transaction ID,Table #,Notes
+Ray,Ramirez,L,,raymond.ramirez87@mail.example.com,,4422 S Jefferson Cir,,Austin,TX,78745,,2026-04-06,$25.00,Scholarship,TXN710129,19,VIP
+Deborah,Roberts,M,,,(973) 555-0148,9652 Willow Pl,,Tulsa,OK,74114,,8/8/2026,$25.00,,TXN679984,30,
+,,M,,king.sophia@example.net,973-555-0100,5877 Hickory Lane Apt 5C,,Tulsa,OK,74114,,2026-06-20,25,Scholarship,TXN223557,,VIP
+DEUORAH,JONES,L,,,4055550121,3182 North Hillcrest Lane,,Edmond,OK,73013-8803,,2026-09-26,100,,TXN539398,30,matching gift?
+Elizabeth,Hall,J,,elizabeth.hall94@example.com,973.555.0105,2925 Riverside Circle,,Edmond,OK,73034-7382,9/20/1946,9/14/2026,50,General,TXN997546,8,
+Linda,Wilson,A,,,,9896 E Jefferson Pl,,Denver,CO,80206,4/12/48,7/13/26,$50.00,Scholarship,TXN508634,27,
+John,Smith,A,,john.smith11@example.com,+1 508 555 0145,639 Walnut Way,,Edmond,OK,73013,,3/7/2026,$150,General,TXN762912,15,
+Michael L.,Nelson,,,,405.555.0167,8844 W Peoria Pl,,Edmond,OK,73012,,5/21/2026,50,General,TXN402023,7,VIP
+Adnrew,O'Brien,K,,ANDREWOBRIEN@EXAMPLE.ORG,(918) 555-0102,797 West Harvard Lane,Ste 7,Edmond,Oklahoma,73034,,2026-09-07,50,General,TXN804716,6,board contact
+Nancy,Perez,J,,nancyperez@example.net,973-555-0110,Post Office Box 1414,,Burlington,VT,05408,,2026-04-01,2500,General,TXN696749,19,wants no mail
+Fatima,Torres,R,,,5085550105,3101 N Lewis Pl Unit 11,,Tulsa,OK,74133,,2026-04-11,,General,TXN316399,20,board contact
+Anthony R.,Hill,,,ahill@example.com,4055550199,PO Box 7578,,Tulsa,Oklahoma,74114-9129,,7/24/26,250,General,TXN864093,,wants no mail
+José,Fitzgerald,Marie,,FITZGERALD.JOSE@EXAMPLE.ORG,,6706 Maple Way,,Austin,TX,78745,,9/4/26,,,TXN558207,24,board contact
+John,Smith,A,Sr,,,639 Walnut Way,,Edmond,OK,73013,,8/23/26,250,,TXN965202,23,
+Eleanor,Anderson,L,,,918.555.0159,8380 S Walnut Cir,,Newark,NJ,7102,,8/4/2026,$50.00,General,TXN830648,,
+Renée,Taylor,E,,renee.taylor21@example.org,5085550121,5100 W Oak Ave APT 4,,Burlington,VT,5408,,6/12/2026,25,Building Fund,TXN535598,,board contact
+Nancy,Fitzgerald,Lee,,nancyfitzgerald@mail.example.com,,,,,,,,"Mar 18, 2026",$150,,TXN277566,14,matching gift?
+ZOË,MARTIN,A,,martin.noah@example.com,405-555-0159,490 N Willow St Apt 14B,,Tulsa,OK,74119,,2026-09-24,$250.00,General,TXN500509,5,board contact
+JENNIFER,TAYLOR,,,,,2432 East Riverside Street,Apt 13B,Newark,NJ,7102,,7/10/26,$250.00,Scholarship,TXN166027,18,matching gift?
+  Edward,Van der Berg ,,,Edwardvanderberg@example.net,918-555-0120,2146 S Peoria Rd Ste 26B,,Tulsa,OK,74137,4/17/1943,7/20/2026,$100.00,Building Fund,TXN555302,29,
+  D.,Nguyen ,L,,David.nguyen@example.org,508.555.0154,7399 North Harvard Avenue,,Tulsa,OK,74114-1874,,"Jun 8, 2026",$150.00,,TXN840420,30,wants no mail
+  Samantha,Taylor ,M,,taylor.samantha@example.com,(973) 555-0168,1057 South Church Way,,Edmond,OK,73034,,5/2/2026,$250.00,Scholarship,TXN704697,23,wants no mail
+Zoë,Allen,,,zoe.rivera40@example.net,+1 918 555 0100,8331 S Lewis Ct Apartment 10B,,Denver,CO,80206,,8/14/2026,$100.00,Building Fund,TXN295425,21,
+Katherine,Young,E,,katherine.young8@example.com,9185550144,8030 Peoria Dr,,Tulsa,OK,74133,,6/10/2026,$50,Building Fund,TXN908326,28,
+M.,McCarthy,R,,,405 555 0136,9409 N Elm Blvd,,Worcester,MA,1605,7/2/1979,2025-06-12,,General,CHK6413,,VIP
+Paul,Carter,J,,carter.paul@example.com,+1 508 555 0127,8624 South Lakeview Place,,Burlington,VT,05401,,3/26/2026,$1000,General,TXN289968,3,
+JOSEPH,SCOTT,L,,,405 555 0173,8364 N Harvard Cir,,Edmond,OK,73003,,3/21/2026,$250.00,Scholarship,TXN758546,18,wants no mail
+Ronald,Jones,M,,rjones@example.com,+1 973 555 0103,9732 Church Cir,,Edmond,OK,73013,2/2/1968,2026-03-23,150,General,TXN123395,,matching gift?
+Maria,Kim,,,mkim@example.com,(405) 555-0132,1720 Willow Cir,,Tulsa,OK,74114,,2026-09-27,,Building Fund,TXN509695,12,
+Olivia,Moore,E,,,+1 973 555 0101,6423 N Sunset Dr,#6A,Worcester,MA,1602,,5/16/2026,2500,Scholarship,TXN700052,4,
+Lawrence,Williams,J,,lawrence.williams@example.org,9185550141,PO Box 4496,,Tulsa,OK,74137,7/18/1983,"Sep 8, 2026",$50.00,General,TXN761751,2,matching gift?
+Ronald,Campbell,M,,ronald.campbell@example.net,9735550153,P.O. Box 5959,,Denver,CO,80206,1/11/1960,9/4/2026,$250.00,Building Fund,TXN653939,22,
+Runée,Johnson,K,,,,9374 Jefferson Place,,Denver,CO,80210,,9/27/2026,$50.00,Scholarship,TXN194527,,
+KAREN,DELACROIX,,,karen.delacroix67@example.com,(918) 555-0178,2801 N Market Cir,,Burlington,VT,05401,,6/11/2026,$100.00,General,TXN801953,12,
+Sophia,King,M,,,973 555 0100,6731 West Washington Lane,Apt 5C,Edmond,OK,73013,,8/28/2026,150,General,TXN760969,8,wants no mail
+Olivia,Kim,A,,olivia.kim41@example.net,405.555.0113,3875 W Main Ct,,Austin,TX,78745,10/26/1946,2026-06-20,$25.00,Building Fund,TXN390707,10,matching gift?
+Mark,Young,J,,,(973) 555-0170,9400 S Washington Pl,Apartment 16B,Burlington,Vermont,5408,4/16/1994,6/25/2026,100,General,TXN762720,,board contact
+Robert,Wilson,,,,,3049 East Hillcrest Place,,Newark,NJ,07104,,8/14/2026,$50.00,,TXN234915,,wants no mail
+Nicholas,King,Lee,,,+1 405 555 0130,Post Office Box 3756,,Edmond,OK,73013,,2026-07-13,250,Building Fund,TXN979161,,board contact
+Anthony,Patel,A,,anthonypatel@example.org,,1259 South Riverside Lane Ste 39A,,Tulsa,OK,74114-1796,,4/25/26,25,Building Fund,TXN398470,27,wants no mail
+Virginia,Rivera,,,Virginiarivera@mail.example.com,+1 973 555 0124,8566 Main Boulevard,Ste 29,Tulsa,OK,74133,,7/17/2026,250,General,TXN368939,,board contact
+Benjamin,Kim,,,kim.hannah@mail.example.com,405 555 0110,6053 S Yale Way,,Edmond,OK,73003-8651,,4/7/2026,$100.00,,TXN242950,11,VIP
+Linda,Taylor,,,linda.taylor@mail.example.com,,9108 Hickory Pl,,Tulsa,OK,74105,2001-10-27,2026-03-07,,,TXN976803,4,board contact
+Gabriel,Scott,,,Gabriel.scott@example.org,(405) 555-0173,8364 North Harvard Circle,,Edmond,Oklahoma,73003-9027,,9/5/2024,$150.00,General,TXN386441,17,
+Lawrence,Harris,R,,harris.lawrence@example.org,,1219 N Harvard Pl,,Edmond,OK,73034,,2026-05-19,25,Scholarship,TXN588694,27,
+Ed,Williams,L,,,(405) 555-0187,7740 W Birch Ct,,Worcester,MA,01609,"Jan 21, 1993",2026-05-16,250,,TXN861336,17,wants no mail
+Eddie,Williams,L,,,+1 405 555 0187,7740 W Birch Ct,,Worcester,MA,01609,,7/25/2026,$50.00,General,TXN657960,11,matching gift?
+Jason,Ramirez,R,,jason.ramirez70@example.com,+1 508 555 0125,2832 East Walnut Road,Ste 18A,Burlington,VT,05401,,2/17/2026,250,Building Fund,CHK5559,,board contact
+Sandra,Oyelaran,K,,sandraoyelaran@mail.example.com,,9794 N Riverside Dr,Apartment 32,Tulsa,OK,74133,,8/17/26,100,Building Fund,TXN497965,20,board contact
+George M.,Chen,,,chen.george@example.org,,523 West Meadow Circle,,Tulsa,OK,74137,11/19/1943,9/17/2026,25,General,TXN948111,,VIP
+CAROL,LEWIS,,,,,7092 W Main Rd,,Newark,NJ,7102,12/19/1940,2026-09-02,100,General,TXN527702,30,VIP
+Noah,Miller,,,nmiller@example.net,918-555-0194,8702 North Yale Avenue,,Newark,NJ,7104,,2026-07-15,$100,General,TXN368631,1,board contact
+Mark,Thomas,,,,,2276 N Elm Rd,,Worcester,MA,1609,1990-06-10,6/15/2026,"$2,500.00",Building Fund,TXN199138,,
+Noah,Jackson,R,,jackson.noah@example.com,(405) 555-0182,5330 West Peoria Circle,,Tulsa,OK,74133,,2026-03-23,fifty,Scholarship,TXN467924,11,board contact
+Donald,Kowalski,J,,,,9677 North Lincoln Road,,Newark,New Jersey,7104,,2026-05-10,50,General,TXN852963,26,
+Chuck J.,Gonzalez,,,charlesgonzalez@example.org,+1 508 555 0143,8801 Lincoln Road,,Edmond,Oklahoma,73003,11/3/1981,"Apr 4, 2026",$100.00,General,TXN447469,,board contact
+Anthony,Scott,J,,,+1 918 555 0163,8138 South Washington Avenue Apartment 23C,,Newark,NJ,7104,1957-08-09,5/13/2026,$250.00,,TXN632007,5,
+Elizabeth,Adams,A,,,973-555-0193,1059 North Hillcrest Court,,Tulsa,OK,74114,,9/17/26,$100,Scholarship,TXN538189,,wants no mail
+EDDIE,WILLIAMS,L,,,405.555.0187,7740 West Birch Court,,Worcester,MA,1609,,"Aug 4, 2026",,Scholarship,TXN740905,1,wants no mail
+Matt,McCarthy,A,,matthewmccarthy@example.com,918-555-0123,881 Washington Lane,,Edmond,OK,73012-8170,,3/28/2026,$250.00,General,TXN626389,8,
+JENNIFER,HARRIS,,,taylor.jennifer@example.org,973-555-0106,2432 E Riverside St,Ste 13B,Newark,NJ,7102,,2026-07-21,$100.00,Scholarship,TXN431750,2,
+Linda,Nelson,,,lnelson@example.net,973 555 0129,7295 Lewis Blvd,,Edmond,OK,73012,,4/15/26,"$1,000.00",,TXN596760,24,
+Jason,Hernandez,R,,hernandez.jason@example.org,405 555 0104,2574 East Market Avenue,,Austin,TX,78704,,2026-03-13,$100.00,Scholarship,TXN911771,,
+Anthony,Hill,R,,,,Post Office Box 7578,,Tulsa,OK,74114,4/3/51,2026-05-11,$50.00,Scholarship,TXN604398,22,board contact
+  Tommy,Smith ,K,,thomas.smith30@example.com,,7537 Pine Circle Ste 23B,,Austin,TX,78701,1984-01-26,5/13/2026,150,,TXN849050,3,VIP
+Jason,Lewis,E,,,,3163 Lewis Blvd Unit 3B,,Worcester,MA,1602,,8/12/2026,100,,TXN212736,12,VIP
+Katie,Young,E,,,918 555 0144,8030 Peoria Dr,,Tulsa,OK,74133-9910,,4/9/2026,250,,TXN271884,6,matching gift?
+Ray,Taylor,J,,raymondtaylor@example.org,5085550119,4903 E Peoria Blvd,,Worcester,MA,1602,,2026-08-18,$50,,TXN486762,11,
+LINDA,JACKSON,,,,,5330 W Peoria Cir,,Tulsa,OK,74133-7546,,4/6/2026,500,General,TXN380952,,board contact
+José,Nguyen,A,,josenguyen@example.com,,6620 S Jefferson Ln,,Edmond,OK,73034,,5/18/2026,$250.00,Scholarship,TXN123631,24,matching gift?
+Ethan,Flores,M,,eflores@example.org,918.555.0130,9453 N Lakeview Dr,Apartment 32,Tulsa,OK,74114,,3/16/2026,"$2,500.00",Scholarship,TXN318826,7,
+Wei,Smith,L,,,,,,,,,,3/21/2026,250,General,TXN604505,7,
+Liia,Gonzalez,M,,lisagonzalez@example.org,405-555-0166,1074 W Lewis Rd,,Denver,CO,80210-9504,1951-04-12,"Jul 28, 2026",$50,Building Fund,TXN708089,7,VIP
+Margaret,Van der Berg,E,,alexandra.vanderberg@example.com,973.555.0121,165 Hickory Pl,,Austin,TX,78701,,7/27/2026,150,Scholarship,TXN379106,28,VIP
+Ronald,Jones,M,,rjones@example.com,(973) 555-0103,9732 Church Circle,,Edmond,OK,73013,2/2/1968,7/24/2026,$50.00,Scholarship,TXN411802,12,matching gift?
+Charles,Martinez,L,,Nancy.martinez43@example.com,973.555.0143,540 N Walnut Rd,,Burlington,VT,05401,2/20/83,"Aug 20, 2026",250,General,TXN939883,,
+Andrew,Brown,,,,918 555 0125,8963 North Church Lane,,Newark,NJ,07106,,2026-08-15,$50.00,Scholarship,TXN927735,5,matching gift?
+Anthony L.,Lewis,,,anthonylewis@example.com,(973) 555-0182,1600 Jefferson Avenue,,Newark,New Jersey,7104,,2026-08-01,$100.00,Building Fund,TXN932535,28,VIP
+Jose,Lopez,K,,,918 555 0192,1338 Oak Avenue,,Newark,NJ,7104,,2026-09-05,$100.00,Building Fund,TXN193778,4,matching gift?
+Nancy,Sanchez,Lee,,,405-555-0148,PO Box 7382,,Tulsa,OK,74119,,"Mar 14, 2026",$50.00,General,TXN843768,13,
+Mark,Lindqvist,A,,,918 555 0161,8495 Sunset Ave,,Worcester,Massachusetts,1605,,8/28/2026,$250.00,General,TXN299364,13,
+James,Johnson,A,,james.johnson6@example.net,(508) 555-0151,1180 Lincoln Street,,Worcester,MA,01605,,8/8/2026,$25,,TXN307618,,
+Maria,Thomas,Marie,,,,POB 8966,,Edmond,OK,73034,2/9/1975,"Aug 13, 2026",$100.00,,TXN729637,10,
+  Deborah,Jones ,L,,deborah.jones38@example.com,,3182 North Hillcrest Lane,,Edmond,OK,73013,,5/25/2026,"$2,500.00",,TXN685490,4,
+E.,Lopez,,,elopez@example.net,,8642 W Harvard Cir,,Worcester,MA,01605,,2026-03-10,"$1,000.00",General,TXN958571,11,wants no mail
+Maria,McCarthy,R,,,405 555 0136,9409 N Elm Blvd,,Worcester,MA,1605,,9/24/2026,$100.00,,TXN306323,2,VIP
+,,,,samuel.kowalski@mail.example.com,(918) 555-0136,4578 Lakeview Drive,,Tulsa,OK,74133,,9/3/2026,"2,500",General,TXN513065,15,
+Andrew,Chen,,,achen@example.org,(918) 555-0143,2264 South Yale Circle,,Worcester,MA,1609,,8/20/2026,$50.00,Scholarship,TXN580671,,
+George,Castellano,A,,castellano.george@example.net,973.555.0169,5432 E Willow Ave,,Austin,TX,78704,,9/13/26,$150,,TXN443690,18,board contact
+Katherine,Davis,,,davis.katherine@example.org,508 555 0120,6460 E Riverside Ct,,Newark,NJ,07106,,4/4/2026,25,Building Fund,TXN983791,9,VIP
+Larence,Williams,M,,lwilliams@mail.example.com,+1 508 555 0113,1376 East Yale Circle,#29,Austin,TX,78745,,6/26/2026,1000,General,TXN350180,,
+Omar,Smith,A,,omarsmith@example.com,973.555.0123,6470 W Birch Dr,,Tulsa,OK,74137,,5/14/26,$500,General,TXN680967,13,board contact
+S.,Wright,Marie,,sophiawright@example.com,+1 405 555 0195,8234 Market Ln,,Tulsa,OK,74137,,9/12/26,$25,General,TXN292495,,
+Johnny,Smith,L,,,5085550150,3172 S Maple Ave,,Burlington,VT,05408,,2026-06-02,100,General,TXN457535,19,matching gift?
+  Hannah,Campbell ,L,,hannahcampbell@example.com,,2621 N Hillcrest St,Apt 33,Tulsa,OK,74137,1959-02-01,2026-03-10,$100.00,Building Fund,TXN480892,,
+Omar,Fitzgerald,,,omarfitzgerald@example.net,+1 973 555 0161,POB 6908,,Tulsa,OK,74133,5/21/1969,"May 30, 2025",$100.00,Building Fund,TXN985662,14,
+Carlo,Hernandez,Lee,,,508.555.0115,2795 Peoria Court,Apartment 26C,Burlington,VT,5401,,7/8/2026,$25,Scholarship,TXN566983,23,board contact
+Noah,Okafor,,,noah.okafor@example.com,973.555.0117,,,,,,,9/15/2026,$25,General,TXN981225,28,
+  Elizabeth,Adams ,A,,elizabeth.adams91@example.com,9735550193,1059 N Hillcrest Ct,,Tulsa,OK,74114-5514,"Oct 15, 1963",2026-06-20,250,Scholarship,TXN145626,19,VIP
+  Christopher,Nelson ,Lee,,Nelson.christopher@example.net,,5549 Lincoln Place,,Tulsa,OK,74105,7/22/1972,"Jul 24, 2026",$25.00,,TXN439226,,matching gift?
+Alexandra,Smith,J,,alexandrasmith@example.net,4055550175,,,,,,,4/19/2026,$150,Scholarship,TXN751970,,wants no mail
+Deborah,Clark,K,,,,1748 North Hickory Place,,Worcester,MA,1609,,2026-07-23,$150.00,General,TXN875851,,
+Omar,Fitzgerald,,,omarfitzgerald@example.net,9735550161,PO Box 6908,,Tulsa,OK,74133,5/21/1969,2026-08-07,25,Building Fund,TXN736702,23,board contact
+Ginny,Whitfield,Lee,,VIRGINIAWHITFIELD+run@EXAMPLE.NET,,3175 W Prairie Ln,,Burlington,VT,5401,,2026-04-25,$50.00,Scholarship,TXN289060,,wants no mail
+Hiroshi,Clark,,,hclark,+1 405 555 0188,3700 Market Blvd,,Tulsa,OK,74105,,3/22/2026,50,Building Fund,TXN982133,21,VIP
+Hiroshi,Wright,M,,,4055550145,7144 Jefferson Street,,Edmond,OK,73034,7/18/86,7/26/26,$100.00,Building Fund,TXN677295,12,VIP
+  Abigail,Sanchez ,M,,,(918) 555-0176,391 Willow Circle,,Denver,CO,80202,,"Aug 8, 2026",100,General,TXN496322,26,board contact
+Zoë,Martin,A,,,(405) 555-0159,490 N Willow St,Unit 14B,Tulsa,OK,74119,,2026-07-09,$500.00,,TXN279821,9,
+LINDA,NELSON,,,lnelson+run@example.net,973.555.0129,7295 Lewis Blvd,,Edmond,OK,73012,,9/12/2026,$50.00,General,TXN593837,21,
+Sophia,Adams,,,sophiaadams@example.org,+1 918 555 0133,6763 South Meadow Circle,,Burlington,VT,05408,,2026-05-07,100,General,TXN971077,,
+Donald,Chen,,,,405.555.0191,6795 Hickory Way,,Worcester,MA,1602,9/5/1951,5/18/26,150,General,TXN657532,,board contact
+Carol,Nguyen,K,,,,4322 Sunset Court,,Edmond,Oklahoma,73003,,9/25/26,$250.00,Building Fund,TXN925129,,board contact
+Timothy,King,J,,,508 555 0129,8493 West Peoria Way,,Austin,Texas,78745,,5/17/2026,"$2,500.00",,TXN958614,29,
+Matthew,Taylor,M,,matthewtaylor@example.net,+1 405 555 0186,6866 Lewis Cir,,Denver,CO,80206,,9/4/2026,,General,TXN178160,29,matching gift?
+Larry,Kowalski,E,,,,1107 E Sunset Way,,Tulsa,OK,74133,,2026-03-08,$50,,TXN179583,16,
+Jason,Lewis,E,,jason.lewis@example.net,,3163 Lewis Blvd Apartment 3B,,Worcester,MA,01602-6854,2/1/1987,"Jul 7, 2026",100,General,TXN474132,7,VIP
+Raymond,Patel,J,,rpatel@mail.example.com,4055550126,6080 Oak Place,,Tulsa,Oklahoma,74114,,9/6/26,$25,General,TXN914103,,matching gift?
+Patricia,Castellano,,,patriciacastellano@example.com,405 555 0122,2980 W Lakeview Cir APT 33,,Burlington,VT,5401,,"Jun 13, 2026",$150,Building Fund,TXN915276,7,wants no mail
+  Mrk,Mitchell ,Marie,,,,7996 East Birch Boulevard,,Tulsa,OK,74137,,8/5/26,$100.00,General,TXN466147,14,wants no mail
+Elizabeth,Hall,J,,elizabeth.hall94@example.com,9735550105,5129 E Prairie Pl,Apt 25,Denver,CO,80210,,2026-08-25,$50.00,General,TXN535834,9,wants no mail
+Edward,Williams,L,,,405 555 0187,7740 West Birch Court,,Worcester,MA,1609,,2026-04-25,$2500,,TXN921163,21,
+Olivia,Kim,A,,olivia.kim41@example.net,(405) 555-0113,3875 West Main Court,,Austin,TX,78745,10/26/1946,2026-09-27,$25.00,,TXN906973,,board contact
+Samantha,Green,M,,,9735550189,3908 E Market Ln,,Tulsa,OK,74133,,2026-09-28,$50.00,,TXN639520,,wants no mail
+Eleanor,Anderson,L,,anderson.eleanor@mail.example.com,918 555 0159,8380 South Walnut Circle,,Newark,NJ,7102,,8/12/2026,100,,TXN844517,,board contact
+Thomas,Oyelaran,,,oyelaran.thomas+run@example.org,405.555.0184,9794 North Riverside Drive Apt 32,,Tulsa,OK,74133,,6/23/2026,$50,Scholarship,TXN919671,12,board contact
+Nancy,Smith,L,,smith.nancy@example.org,+1 918 555 0165,1682 Lewis Boulevard,,Newark,NJ,07106,9/18/1991,6/22/2026,$100.00,Building Fund,TXN594248,24,board contact
+Hannah,Roberts,Lee,,ROBERTS.HANNAH@EXAMPLE.COM,9185550145,984 Elm Circle,,Tulsa,Oklahoma,74137,8/7/1951,7/1/2026,$100.00,Scholarship,TXN508178,,
+Nicholas,King,Lee,,nicholas.king@example.org,405 555 0130,PO Box 3756,,Edmond,OK,73013-5482,,2026-08-19,25,,TXN790831,20,matching gift?
+Sophia,Haudad,Lee,,sophia.oyelaran12+gala@example.org,918.555.0182,3791 Walnut Ct,,Worcester,MA,01605-8564,1977-01-20,3/19/2026,"$1,000.00",General,TXN770713,6,
+ROBERT,GARCIA,M,,rgarcia@example.org,,4785 W Meadow Blvd,,Austin,TX,78701,9/9/1949,9/16/2026,$50,General,TXN806686,29,
+Jason,Miller,,,anthonylewis@example.com,,1600 Jefferson Ave,,Newark,NJ,07104,5/26/44,7/1/2026,$250.00,General,TXN857447,8,VIP
+Harris,Anaïs,E,,harris.anais@mail.example.com,,1990 Prairie Dr Ste 4,,Worcester,MA,1609,,2026-09-17,$100.00,General,TXN740115,20,VIP
+NANCY,FITZGERALD,Lee,,nancyfitzgerald@mail.example.com,(918) 555-0191,,,,,,1964-07-02,9/6/2026,$100.00,General,TXN524721,9,
+Priya,Thomas,K,,pthomas@example.net,,7128 E Yale Ave,,Edmond,OK,73013,,"Jul 1, 2026",150,,TXN440648,3,VIP
+Emily,Hill,,,emily.hill@example.com,,1281 East Birch Drive,,Austin,TX,78701,,5/10/26,100,,TXN627158,1,VIP
+Thomas,Cirter,,,thomas.carter72+run@example.net,(918) 555-0186,PO Box 8299,,Tulsa,OK,74133,,2026-06-20,50,General,TXN681869,,
+Jason,Hernandez,Marie,,jason.hernandez@example.com,(918) 555-0175,5509 Maple Blvd,,Tulsa,OK,74105-1323,,2026-05-11,25,Building Fund,TXN925200,,
+George,Van der Berg,R,,george.vanderberg12@example.org,9185550121,2146 South Peoria Road,Ste 26B,Tulsa,OK,74137,,2026-07-28,25,General,TXN364942,11,matching gift?
+Katherine,Garcia,E,,garcia.katherine@example.net,918-555-0137,8352 S Lincoln Pl,,Burlington,VT,5401,1978-09-05,2026-07-07,50,General,TXN727218,24,
+Sophia,White,J,,white.anais@example.com,,4506 E Birch Dr,,Austin,TX,78745,,5/18/2026,100,,TXN663201,21,matching gift?
+  MARIA,GARCIA ,L,,maria.garcia@example.net,,8950 North Jefferson Circle,Apt 26C,Tulsa,OK,74114,,2026-04-07,$250,Building Fund,TXN210299,7,
+Noah,Okafor,,,noah.okafor@example.com,973.555.0117,6841 S Maple Ct,,Edmond,OK,73012,,2026-09-06,250,,TXN356263,5,board contact
+C.,Gonzalez,J,Sr.,gonzalez.charles@example.com,,8801 Lincoln Road,,Edmond,OK,73003,,"Apr 28, 2026",$250.00,Scholarship,TXN311358,15,wants no mail
+Linda,Thomas,K,,LTHOMAS@EXAMPLE.ORG,918-555-0155,4794 West Hickory Court Apt 39,,Tulsa,OK,74133-3914,1996-09-06,9/15/26,"$2,500.00",General,TXN287586,,
+Eleanor L.,Anderson,,,anderson.eleanor@mail.example.com,918 555 0159,8380 S Walnut Cir,,Newark,New Jersey,07102,12/26/1979,8/24/26,100,Scholarship,TXN733418,4,VIP
+LINDA,WHITE,,,LINDAWHITE@EXAMPLE.COM,,1670 N Peoria Dr,,Edmond,OK,73034,,2026-04-11,$100.00,General,TXN783783,,matching gift?
+  Lawrence,Kowalski ,E,,,,1107 East Sunset Way,,Tulsa,OK,74133,,5/14/2026,"$2,500.00",Scholarship,TXN925464,9,
+Katherine,Davis,,,davis.katherine@example.org,,,,,,,9/13/1976,"Jun 13, 2026",$100.00,General,TXN959380,,
+Zoë,Okafor,E,,zokafor+news@example.com,5085550102,2607 W Hickory St #26C,,Edmond,Oklahoma,73003,,2026-09-20,$100,Scholarship,TXN791757,23,VIP
+Renée,Van der Berg,K,,mccarthy.renee@example.com,918 555 0169,1465 Meadow St,,Worcester,MA,1602,,"May 10, 2026",25,,TXN148399,4,
+  DREW,BROWN ,,,,9185550125,8963 North Church Lane,,Newark,NJ,7106,,2027-01-03,$100,Scholarship,TXN174893,21,wants no mail
+Fatima,Torres,R,,,508 555 0105,7381 W Pine Cir,,Austin,TX,78701,,2026-07-19,100,Scholarship,TXN218580,1,
+  Lexi,Smith ,J,,alexandrasmith@example.net,405-555-0175,4010 West Peoria Circle,,Tulsa,OK,74114,,6/27/2026,$50.00,Building Fund,TXN956031,15,wants no mail
+  Richard,Fitzgerald ,A,,RICHARDFITZGERALD@EXAMPLE.COM,405-555-0134,2855 N Lakeview Ct,#28B,Edmond,OK,73013,1941-05-01,6/5/26,50,Building Fund,TXN336212,29,board contact
+SOPHIA,ADAMS,,,sophiaadams@example.org,918-555-0133,9684 Market Ave Unit 10B,,Austin,TX,78745-9244,,2026-03-02,250,,TXN915472,11,wants no mail
+Linda,Nelson,Lee,,lnelson+run@mail.example.com,,3700 Market Blvd,,Tulsa,OK,74105,,"Jun 11, 2026",$500.00,General,TXN758955,24,matching gift?
+Lisa M.,Scott,,,lisa.scott@example.org,,8091 N Birch Rd Unit 28,,Newark,NJ,7106,,2026-09-11,$150.00,General,TXN387843,18,wants no mail
+Tony,Patel,A,,anthonypatel@example.org,,1259 South Riverside Lane,Ste 39A,Tulsa,OK,74114,7/8/72,"Mar 11, 2026",$25.00,Scholarship,TXN156535,7,board contact
+Daniel,Taylor,L,,taylor.daniel@example.net,918 555 0128,3258 S Oak Ln,,Burlington,VT,05408,,"Sep 5, 2026",500,General,TXN698366,,matching gift?
+Mark,Jackson,L,,,,4341 West Oak Avenue,,Edmond,OK,73012,2/9/1971,2026-06-24,250,Scholarship,TXN733129,,matching gift?
+Robert,Gonzalez,J,,gonzalez.robert@example.net,,8638 South Prairie Place,,Tulsa,OK,74137,,"Sep 9, 2026",$100.00,General,TXN156786,6,
+Anaïs,Delacroix,E,,,(405) 555-0111,6207 Main Circle,,Edmond,OK,73013,,2026-07-08,50,General,TXN850052,18,wants no mail
+Deborah,Clark,K,,,,1748 North Hickory Place,,Worcester,MA,1609,,5/15/2026,$1000,Scholarship,TXN290497,25,wants no mail
+José,Haddad,,,jose.haddad@example.com,,2018 West Maple Street,,Burlington,VT,5401,,3/4/2026,50,Building Fund,TXN759062,1,
+Carol,Hernandez,Lee,,HERNANDEZ.CAROL@EXAMPLE.ORG,508 555 0115,2795 Peoria Court,Apt 26C,Burlington,VT,5401,2/7/2001,7/26/2026,100,Scholarship,TXN270273,15,matching gift?
+Drew,White,K,,andrewwhite@example.org,4055550141,1517 N Elm Blvd,,Edmond,OK,73003,,6/16/2026,100,,TXN817422,,
+Carol,Nguyen,K,,,,4322 Sunset Ct,,Edmond,OK,73003,1966-01-27,4/13/2026,,Scholarship,TXN267329,,
+Paul,Carter,J,,carter.paul+gala@example.com,508.555.0127,8624 S Lakeview Pl,,Burlington,VT,05401,1981-01-26,6/20/2026,25,Scholarship,TXN793078,22,
+Ethan,Jackson,E,,ejackson+gala@mail.example.com,508 555 0109,3154 East Oak Way,,Tulsa,OK,74105-3238,,"Aug 11, 2026","$1,000.00",General,TXN288363,30,wants no mail
+Linda,Wilson,A,,,,9896 E Jefferson Pl,,Denver,CO,80206,,8/13/2026,"1,000",General,TXN224077,,wants no mail
+Nathaniel,Clark,J,,,973 555 0146,108 North Elm Drive Ste 3,,Edmond,OK,73034,1969-12-10,8/6/2026,$100.00,General,TXN522316,8,
+Linda,Mitchell,,,linda.mitchell73@@example.com,973 555 0184,6191 West Cedar Road,,Edmond,OK,73013,,9/13/2026,50,General,TXN381291,8,wants no mail
+John,Martin,J,,john.martin@example.com,(508) 555-0148,8014 S Willow Ln,APT 29C,Tulsa,OK,74119,12/22/1954,7/28/26,$100.00,,TXN501429,19,
+Samuel,Kowalski,,,samuel.kowalski@mail.example.com,918 555 0136,4578 Lakeview Drive,,Tulsa,OK,74133,"Jan 4, 1990",6/20/2026,50,General,TXN368535,28,matching gift?
+Jason,Garcia,Marie,,garcia.jason@example.org,405-555-0146,3213 Jefferson Ln,,Edmond,OK,73003,,7/12/26,250,Scholarship,TXN195500,8,wants no mail
+Raymond,Patel,J,,rpatel@mail.example.com,,8956 E Church Blvd,Unit 21B,Newark,NJ,7102,,2026-04-09,$50.00,,TXN189332,4,
+Hannah,Campbell,L,,,918.555.0197,2621 North Hillcrest Street,Ste 33,Tulsa,OK,74137,,5/21/26,,Scholarship,TXN406691,,
+José,Delacroix,,,JDELACROIX@MAIL.EXAMPLE.COM,(918) 555-0110,3877 North Church Avenue,,Tulsa,Oklahoma,74119,11/17/1968,8/8/2026,250,General,TXN748540,22,wants no mail
+Kevin,Nelson,Marie,,kevinnelson@mail.example.com,,5525 E Lakeview Dr,Ste 36,Newark,New Jersey,07104-3402,,2026-07-01,$500,,TXN379636,4,wants no mail
+  Bill R.,Flores ,,,eflores@example.org,(918) 555-0131,,,,,,1977-11-01,9/10/2026,(50.00),Scholarship,TXN343570,18,VIP
+José,Haddad,,,Jose.haddad@example.com,,,,,,,,8/1/2026,"$1,000.00",Scholarship,TXN891694,25,matching gift?
+José,Haddad,,,,918.555.0177,2018 West Maple Street,,Burlington,VT,05401,,"Sep 7, 2026",$100.00,Scholarship,TXN184174,,board contact
+STEVEN,ROBERTS,Marie,,,(973) 555-0155,PO Box 6470,,Tulsa,OK,74133,,2026-08-19,250,Building Fund,TXN478324,,wants no mail
+Wei,Smith,L,,wei.smith52@example.com,,7546 W Prairie Ct,,Austin,TX,78704,,4/9/2026,100,Building Fund,TXN984116,5,matching gift?
+Christopher,Martinez,M,,martinez.christopher@example.net,,4321 Pine St,,Tulsa,OK,74137,9/19/59,"Apr 15, 2026",500,General,TXN621716,,
+  William,Oyelaran ,A,,william.oyelaran@example.org,,,,,,,,8/28/2026,1000,Building Fund,TXN658913,17,wants no mail
+George,Chen,M,,chen.george@example.org,,523 West Meadow Circle,,Tulsa,OK,74137,,9/24/26,$250.00,General,TXN297384,4,board contact
+Nancy,Perez,J,,nancyperez@example.net,,Post Office Box 1414,,Burlington,VT,5408,,2026-07-10,$25.00,Scholarship,TXN434992,8,
+Donald,Kowalski,,,Donald.kowalski72@example.com,,6632 Lewis Dr,,Burlington,VT,5401,,"Jun 19, 2026",500,Building Fund,CHK4229,20,
+Ethan,Anderson,,,ethananderson@example.org,918-555-0180,4084 Yale Ave,,Tulsa,OK,74133,,7/10/2026,$50.00,,TXN208752,13,
+Dorothy,Allen,,,dorothy.vanderberg9@example.com,+1 918 555 0154,7644 N Willow Pl,,Tulsa,OK,74105,,2026-08-15,"$1,000.00",General,TXN477122,17,matching gift?
+  George,Thompson ,R,,george.thompson,,9124 Sunset Pl Apartment 9A,,Newark,New Jersey,07102,3/2/1995,2026-05-09,$150,General,TXN213335,,
+Wei,Smith,L,,wei.smith52@example.com,,7546 W Prairie Ct,,Austin,TX,78704-9346,,2026-08-08,"1,000",General,TXN984245,,
+Samuel,Oyelaran,M,,samuel.oyelaran@example.com,4055550127,2914 W Church Pl,,Worcester,MA,1609,,6/8/2026,$100,Scholarship,TXN112556,,matching gift?
+Raymond,Ramirez,L,,raymond.ramirez87+news@mail.example.com,(973) 555-0145,4422 South Jefferson Circle,,Austin,TX,78745,,6/23/2026,150,Scholarship,TXN816277,5,
+Carol L.,Hernandez,,,hernandez.carol@example.org,(508) 555-0115,,,,,,2/7/01,2026-07-18,"2,500",Building Fund,TXN883688,25,
+LINDA,TAYLOR,,,,,9108 Hickory Place,,Tulsa,OK,74105,,4/16/26,$25.00,Scholarship,TXN985703,,
+EMILY,OYELARAN,R,,,+1 973 555 0130,7213 East Hickory Court,,Austin,TX,78745,,2026-03-22,150,Building Fund,TXN797323,17,VIP
+N.,McCarthy,M,,nathanielmccarthy@mail.example.com,(405) 555-0116,1512 W Hickory Ct,,Burlington,VT,5408,,6/20/2026,$100.00,General,TXN796212,,wants no mail
+Kevin,Nelson,Marie,,kevinnelson@mail.example.com,,5525 East Lakeview Drive,#36,Newark,NJ,7104,,5/4/26,100,Scholarship,TXN349297,,
+Susan,Rivera,R,,SRIVERA@MAIL.EXAMPLE.COM,973 555 0135,6800 Meadow Ln,Unit 33,Burlington,Vermont,05408,,3/16/2026,$50.00,Building Fund,TXN242134,11,
+JOSE A.,TORRES,,,jtorres@example.com,+1 918 555 0188,2820 Elm Blvd,,Newark,NJ,07104,,2026-07-10,$2500,General,TXN885836,,wants no mail
+Michael,Martinez,,,,,4750 Maple Ct,,Denver,CO,80206,,4/18/26,25,Scholarship,TXN166778,,VIP
+CHARLES,ANDERSON,M,,ethananderson@example.org,+1 918 555 0181,4084 Yale Avenue,,Tulsa,OK,74133,,2026-05-26,1000,,TXN845064,,board contact
+Nathaniel,Clark,J,,James.clark59@example.org,973-555-0146,108 North Elm Drive APT 3,,Edmond,OK,73034,,2026-07-28,$100.00,Scholarship,TXN921243,22,matching gift?
+JAMES L.,JOHNSON,,,jamesjohnson@example.org,+1 508 555 0152,,,,,,,4/19/2026,250,,TXN148630,7,matching gift?
+Olivia,Okafor,K,,oliviaokafor@mail.example.com,,8637 Peoria Pl,,Burlington,VT,5401,,3/16/2026,$100.00,General,TXN899454,22,
+Lisa,Young,J,,lyoung@mail.example.com,973.555.0163,9773 S Hillcrest Ln,,Newark,NJ,7104,,8/28/26,50,,TXN967407,4,
+Victoria A.,Kim,,,kim.victoria@@example.org,,4111 Sunset Ave,,Tulsa,OK,74119,,"Aug 8, 2026","$1,000.00",,TXN341841,,wants no mail
+Kevin,Brown,E,,kevinbrown@mail.example.com,,4642 S Hillcrest Pl,,Austin,TX,78745,,4/15/26,$50.00,General,TXN601082,10,VIP
+Margaret,Campbell,Marie,,margaret.campbell@example.com,,8749 South Hillcrest Boulevard,,Worcester,MA,1602,3/8/1996,2026-07-13,250,Building Fund,TXN322714,,
+Robert,Mitchell,,,rmitchell@mail.example.com,405.555.0176,602 N Lewis Pl,Unit 30C,Edmond,OK,73013,9/24/1958,7/16/2026,50,,TXN922120,,VIP
+Brennan,Charles,M,,cbrennan@mail.example.com,508 555 0141,8506 West Lakeview Avenue,,Tulsa,OK,74137,1950-11-02,6/16/2026,$25.00,Building Fund,TXN802523,,wants no mail
+BJÖRN,SMITH,E,,bjorn.smith18@mail.example.com,5085550101,2607 West Hickory Street,APT 26C,Edmond,OK,73003,,9/2/2026,50,Scholarship,TXN934512,7,VIP
+Mark,Thomas,,,mthomas@mail.example.com,405-555-0129,2276 North Elm Road,,Worcester,MA,1609,,9/15/2026,$250.00,Scholarship,TXN940750,,matching gift?
+  Chritsopher,Fitzgerald ,A,,,+1 405 555 0140,6600 Yale St,,Burlington,VT,5408,,"Aug 22, 2026",$25.00,Building Fund,TXN224314,4,VIP
+  Paul,Van der Berg ,,,Vanderberg.paul@example.org,508-555-0108,Post Office Box 2169,,Denver,CO,80206-5804,,"Apr 6, 2026",$50.00,Scholarship,TXN951863,4,
+Geirge,Castellano,A,,castellano.george@example.net,+1 973 555 0169,5432 East Willow Avenue,,Austin,TX,78704,,2026-05-15,"$1,000.00",Building Fund,TXN648804,6,wants no mail
+Noah,Jackson,R,,jackson.noah@example.com,,5330 West Peoria Circle,,Tulsa,OK,74133,11/28/62,3/4/26,500,Building Fund,TXN103621,22,
+Paul,Van der Berg,,,vanderberg.paul@example.org,,PO Box 2169,,Denver,CO,80206,,"Aug 26, 2026","1,000",Scholarship,TXN434802,13,VIP
+  Michael,Baker ,A,,michael.baker96@example.org,(973) 555-0115,4527 Meadow Cir Unit 23A,,Tulsa,OK,74105,,6/9/2026,$100.00,General,TXN845970,26,board contact
+Zoë,Walker,E,,zwalker@example.org,9735550127,8192 W Hickory Way,,Worcester,MA,1609,,3/14/2026,100,Scholarship,TXN841755,25,
+  Rick,Garcia ,,,,,7055 South Riverside Place,,Denver,CO,80210,,7/25/2026,50,,TXN109832,28,VIP
+Linda,Thomas,K,,,9185550155,4794 West Hickory Court,Apt 39,Tulsa,Oklahoma,74133,,7/10/26,"$1,000.00",General,TXN153846,12,matching gift?
+Björn,King,Lee,,king.bjorn@mail.example.com,918 555 0127,8664 East Washington Court,,Austin,TX,78704,,5/16/2026,50,General,TXN280557,3,VIP
+Chas,Brennan,M,Jr.,,508.555.0141,8506 West Lakeview Avenue,,Tulsa,OK,74137,,"Jul 20, 2026",250,,TXN263214,,board contact
+  W.,Smith ,L,,wei.smith52@example.com,,7546 West Prairie Court,,Austin,TX,78704,,"Jun 22, 2026",150,,TXN405041,17,board contact
+Charles,Miller,K,,,+1 973 555 0144,4722 Lincoln Drive,,Newark,NJ,07104,"Sep 20, 1964",9/17/26,$150.00,General,TXN971988,11,board contact
+Yuki,Martinez,L,,ymartinez@example.net,+1 405 555 0169,3188 Oak Avenue Unit 1,,Tulsa,OK,74114,,9/11/2026,"2,500",Scholarship,TXN719587,29,wants no mail
+  Priya,Thomas ,K,,,918 555 0108,7128 E Yale Ave,,Edmond,OK,73013-1105,,2026-03-25,100,Building Fund,TXN741274,3,matching gift?
+Sandra,Oyelaran,R,,,,4610 Yale Road,Unit 28,Denver,CO,80206,,8/12/26,100,Building Fund,TXN612365,17,wants no mail
+Jose,Torres,A,,jtorres@example.com,,2820 Elm Blvd,,Newark,NJ,07104,1987-11-12,1/26/2027,$500.00,Building Fund,TXN562467,10,
+C.,Floues,K,,fitzgerald.christopher+gala@example.com,,4900 Hillcrest Boulevard,,Newark,NJ,7102,1985-09-15,4/2/2026,$500.00,,TXN317148,,
+Paul,Torres,Lee,,,918 555 0189,2820 Elm Blvd,,Newark,NJ,07104,,2026-05-28,250,General,TXN237704,8,VIP
+Sandra,Lindqvist,Lee,,slindqvist@mail.example.com,(405) 555-0155,9524 North Lincoln Way,,Edmond,OK,73012,9/11/79,4/4/2026,$25.00,Building Fund,TXN772038,20,
+Anthony,Jones,J,,,918 555 0163,,,,,,8/9/57,"Aug 26, 2026",150,Building Fund,TXN833024,,VIP
+Eddie,Hill,Marie,,,,POB 7578,,Tulsa,OK,74114,,2026-06-16,25,General,TXN254073,,
+Harris,Thomas,R,,,,832 Pine Circle,Apt 21B,Austin,TX,78701,,"Aug 23, 2026",$250.00,Scholarship,TXN220352,1,matching gift?
+John,Martin,J,Jr,,508 555 0148,8014 S Willow Ln Apt 29C,,Tulsa,OK,74119,,3/3/26,$50.00,Building Fund,TXN849650,11,wants no mail
+Lisa,Scott,M,,lisa.scott@example.org,508.555.0133,9057 S Church Ct,APT 12A,Newark,NJ,7102,,6/16/26,$250,General,TXN965309,20,
+Raymond,Wilson,,,rebeccahaddad+gala@example.com,918.555.0118,7796 Oak Boulevard,,Tulsa,OK,74133-1940,1984-02-28,2026-08-15,250,General,TXN975086,27,wants no mail
+Jason,Miller,,,,973 555 0182,1600 Jefferson Avenue,,Newark,NJ,7104,,7/6/2026,$100.00,General,TXN625602,22,matching gift?
+Christopher,Kim,E,,Christopherkim@example.com,,7035 South Hillcrest Place,,Edmond,OK,73003,,7/9/2026,$50,,TXN497680,17,wants no mail
+Jason,Hernandez,R,,hernandez.jason+gala@example.org,+1 405 555 0104,2574 East Market Avenue,,Austin,TX,78704,,7/5/2026,$50.00,Building Fund,TXN686129,,VIP
+Noah,Miller,,,nmiller@example.net,918-555-0194,8702 North Yale Avenue,,Newark,New Jersey,7104,,2026-04-04,$150.00,,TXN300885,22,
+Deb,Clark,K,,,,1748 North Hickory Place,,Worcester,MA,01609,1944-06-17,10/29/25,1000,Building Fund,TXN814991,,matching gift?
+S.,Oyelaran,R,,,,4610 Yale Road,#28,Denver,CO,80206,,4/14/2026,100,General,TXN758461,,board contact
+Willy,Nguyen,Lee,,williamnguyen@example.net,4055550194,8170 W Maple Dr,,Tulsa,OK,74133,,2026-03-02,25,General,TXN307463,4,VIP
+P.,Walker,K,,,,1980 North Riverside Drive,,Austin,Texas,78745,1990-06-04,5/28/2026,$50.00,,TXN589046,30,
+Lisa,Whitfield,Marie,,lwhitfield@example.com,405.555.0115,,,,,,6/19/1972,2026-07-06,100,Scholarship,TXN681512,,board contact
+Anaïs,Jackson,M,,,,7887 North Willow Avenue,,Austin,TX,78701,,"Aug 5, 2026",100,,TXN928388,,matching gift?
+Diego,Williams,K,,,973 555 0176,6849 East Lakeview Court,,Edmond,OK,73034,,7/11/2026,$50.00,Building Fund,TXN636022,29,wants no mail
+DANIEL,TAYLOR,L,,taylor.daniel@example.net,918-555-0128,3258 South Oak Lane,,Burlington,VT,5408,,4/26/2026,50,,TXN845761,6,
+Mark L.,Jackson,,,,918-555-0146,4341 West Oak Avenue,,Edmond,OK,73012,,3/3/26,$50.00,General,TXN221611,3,
+PAUL,BRENNAN,A,,Paul.brennan@example.net,405-555-0125,388 Church Ln,,Burlington,VT,5401,,5/16/26,$50.00,Building Fund,TXN777766,1,
+  Vna der Berg,Donald ,J,,donald.kowalski@example.com,,9677 N Lincoln Rd,,Newark,NJ,07104,,9/24/2026,"$2,500.00",General,TXN831971,,wants no mail
+Nancy,Martinez,,,nancy.martinez43@example.com,9735550142,540 North Walnut Road,,Burlington,VT,5401,,"Jul 8, 2026",$150.00,Scholarship,TXN522844,28,wants no mail
+Andrew,White,K,,andrewwhite@example.org,,1517 North Elm Boulevard,,Edmond,OK,73003,,6/5/2026,$250.00,,TXN376927,23,wants no mail
+Jones,Deb,L,,Deborah.jones38@example.com,+1 405 555 0121,3182 N Hillcrest Ln,,Edmond,OK,73013,2/27/1968,6/17/2026,$25.00,General,TXN906542,,wants no mail
+Zoë,Martin,A,,martin.noah@example.com,405-555-0159,490 N Willow St,Apt 14B,Tulsa,OK,74119,1993-08-24,4/25/2026,2500,Building Fund,TXN933156,4,wants no mail
+  Noah,Martin ,Lee,,martin.noah@example.com,,9843 N Sunset Blvd #32,,Tulsa,OK,74137,,7/15/2026,2500,General,TXN788419,7,
+Michael,Martinez,,,,,4750 Maple Court,,Denver,CO,80206,,"Jun 20, 2026",100,Building Fund,TXN238683,9,
+A.,ALLEN,K,,alexanderallen@mail.example.com,4055550177,6217 North Market Lane,,Burlington,VT,05408,,8/9/2026,$25.00,General,TXN899076,,matching gift?
+  B.,Kowalski ,Lee,,wkowalski@example.org,(918) 555-0106,7743 South Sunset Way,Apt 30C,Tulsa,OK,74133,1981-04-04,6/2/26,$25.00,General,TXN947038,27,
+Anthony,Hill,R,,ahill@example.com,405 555 0199,P.O. Box 7578,,Tulsa,OK,74114,,5/14/2026,50,Scholarship,TXN278752,,
+  Wei,Smith ,L,,wei.smith52@@example.com,,7546 West Prairie Court,,Austin,TX,78704,,7/25/2026,250,Building Fund,TXN204277,21,matching gift?
+Renée,Van der Berg,K,,mccarthy.renee@example.com,,1465 Meadow St,,Worcester,MA,01602,,5/14/2026,50,General,TXN731381,6,
+Jennifer,Van der Berg,Marie,,jvanderberg@example.net,+1 973 555 0187,5897 Lewis Ave,,Tulsa,OK,74114,,5/2/2026,2500,Scholarship,TXN607771,,wants no mail
+RONALD,JONES,M,,rjones@example.com,+1 973 555 0103,9732 Church Cir,,Edmond,OK,73013,,6/22/2026,$25.00,Building Fund,TXN375654,14,wants no mail
+Virginia,Whitfield,Lee,,VIRGINIAWHITFIELD@EXAMPLE.NET,,3175 W Prairie Ln,,Burlington,VT,5401,,2026-04-16,50,General,TXN265155,12,matching gift?
+Noah,Martin,Lee,,martin.noah+news@example.com,(405) 555-0159,9843 N Sunset Blvd,Ste 32,Tulsa,OK,74137,,5/15/2026,"$2,500.00",General,TXN514479,22,wants no mail
+NATHANIEL,TAYOR,E,,taylor.daniel@example.net,,3258 South Oak Lane,,Burlington,VT,5408,,8/5/26,50,Scholarship,TXN851173,3,board contact
+Mark,Taylor,R,,mark.taylor@mail.example.com,,2432 E Riverside St,Unit 13B,Newark,NJ,7102,1966-10-08,2026-04-06,25,General,TXN721024,27,VIP
+Omar,Kowalski,,,,(405) 555-0193,6317 Elm Ln,,Tulsa,OK,74114,7/29/1945,2/26/2025,50,Building Fund,CHK2684,,board contact
+Björn,Smith,E,,bjorn.smith18@mail.example.com,5085550101,2607 W Hickory St #26C,,Edmond,OK,73003,,2025-10-18,$50.00,General,TXN727667,12,
+Raymond,Torres,M,,andrewwhite@example.org,405 555 0142,1517 North Elm Boulevard,,Edmond,OK,73003,,2026-07-21,100,Building Fund,TXN415020,,
+Gabe,Whitfield,K,,,(973) 555-0198,3425 Jefferson Way APT 15A,,Austin,TX,78701,,3/28/2026,$100.00,,TXN192239,8,
+Ray L.,Ramirez,,,raymond.ramirez87@mail.example.com,973-555-0145,4422 S Jefferson Cir,,Austin,TX,78745,4/10/1952,"Aug 2, 2026",50,General,TXN211373,6,VIP
+David,Nguyen,A,,DAVIDNGUYEN@MAIL.EXAMPLE.COM,+1 508 555 0153,3601 East Riverside Road,,Tulsa,OK,74137,8/22/1988,2026-04-01,$250.00,,TXN379848,30,
+Emily,Chen,L,,emilydavis@example.net,973 555 0116,4452 N Yale Ave,,Tulsa,OK,74137,,2026-06-18,$500.00,General,TXN738908,5,
+Noah,Miller,,,,918-555-0194,8702 North Yale Avenue,,Newark,NJ,07104,3/13/1972,9/15/2026,1000,Building Fund,TXN141598,9,
+Noah,Okafor,,,noah.okafor@example.com,,6841 S Maple Ct,,Edmond,OK,73012,,3/11/2026,$25.00,General,TXN918029,4,
+Patricia,Castellano,,,patriciacastellano@example.com,405.555.0122,2980 W Lakeview Cir APT 33,,Burlington,Vermont,5401,,"Jul 14, 2026",50,Scholarship,TXN177727,7,matching gift?
+Olivia,Okafor,K,,oliviaokafor@mail.example.com,4055550112,8637 Peoria Pl,,Burlington,VT,05401,,2026-05-03,150,General,TXN523528,17,board contact
+Sophia J.,Nguyen,,,white.anais@example.com,973.555.0149,4506 E Birch Dr,,Austin,TX,78745,,3/3/26,$150.00,Scholarship,TXN593852,,VIP
+L.,Thomas,K,,lthomas@example.org,(918) 555-0155,4794 West Hickory Court APT 39,,Tulsa,OK,74133,,2026-06-09,$25.00,Building Fund,TXN952161,,board contact
+Alexander,Hill,R,,,+1 405 555 0153,5923 South Walnut Court,,Edmond,OK,73013,,3/26/2026,$25.00,General,TXN902017,,
+Benjamin,Kim,,,kim.hannah@mail.example.com,,6988 West Walnut Court,,Edmond,OK,73003,,"May 21, 2026",$50.00,General,TXN183865,7,board contact
+Diego,Williams,K,,,(973) 555-0176,6849 E Lakeview Ct,,Edmond,OK,73034,,"Jun 22, 2026",$25.00,General,TXN688460,7,wants no mail
+Lisa,Gonzalez,M,,lisagonzalez@example.org,405-555-0166,2721 Pine Street,,Edmond,OK,73003,,2026-05-13,$25.00,General,TXN927647,28,wants no mail
+R.,Campbell,M,,ronald.campbell@example.net,,PO Box 5959,,Denver,CO,80206,1/11/1960,5/16/2026,25,General,TXN354878,22,
+Maria A.,Garcia,,,mgarcia@example.net,(508) 555-0149,576 W Cedar St APT 34,,Tulsa,OK,74105,,"Jun 14, 2026",50,General,TXN688748,,board contact
+Anthoyn,Gonzalez,K,,ANTHONY.GONZALEZ64@EXAMPLE.COM,9185550139,4466 South Harvard Street Apartment 13B,,Edmond,OK,73003,1986-10-06,6/16/2026,$500.00,,TXN333364,,matching gift?
+Paul,Torres,Lee,,ptorres@example.com,,2820 Elm Boulevard,,Newark,NJ,7104,,4/16/2026,$500.00,Scholarship,TXN345967,,wants no mail
+  Victoria,Walker ,,,victoriawalker@example.net,+1 918 555 0171,3846 North Jefferson Place,,Newark,NJ,07104,11/10/1986,8/15/2026,$25.00,Building Fund,TXN830063,12,matching gift?
+Anaïs,Martinez,E,,harris.anais@mail.example.com,,1990 Prairie Drive,Ste 4,Worcester,MA,01609,,2026-09-25,250,,TXN770571,18,
+Noah,Okafor,,,noah.okafor@example.com,973 555 0117,6841 South Maple Court,,Edmond,OK,73012,,2026-04-23,$100.00,Building Fund,TXN736715,,
+Ethan,Jackson,E,,,508 555 0109,3154 E Oak Way,,Tulsa,OK,74105,11/26/73,6/10/26,100,General,TXN645358,28,
+Renée,Van der Berg,K,,mccarthy.renee@example.com,,1465 Meadow St,,Worcester,MA,1602,,7/24/26,$25.00,Building Fund,TXN789920,8,matching gift?
+Matthew,Taylor,M,,matthewtaylor@example.net,(405) 555-0186,6866 Lewis Circle,,Denver,CO,80206,,5/28/2026,$500.00,,TXN747729,18,matching gift?
+N.,Jackson,R,,jackson.noah@example.com,(405) 555-0182,5330 W Peoria Cir,,Tulsa,Oklahoma,74133,1962-11-28,7/26/2026,$50.00,General,TXN279701,12,
+Daniel,Taylor,L,,,(918) 555-0128,3258 South Oak Lane,,Burlington,VT,05408,,2026-07-26,$25.00,General,TXN397689,4,
+J.,Smith,A,,John.smith87@example.net,,8589 Washington St,,Burlington,VT,05401,2/12/1961,2026-08-22,$1000,,TXN759309,15,wants no mail
+Nancy,Mrtinez,,,,(973) 555-0142,540 North Walnut Road,,Burlington,VT,5401,4/30/1967,4/17/2026,500,Building Fund,TXN266670,,
+Ronald,Okafor,,,,,4444 Elm Ave,,Edmond,OK,73013,,7/22/2026,$50,General,TXN214277,4,wants no mail
+Z.,Garcia,Marie,,,(405) 555-0196,475 East Walnut Circle,,Tulsa,OK,74137,,2026-07-03,$250.00,Building Fund,TXN144646,4,
+Dot A.,Ramirez,,,,+1 973 555 0160,5085 Riverside St,,Edmond,OK,73003,"Aug 13, 1970","Jul 24, 2026",$50.00,General,TXN587666,,
+WILL,OKAFOR,R,,williamokafor@example.org,,4444 Elm Ave,,Edmond,OK,73013,,2026-07-08,25,,TXN527171,,matching gift?
+Sophia,Nguyen,J,,,973 555 0149,4506 East Birch Drive,,Austin,TX,78745,"Sep 10, 1950",4/22/2026,$25.00,,TXN950307,19,
+Sophia,King,M,,king.sophia@example.net,(973) 555-0100,5877 Hickory Lane,Ste 5C,Tulsa,OK,74114,,2026-07-24,$250.00,General,TXN354916,21,matching gift?
+Ronald,Haddad,R,,ronald.whitfield87@example.com,+1 405 555 0123,1881 Walnut Ave,,Austin,TX,78701,,8/12/2026,,Scholarship,TXN528434,21,
+Eleanor,Lopez,,,,,8910 S Willow Ln,,Tulsa,OK,74133,,6/24/2026,50,General,TXN594688,25,
+Samantha,Jones,A,,sjones@mail.example.com,405.555.0114,7737 Elm Ave,,Tulsa,OK,74105,10/24/1958,6/8/2026,$100,General,TXN560814,,matching gift?
+Carol,Haddad,Marie,,chaddad@mail.example.com,,1958 S Jefferson Way,,Newark,NJ,07106,,8/26/26,$100.00,General,TXN648156,,
+  Barbara,Ramirez ,A,,Barbararamirez@example.org,+1 918 555 0160,4327 East Maple Place Ste 35,,Burlington,VT,5401,,5/18/2026,"2,500",General,TXN954593,14,board contact
+Hiroshi,Clark,,,hclark@example.com,405-555-0188,3700 Market Blvd,,Tulsa,OK,74105,"Jan 16, 1986",2026-06-06,"1,000",Building Fund,TXN177313,25,matching gift?
+Kevin,Anderson,,,,,7141 Peoria Street,,Austin,TX,78701,,8/20/26,$50,,TXN170555,6,
+Diego,Oyelaran,M,,,+1 973 555 0124,8566 Main Blvd Ste 29,,Tulsa,OK,74133-9434,,3/15/2026,$250.00,General,TXN674020,6,
+Benjamin,Kim,,,kim.hannah@mail.example.com,,6053 South Yale Way,,Edmond,OK,73003,,"Jun 6, 2026",250,General,TXN823091,21,
+Eleanor,Smith,Marie,,eleanorsmith@example.com,+1 918 555 0166,1682 Lewis Blvd,,Newark,NJ,7106,,6/8/2026,250,General,TXN251536,,board contact
+Zoë,Okafor,E,,zokafor@example.com,(508) 555-0102,2607 W Hickory St Unit 26C,,Edmond,OK,73003,,8/21/2026,$50.00,General,TXN897199,,
+Sohpia,Whitfield,,,sophiawhitfield@example.net,+1 973 555 0199,8762 N Sunset Blvd,,Tulsa,OK,74105,,2026-07-18,500,General,TXN682558,,
+Sandra,Harris,E,,sandraharris@example.net,973-555-0165,685 West Birch Street,,Burlington,VT,5408,6/9/1970,2026-08-16,$100.00,General,TXN237348,15,
+Jennifer,Martinez,,,jennifermartinez@example.org,+1 973 555 0137,969 Oak Cir,,Edmond,OK,73003,,3/4/26,$50.00,General,TXN636386,23,wants no mail
+Katherine,Young,E,,katherine.young8@example.com,9185550144,8030 Peoria Dr,,Tulsa,OK,74133,,10/9/25,"$1,000.00",Building Fund,TXN231602,4,
+  Zoë,Okafor ,E,,ZOKAFOR@EXAMPLE.COM,508.555.0102,2607 W Hickory St Apartment 26C,,Edmond,OK,73003,,8/13/2026,$100.00,,TXN383626,8,
+Rebecca,Haddad,L,,Rebeccahaddad@example.com,918-555-0118,7271 Willow Lane,,Austin,TX,78704,,"May 5, 2026",$150.00,Scholarship,TXN891126,,
+  Abby,Allen ,E,,abigail.allen10@example.com,(508) 555-0118,8168 Church Boulevard,,Tulsa,OK,74137,,9/18/2026,100,,TXN422060,8,
+Steven L.,Lindqvist,,,,405 555 0154,9524 N Lincoln Way,,Edmond,OK,73012,3/19/1971,9/26/2026,$100.00,General,TXN454571,,
+Kevin,Miller,Marie,,Kevinnelson@mail.example.com,,5525 E Lakeview Dr,Ste 36,Newark,NJ,7104,1949-12-11,4/14/2026,50,Scholarship,TXN498468,12,VIP
+CHARLES,MARTINEZ,L,,nancy.martinez43@example.com,973 555 0143,540 North Walnut Road,,Burlington,VT,5401,,8/6/26,$100.00,General,TXN867140,21,matching gift?
+Diego,Fitzgerald,Lee,,fitzgerald.christopher@example.com,,4900 Hillcrest Blvd,,Newark,NJ,7102,,5/14/2026,50,General,TXN210314,15,
+Christopher,Fitzgerald,A,,CHRISTOPHER.FITZGERALD32@MAIL.EXAMPLE.COM,+1 405 555 0140,6600 Yale St,,Burlington,VT,5408,,"May 4, 2026",150,Building Fund,TXN996552,26,
+Omar,Clurk,Marie,,omarclark@example.com,,519 W Birch St,,Tulsa,OK,74137,1993-12-28,8/1/26,25,Scholarship,TXN473660,,
+Richard,Fitzgerald,A,,,4055550134,2855 North Lakeview Court,#28B,Edmond,OK,73013,,9/17/2026,"2,500",Building Fund,TXN296013,,
+Nancy,Smith,L,,smith.nancy@example.org,,1682 Lewis Boulevard,,Newark,NJ,7106,,5/4/26,1000,General,TXN269293,,
+Zoë,Walker,E,,zwalker@example.org,,8192 West Hickory Way,,Worcester,MA,1609,,6/1/2026,250,,TXN754726,9,
+Brian,Brennan,Lee,,brennan.mark@example.net,,3920 West Harvard Boulevard,,Burlington,VT,5408,6/5/1951,2026-04-14,100,,TXN206957,,
+Nancy,Haddad,Marie,,,(918) 555-0152,8071 Prairie Dr,,Tulsa,OK,74137,6/29/1947,5/16/2026,$25.00,Building Fund,TXN262407,1,board contact
+Anaïs,Allen,,,,+1 973 555 0158,7362 Main Pl,,Burlington,VT,5408,,2026-08-26,"$1,000.00",General,TXN559515,18,
+Abby,Hall,,,,(973) 555-0126,9677 N Market Pl,,Tulsa,OK,74119,,6/2/2026,$250.00,Scholarship,TXN756842,8,
+  Anaïs,Gonzalez ,,,Agonzalez@example.com,(405) 555-0102,,,,,,,"Sep 11, 2026",150,,TXN830110,2,VIP
+Kit,Martinez,M,,martinez.christopher@example.net,,4321 Pine St,,Tulsa,OK,74137,,4/24/2026,25,General,TXN178575,29,
+Alexandra,Smith,J,,alexandrasmith@example.net,405 555 0175,4010 West Peoria Circle,,Tulsa,OK,74114,,5/11/2026,$100,,TXN548076,12,
+  L.,Thomas ,K,,lthomas@example.org,918 555 0155,4794 West Hickory Court Apt 39,,Tulsa,OK,74133,,4/16/26,$100.00,Scholarship,TXN456939,14,wants no mail
+Brian,Ramirez,Lee,,,,1565 N Hickory Way,,Tulsa,OK,74137-7607,,8/26/2026,50,General,TXN550381,23,VIP
+Eleanor M.,Flores,,,eflores@example.com,,819 Lakeview Ln,,Worcester,MA,01602,,2026-08-05,$250.00,General,TXN660650,,matching gift?
+Sophia,Wright,Marie,,sophiawright@example.com,405 555 0195,8234 Market Ln,,Tulsa,OK,74137,,7/24/2026,250,General,TXN373437,1,
+Ethan,Thomas,J,,Ethomas+gala@example.net,,1013 N Market Ave,,Worcester,MA,01605,,9/21/2026,50,,TXN488502,26,matching gift?
+Benjamin,Gonzalez,A,,benjamin.gonzalez50@example.com,+1 918 555 0153,9596 East Market Boulevard,Ste 2,Burlington,VT,5401,,9/17/26,$500.00,General,TXN303880,11,matching gift?
+Thomas,Oyelaran,,,oyelaran.thomas@example.org,+1 405 555 0184,9794 North Riverside Drive APT 32,,Tulsa,OK,74133,1969-10-20,2026-05-18,"$2,500.00",General,TXN318396,9,board contact
+Steven,Brown,,,,973.555.0166,,,,,,,2026-08-27,$1000,General,TXN626468,2,VIP
+Paul,Van der Berg,,,vanderberg.paul@example.org,508.555.0108,PO Box 2169,,Denver,CO,80206,,2026-07-08,$250.00,Scholarship,TXN873774,,board contact
+Sophia,Whitfield,,,sophiawhitfield@example.net,+1 973 555 0199,8762 N Sunset Blvd,,Tulsa,OK,74105,,7/28/2026,25,Scholarship,TXN652418,6,
+Susn,Sanchez,J,,susan.sanchez54@example.net,,5830 North Lincoln Drive,,Edmond,OK,73003,,2026-03-28,$250,General,TXN542005,12,
+Christpoher,Nelson,Lee,,nelson.christopher@example.net,,5549 Lincoln Place,,Tulsa,OK,74105-7347,7/22/1972,4/11/2026,"1,000",Scholarship,TXN691097,9,
+Donald,Oyelaran,L,,donald.oyelaran35@example.net,,4610 Yale Road,#28,Denver,CO,80206,1966-12-11,"Jul 8, 2026",250,General,TXN383748,13,wants no mail
+RAYMOND,WILSON,,,rebeccahaddad@example.com,918.555.0118,7271 Willow Ln,,Austin,TX,78704-4109,,9/15/2026,250,General,TXN989969,13,
+Dorothy,Carter,J,,thomas.carter72@example.net,918.555.0186,POB 8299,,Tulsa,OK,74133,,7/17/26,$100.00,General,TXN707145,,wants no mail
+  David,Rodriguez ,Marie,,Rodriguez.david@example.com,+1 508 555 0136,654 North Hickory Court,,Worcester,MA,01609,,2026-03-13,50,,TXN973576,17,
+George A.,Castellano,,,castellano.george@example.net,(973) 555-0169,5432 East Willow Avenue,,Austin,TX,78704,,9/21/2026,100,Building Fund,TXN935521,25,board contact
+Zoë,Martin,A,,martin.noah@example.com,405-555-0159,490 N Willow St,Apt 14B,Tulsa,OK,74119,1993-08-24,4/25/2026,2500,Building Fund,TXN933156,4,wants no mail
+THOMAS,HARRIS,R,,,,4785 W Meadow Blvd,,Austin,TX,78701-3704,,9/21/2026,$25.00,General,TXN330162,,
+  Chritsopher,Fitzgerald ,A,,,+1 405 555 0140,6600 Yale St,,Burlington,VT,5408,,"Aug 22, 2026",$25.00,Building Fund,TXN224314,4,VIP
+KATHERINE,YOUNG,E,,katherine.young8@example.com,,8030 Peoria Dr,,Tulsa,OK,74133,,2026-05-27,$100.00,Scholarship,TXN613786,26,wants no mail
+Mark,Thomas,,,,,2276 N Elm Rd,,Worcester,MA,1609,1990-06-10,6/15/2026,"$2,500.00",Building Fund,TXN199138,,
+William,Flores,R,,eflores@example.org,918-555-0131,9453 North Lakeview Drive,Unit 32,Tulsa,OK,74114,,6/20/2026,$25.00,Building Fund,TXN262034,12,
+William,Kowalski,Lee,,Wkowalski@example.org,918-555-0106,,,,,,,3/4/2026,"$1,000.00",,TXN140141,,
+Margaret,Van der Berg,E,,alexandra.vanderberg@example.com,973.555.0121,165 Hickory Pl,,Austin,TX,78701,,7/27/2026,150,Scholarship,TXN379106,28,VIP
+Katherine,Davis,,,davis.katherine@example.org,,,,,,,9/13/1976,"Jun 13, 2026",$100.00,General,TXN959380,,
+  Anaïs,Gonzalez ,,,Agonzalez@example.com,(405) 555-0102,,,,,,,"Sep 11, 2026",150,,TXN830110,2,VIP
+Donald,Kowalski,,,donald.kowalski72@example.com,+1 918 555 0157,6632 Lewis Drive,,Burlington,VT,05401,,9/13/2026,$250.00,Building Fund,TXN274380,18,
+Raymond,Wilson,,,rebeccahaddad+gala@example.com,918.555.0118,7796 Oak Boulevard,,Tulsa,OK,74133-1940,1984-02-28,2026-08-15,250,General,TXN975086,27,wants no mail
+Ray,Ramirez,L,,raymond.ramirez87@mail.example.com,+1 973 555 0145,,,,,,,4/15/2026,$50.00,Scholarship,TXN938329,26,
+Ray,Taylor,J,,raymondtaylor@example.org,5085550119,4903 E Peoria Blvd,,Worcester,MA,1602,,2026-08-18,$50,,TXN486762,11,
+Raymond,Ramirez,L,,raymond.ramirez87+news@mail.example.com,(973) 555-0145,4422 South Jefferson Circle,,Austin,TX,78745,,6/23/2026,150,Scholarship,TXN816277,5,
+Susan,Rivera,R,,srivera@mail.example.com,973-555-0135,6800 Meadow Lane,#33,Burlington,VT,05408,,6/3/2026,250,,TXN939578,3,
+  Charles,Brennan ,M,Jr,,5085550141,8506 W Lakeview Ave,,Tulsa,Oklahoma,74137,,"Apr 20, 2026","1,000",General,TXN742569,2,VIP
+Jason,Miller,,,,+1 973 555 0182,1600 Jefferson Ave,,Newark,NJ,7104,,"May 15, 2026",$250.00,Scholarship,TXN752305,5,
+Mark,Thomas,,,mthomas@mail.example.com,405-555-0129,2276 North Elm Road,,Worcester,MA,1609,,9/15/2026,$250.00,Scholarship,TXN940750,,matching gift?
+Mark,Jackson,L,,,(918) 555-0146,4341 W Oak Ave,,Edmond,OK,73012,,"Aug 19, 2026",100,Building Fund,TXN668545,29,wants no mail
+Daniel,Talor,L,,taylor.daniel@example.net,,3258 S Oak Ln,,Burlington,VT,05408,1986-08-31,8/9/2026,$250.00,,TXN347562,,board contact
+  A.,HARRIS ,E,,,,1990 Prairie Dr,Apartment 4,Worcester,MA,1609,,2026-07-23,150,Building Fund,TXN800116,18,
+Sandra,Oyelaran,R,,,,4610 Yale Road,Unit 28,Denver,CO,80206,,8/12/26,100,Building Fund,TXN612365,17,wants no mail
+  Paul,Van der Berg ,,,Vanderberg.paul@example.org,508-555-0108,Post Office Box 2169,,Denver,CO,80206-5804,,"Apr 6, 2026",$50.00,Scholarship,TXN951863,4,
+Nicholas,King,Lee,,nicholas.king@example.org,405 555 0130,PO Box 3756,,Edmond,OK,73013-5482,,2026-08-19,25,,TXN790831,20,matching gift?
+Andrew,O'Brien,K,,andrewobrien@example.org,918 555 0102,797 W Harvard Ln #7,,Edmond,OK,73034,,"Apr 24, 2026",1000,Scholarship,TXN123690,2,
+Kit,Martinez,M,,martinez.christopher@example.net,,4321 Pine St,,Tulsa,OK,74137,,4/24/2026,25,General,TXN178575,29,
+Donald,Kowalski,,,Donald.kowalski72@example.com,,6632 Lewis Dr,,Burlington,VT,5401,,"Jun 19, 2026",500,Building Fund,CHK4229,20,
+Zoë,Martin,A,,MARTIN.NOAH@EXAMPLE.COM,+1 405 555 0159,490 N Willow St,Apt 14B,Tulsa,OK,74119,,4/8/2026,"1,000",Scholarship,TXN735645,16,VIP
+Jason,Ramirez,R,,jason.ramirez70@example.com,+1 508 555 0125,2832 East Walnut Road,Ste 18A,Burlington,VT,05401,,2/17/2026,250,Building Fund,CHK5559,,board contact
+N.,Smith,L,,smith.nancy@example.org,918 555 0165,1682 Lewis Boulevard,,Newark,NJ,07106-4863,,2026-08-13,2500,Building Fund,TXN159158,10,VIP
+  Lawrence,Kowalski ,E,,,,1107 East Sunset Way,,Tulsa,OK,74133,,5/14/2026,"$2,500.00",Scholarship,TXN925464,9,
+Jason,Hernandez,R,,hernandez.jason+gala@example.org,+1 405 555 0104,2574 East Market Avenue,,Austin,TX,78704,,7/5/2026,$50.00,Building Fund,TXN686129,,VIP
+Chas,Brennan,M,Jr.,,508.555.0141,8506 West Lakeview Avenue,,Tulsa,OK,74137,,"Jul 20, 2026",250,,TXN263214,,board contact
+Andrew,O'Brien,K,,andrewobrien@example.org,918 555 0102,797 W Harvard Ln #7,,Edmond,OK,73034,,"Apr 24, 2026",1000,Scholarship,TXN123690,2,
+Kim,Benjamin,,,kim.hannah@mail.example.com,,6988 West Walnut Court,,Edmond,OK,73003,,7/15/26,50,Building Fund,TXN355889,,
+Benjamin,Kim,,,kim.hannah@mail.example.com,405 555 0110,6053 S Yale Way,,Edmond,OK,73003-8651,,4/7/2026,$100.00,,TXN242950,11,VIP
+Sophia,Adams,,,,,6763 South Meadow Circle,,Burlington,Vermont,5408,,3/25/2026,$100.00,General,TXN343335,14,
+Zoë,Walker,E,,zwalker@example.org,973 555 0127,8192 W Hickory Way,,Worcester,MA,01609,,3/5/26,100,General,TXN942306,23,board contact
