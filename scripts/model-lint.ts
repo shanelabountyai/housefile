@@ -25,11 +25,13 @@ function walk(dir: string): string[] {
     return statSync(p).isDirectory() ? walk(p) : p.endsWith('.ts') ? [p] : [];
   });
 }
-for (const file of walk('src/matching')) {
+// src/import is scanned too (review 2026-10-17), minus node:/process tokens it has no use for either.
+for (const file of [...walk('src/matching'), ...walk('src/import')]) {
   readFileSync(file, 'utf8')
     .split('\n')
     .forEach((line, i) => {
-      for (const re of FORBIDDEN) if (re.test(line)) problems.push(`${file}:${i + 1}: forbidden ${re.source}: ${line.trim()}`);
+      const code = line.replace(/\/\/.*$/, ''); // a comment that names the rule is not a use of it
+      for (const re of FORBIDDEN) if (re.test(code)) problems.push(`${file}:${i + 1}: forbidden ${re.source}: ${line.trim()}`);
     });
 }
 
