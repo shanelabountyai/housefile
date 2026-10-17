@@ -41,7 +41,8 @@ export function loadConstituents(bytes: Uint8Array): CrmConstituent[] {
 export function loadGifts(bytes: Uint8Array): CrmGift[] {
   return parseCsv(bytes).rows.map((r) => {
     const c = r.cells;
-    const cents = Number(c.amount_cents);
+    const raw = c.amount_cents ?? '';
+    const cents = /^-?\d+$/.test(raw) ? Number(raw) : NaN; // '' or ' ' must not become 0
     if (!Number.isSafeInteger(cents)) throw new Error(`crm_gifts: ${c.gift_id} amount_cents "${c.amount_cents}" is not an integer`);
     return {
       gift_id: c.gift_id ?? '',
