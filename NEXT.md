@@ -1,5 +1,93 @@
 # NEXT
 
+## ▶ Next session (Shane, on the Mac): review branch `phase-1`, then finish 1.9 / 1.12 and gate Phase 1
+
+**2026-10-17 (unattended Phase 1 build, branch `phase-1`, not pushed):** tasks 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.10, 1.11 and the 1.1 npm scripts are built and committed in small commits (`git log --oneline main..phase-1`). Nothing touched the database, Prisma, the UI, `fixtures/`, `src/core/**`, `tests/invariants/**` or `.github/workflows`.
+
+**What was built**
+- `src/lib/`: `money.ts` (LoanBook port + new `parseCents`), `canonical.ts` (Adjuster port + `sha256Bytes`), `fold.ts`.
+- `src/import/`: `normalize/` (N1–N9, rule code per value), `csv.ts` (own reader, BOM/UTF-8→cp1252/CRLF/quotes), `map.ts` (+ `import/synonyms.json`, `import/maps/*.map.json`), `validate.ts` (closed codes, explicit `asOf`), `crm.ts` (fixture loaded read-only), `pipeline.ts`, `resolve.ts` (D-15, tie-break by score then id), `preview.ts` + `report.ts` (dry-run write plan, S1–S4, DUP_GIFT, D-11 `beforeHash`).
+- `src/matching/`: pure matcher — `similarity.ts` (JW, Soundex), `blocking.ts` (B1–B5), `score.ts` (from `matching/model.v1.json`), `nicknames.ts` (from `matching/nicknames.json`), `model.ts` (shape lint + loader).
+- `src/eval/import-eval.ts` (the only reader of truth/answer keys/decisions), `scripts/import-eval.ts`, `scripts/import-dry-run.ts`, `scripts/model-lint.ts`; npm scripts `import:eval`, `import:dry-run`, `fixtures:check`, `model:lint`, `typecheck:phase1`, `test:phase1`; `tsconfig.phase1.json`.
+- Tests: `tests/unit/import/*` and `tests/unit/matching/*` (226 cases: GN-01..20, GA-01..20 + symmetry, 650-row validation, eval numbers and 0 drift, dry-run reconciliation, carry-over and model-is-data checks).
+- Docs: `docs/EVAL.md`; `docs/decisions.md` D-33 (ports/lineage) and **D-34..D-40 PROVISIONAL — awaiting Shane**; D-16 hash line; `eval/labels/README.md`.
+
+**Gate output, verbatim (2026-10-17)**
+
+```
+$ npx tsx scripts/import-eval.ts
+thresholds: MERGE>=70 REVIEW>=45
+A file: A
+A encoding: utf-8-sig
+A rows: 400
+A rejected: 15
+A rows_merge: 256
+A rows_review: 58
+A rows_new: 71
+A pairs_compared: 685
+A auto_merge_pairs: 264
+A auto_merge_correct: 264
+A auto_merge_wrong: 0
+A true_pairs_scored_below_review: 13
+A true_pairs_not_blocked: 2
+A review_pairs: 128
+A review_pairs_true: 70
+A pair_precision: 1.0
+A pair_recall: 0.9462
+A validation_mismatches: 0
+A row_confusion: {'DUP_IN_FILE->MERGE': 65, 'DUP_IN_FILE->NEW': 6, 'DUP_IN_FILE->REJECT': 2, 'DUP_IN_FILE->REVIEW': 9, 'EXISTING->MERGE': 191, 'EXISTING->NEW': 5, 'EXISTING->REJECT': 9, 'EXISTING->REVIEW': 43, 'NEW->NEW': 60, 'NEW->REJECT': 4, 'NEW->REVIEW': 6}
+A rejects: {'NAME_MISSING': 2, 'AMOUNT_MISSING': 10, 'AMOUNT_INVALID': 1, 'DATE_FUTURE': 2}
+A NOT BLOCKED: A-0238 (no candidate blocked) [D-TRANSPOSE|D-MOVED|D-UNITFMT]
+A NOT BLOCKED: A-0312 (no candidate blocked) [D-EMAIL-MISSING|D-MOVED]
+
+B file: B
+B encoding: cp1252
+B rows: 250
+B rejected: 14
+B rows_merge: 166
+B rows_review: 33
+B rows_new: 37
+B pairs_compared: 394
+B auto_merge_pairs: 169
+B auto_merge_correct: 169
+B auto_merge_wrong: 0
+B true_pairs_scored_below_review: 8
+B true_pairs_not_blocked: 0
+B review_pairs: 65
+B review_pairs_true: 37
+B pair_precision: 1.0
+B pair_recall: 0.9548
+B validation_mismatches: 0
+B row_confusion: {'DUP_IN_FILE->MERGE': 35, 'DUP_IN_FILE->NEW': 2, 'DUP_IN_FILE->REJECT': 1, 'DUP_IN_FILE->REVIEW': 3, 'EXISTING->MERGE': 131, 'EXISTING->NEW': 3, 'EXISTING->REJECT': 10, 'EXISTING->REVIEW': 28, 'NEW->NEW': 32, 'NEW->REJECT': 3, 'NEW->REVIEW': 2}
+B rejects: {'AMOUNT_MISSING': 7, 'AMOUNT_INVALID': 6, 'DATE_FUTURE': 1}
+
+pipeline: typescript (src/import, src/matching, model matching/model.v1.json, as-of 2026-10-14)
+drift vs fixtures/decisions_*.csv: 0 rows
+exit 0
+
+$ npm run fixtures:check   (last line)
+OK
+model matching/model.v1.json sha256 40312dfedce1ed59481bb610e4155ff90006f041700974825c48c63b37ee635b
+model:lint OK
+foundation:drift: clean against v1.2.1
+ Test Files  9 passed (9)
+      Tests  226 passed (226)
+tsc -p tsconfig.phase1.json --noEmit: clean
+```
+
+Two dry-runs of each fixture file were byte-identical (`cmp`); totals A 400 = 256 + 58 + 71 + 15, B (fresh CRM) 250 = 166 + 32 + 38 + 14.
+
+**Provisional decisions to confirm (docs/decisions.md):** D-34 A→B carry-over (reference runs B over the CRM enriched by A; B alone differs on 10 rows, not the 5 the audit named) · D-35 tie-break highest score then highest id · D-36 synonyms `middle`, `suffix`, `donor last name` · D-37 `asOf` input, default 2026-10-14 · D-38 reject precedence · D-39 dry-run gift rules (D-25 literal: blank CRM reference ≠ file reference → 7 near misses in A listed, not skipped), FUND_UNKNOWN not implemented, `beforeHash` by business id, row `asOf` = gift date · D-40 brief-vs-oracle wording (N1 hyphen→space, N4 uppercase, DATE_INVALID vs GIFT_DATE_INVALID, S6/GA-09 one best candidate, DATE_EXCEL_SERIAL warn, duplicate HOUSEHOLD_CANDIDATE flag emitted once, cp1252 undefined bytes).
+
+**Left for Shane**
+- **1.9** the 30 blind labels → `eval/labels/shane-30.json`; then the agreement numbers into `docs/EVAL.md` and dated O-2 / O-3 entries.
+- **1.12** CI gate in `.github/workflows` (import:eval drift, fixtures:check, model:lint, float-into-cents lint); prove red/green on a throwaway branch and link both runs here. The commands exit non-zero as required (verified locally with a FIRST_NICKNAME=10 model copy: 60 drifting rows, exit 1).
+- Remaining 1.1 items: port-5500 row in `~/.claude/CLAUDE.md`, clone row in `saas-foundation/CLONES.md` and this repo's `CLONES.md`, reuse scan (`~/Projects/reuse-scan.py`) recorded under D-33, D-5 billing/share-link unwiring. None were reachable from the build container.
+- Not run here (no Prisma engines in the container): full `npm test` and `npm run typecheck`; Phase 1 code was checked with `tsconfig.phase1.json` and `vitest run tests/unit/import tests/unit/matching` instead. The new tests have no DB dependency and should pass inside `npm test` as well.
+- Before Phase 2: the "FIRST_NICKNAME → 10 moves the review count and fails the drift check" check is already a vitest case and was run by hand; write `docs/phase-2-tasks.md` and stop for review.
+
+---
+
 ## ▶ Next session: clone and set up on the Mac, then plan Phase 1 (stop before code)
 
 Paste the block in `KICKOFF.md` into Claude Code started in `~/Projects`, on Fable.
