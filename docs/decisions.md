@@ -45,6 +45,8 @@ The PRD leaves several rules open. The golden pairs and measurements in `docs/do
 | D-20 | **Gmail dots and `+tags` are folded** (O-4 default); `+tag` folded on every domain. Recorded as a normalization, so the original is kept as an alternate. | Common in gala exports; reversible because the raw value survives |
 | D-21 | **Two-digit years:** 00–69 → 20xx, 70–99 → 19xx. Day-first dates are `DATE_INVALID`, never guessed. Excel serials accepted in 20000–60000 (1954–2064). | A guessed day/month swap is worse than a reject |
 
+**D-16 hash, 2026-10-17:** `matching/model.v1.json` created; sha256 of its canonical JSON (`src/lib/canonical.ts`, Adjuster port) is `40312dfedce1ed59481bb610e4155ff90006f041700974825c48c63b37ee635b`. `npm run model:lint` recomputes it and fails on a difference. The file holds integers only (percent values for the Jaro-Winkler constants, divided by 100 at load) so it can pass through the canonical serializer, which refuses floats.
+
 ### Review, survivorship, merge
 
 | # | Decision | Why |
