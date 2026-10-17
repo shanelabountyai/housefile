@@ -1,0 +1,9 @@
+constituent_id,first_name,middle_name,last_name,suffix,email,phone,address_line1,address_line2,city,state,zip,dob,household_id,created_at
+C0001,Zoë,,Rivera,,zoe.rivera40@example.net,(918) 555-0100,8331 S Lewis Ct,Apt 10B,Denver,CO,80206,,H0001,2025-05-23
+C0002,Victoria,Marie,Whitfield,,victoriawhitfield@example.net,(918) 555-0101,8331 S Lewis Ct,Apt 10B,Denver,CO,80206,,H0001,2024-03-08
+C0003,Christopher,M,Mitchell,,christopher.mitchell@example.org,(918) 555-0103,9111 S Oak St,Apt 1A,Tulsa,OK,74119,1984-01-09,H0003,2024-01-15
+C0004,Hiroshi,A,Ramirez,,ramirez.hiroshi@example.org,(918) 555-0105,3510 Oak Rd,,Burlington,VT,05401,1948-06-01,H0004,2023-01-08
+C0005,William,Lee,Kowalski,,wkowalski@example.org,(918) 555-0106,7743 S Sunset Way,Apt 30C,Tulsa,OK,74133,,H0005,2023-05-12
+C0006,Deborah,K,Clark,,,,1748 N Hickory Pl,,Worcester,MA,01609,1944-06-17,H0007,2023-01-24
+C0007,Priya,K,Thomas,,pthomas@example.net,(918) 555-0108,7128 E Yale Ave,,Edmond,OK,73013,,H0008,2024-07-31
+C0008,Linda,,White,,lindawhite@example.com,(918) 555-0109,1670 N Peoria Dr,,Edmond,OK,73034,,H0009,2024-09-04

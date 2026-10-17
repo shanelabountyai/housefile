@@ -1,0 +1,9 @@
+Name,E-mail,Phone,Address 1,Address 2,City,State,Postal,DOB,Date,Amt,Fund,Source
+"Nguyen, Samantha",snguyen@example.org,,1279 Main Pl,,Burlington,Vermont,5408,,2026-04-04,50,BLDG,P2P
+"Gonzalez,Karen R.",karengonzalez@example.com,918 555 0112,2956 Cedar Circle,,Denver,CO,80210,,2026-04-16,$100.00,BLDG,P2P
+Johnson L. Jaoes,,508.555.0152,6851 S Lakeview Way,,Worcester,MA,1602,7/25/1963,2026-05-12,$50.00,GEN,Web
+"Lewis, Virginia",Virginialewis@example.org,(973) 555-0194,3622 W Willow Cir,,Tulsa,Oklahoma,74133,,7/25/2026,250,General,Event
+"Davis, Dorothy",dorothydavis@example.org,9735550138,819 Lakeview Ln,,Worcester,MA,1602,,4/13/2026,250,General,Event
+NANCY SIMTH,smith.nancy@example.org,9185550165,2384 Maple Court,,Denver,CO,80206,9/18/1991,2026-06-10,100,GEN,Web
+  Björn L. King ,king.bjorn@mail.example.com,(918) 555-0127,8664 E Washington Ct,,Austin,TX,78704,1950-10-14,9/21/26,"2,500",BLDG,Event
+"Smith, John Jr",,,639 Walnut Way,,Edmond,OK,73013,,2024-10-17,100,General,Web

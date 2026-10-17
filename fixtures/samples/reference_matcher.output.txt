@@ -1,0 +1,45 @@
+thresholds: MERGE>=70 REVIEW>=45
+A file: A
+A encoding: utf-8-sig
+A rows: 400
+A rejected: 15
+A rows_merge: 256
+A rows_review: 58
+A rows_new: 71
+A pairs_compared: 685
+A auto_merge_pairs: 264
+A auto_merge_correct: 264
+A auto_merge_wrong: 0
+A true_pairs_scored_below_review: 13
+A true_pairs_not_blocked: 2
+A review_pairs: 128
+A review_pairs_true: 70
+A pair_precision: 1.0
+A pair_recall: 0.9462
+A validation_mismatches: 0
+A row_confusion: {'DUP_IN_FILE->MERGE': 65, 'DUP_IN_FILE->NEW': 6, 'DUP_IN_FILE->REJECT': 2, 'DUP_IN_FILE->REVIEW': 9, 'EXISTING->MERGE': 191, 'EXISTING->NEW': 5, 'EXISTING->REJECT': 9, 'EXISTING->REVIEW': 43, 'NEW->NEW': 60, 'NEW->REJECT': 4, 'NEW->REVIEW': 6}
+A rejects: {'NAME_MISSING': 2, 'AMOUNT_MISSING': 10, 'AMOUNT_INVALID': 1, 'DATE_FUTURE': 2}
+A NOT BLOCKED: A-0238 (no candidate blocked) [D-TRANSPOSE|D-MOVED|D-UNITFMT]
+A NOT BLOCKED: A-0312 (no candidate blocked) [D-EMAIL-MISSING|D-MOVED]
+
+B file: B
+B encoding: cp1252
+B rows: 250
+B rejected: 14
+B rows_merge: 166
+B rows_review: 33
+B rows_new: 37
+B pairs_compared: 394
+B auto_merge_pairs: 169
+B auto_merge_correct: 169
+B auto_merge_wrong: 0
+B true_pairs_scored_below_review: 8
+B true_pairs_not_blocked: 0
+B review_pairs: 65
+B review_pairs_true: 37
+B pair_precision: 1.0
+B pair_recall: 0.9548
+B validation_mismatches: 0
+B row_confusion: {'DUP_IN_FILE->MERGE': 35, 'DUP_IN_FILE->NEW': 2, 'DUP_IN_FILE->REJECT': 1, 'DUP_IN_FILE->REVIEW': 3, 'EXISTING->MERGE': 131, 'EXISTING->NEW': 3, 'EXISTING->REJECT': 10, 'EXISTING->REVIEW': 28, 'NEW->NEW': 32, 'NEW->REJECT': 3, 'NEW->REVIEW': 2}
+B rejects: {'AMOUNT_MISSING': 7, 'AMOUNT_INVALID': 6, 'DATE_FUTURE': 1}
+
