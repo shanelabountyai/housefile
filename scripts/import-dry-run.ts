@@ -5,8 +5,9 @@
 //   --crm <dir>         directory holding crm_constituents.csv and crm_gifts.csv (default fixtures)
 //   --as-of <date>      ISO as-of date for DATE_FUTURE (default 2026-10-14)
 //   --tag <X>           row id prefix (default: the letter in import_<x>.csv, else R)
-//   --after <csv>       resolve this earlier file first over the same in-memory CRM (with --after-map), so the
-//                       preview sees the CRM as that batch's merges would leave it; default: the fresh CRM
+//   --after <csv>       REFUSED (review 2026-10-17): the preview would plan field changes against a mix of the
+//                       committed CRM and an uncommitted earlier batch, a state that never exists. Use
+//                       `npm run import:eval` for the A-then-B sequence (D-34). Previews run on the committed CRM.
 //   --json              print the preview as JSON instead of text
 import { readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -26,7 +27,7 @@ const flag = (name: string) => args.includes(name);
 
 const filePath = opt('--file');
 if (!filePath) {
-  console.error('usage: npm run import:dry-run -- --file <csv> [--map <json>] [--crm <dir>] [--as-of YYYY-MM-DD] [--tag X] [--after <csv> --after-map <json>] [--json]');
+  console.error('usage: npm run import:dry-run -- --file <csv> [--map <json>] [--crm <dir>] [--as-of YYYY-MM-DD] [--tag X] [--json]');
   process.exit(2);
 }
 const crmDir = opt('--crm') ?? 'fixtures';
@@ -39,11 +40,11 @@ const crm = loadConstituents(bytes(join(crmDir, 'crm_constituents.csv')));
 const gifts = loadGifts(bytes(join(crmDir, 'crm_gifts.csv')));
 const state = createMatchState(crm);
 
-const after = opt('--after');
-if (after) {
-  const prior = loadImportFile(bytes(after), { tag: tagOf(after, 'P'), asOf, map: readMap(opt('--after-map')) });
-  resolveBatch(prior.rows, state);
+if (flag('--after')) {
+  console.error('import:dry-run: --after is not supported. A preview plans against the committed CRM only; an uncommitted earlier batch would make the plan describe a state that never exists. Use `npm run import:eval` for the A-then-B sequence (D-34).');
+  process.exit(2);
 }
+const after: string | undefined = undefined;
 
 const file = loadImportFile(bytes(filePath), { tag: opt('--tag') ?? tagOf(filePath, 'R'), asOf, map: readMap(opt('--map')) });
 const beforeBatch = createMatchState(state.crm); // the CRM as it stands before this batch: survivorship is planned against it
