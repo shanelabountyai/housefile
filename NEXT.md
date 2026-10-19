@@ -1,6 +1,18 @@
 # NEXT
 
-## ▶ Next session: decide the two-digit DOB year finding, finish the 1.1 leftovers, then gate Phase 1 (1.12 done 2026-10-19)
+## ▶ Next session: finish the 1.1 leftovers, then gate Phase 1 (D-43 done 2026-10-19)
+
+**2026-10-19 D-43 DONE (two-digit DOB years).** Shane chose to pivot on `asOf`: a DOB written `M/D/YY` whose 20xx reading falls after `asOf` loses 100 years. Gift dates are unchanged. Oracle `matchlib.norm_dob`, TS `normDob`, golden GN-21; `decisions_a.csv` and `fixtures/samples/reference_matcher.output.txt` regenerated from the oracle; brief §10–§12, EVAL.md and the snapshot tests updated. Commits 9fa52f5 (rule) and 3951ea6 (`import:eval` now prints each labelled pair's current decision: REVIEW 28, MERGE 2).
+- File A: 256/58/71 → **259/55/71**, pairs 685 → 679, auto-merge 265 correct / 0 wrong, recall 0.9462 → 0.9464, precision 1.0. File B unchanged. Labels still 30 / 30.
+- Gate, local, 2026-10-19: `fixtures:check` OK, `model:lint` OK, `money:lint` OK, `typecheck:phase1` clean, `test:phase1` 228/228, `import:eval` byte-identical to the sample, drift 0 rows.
+
+**Next, in order (1.1 leftovers, then the gate):**
+1. **Port collision.** `package.json` and `playwright.config.ts` use **5500**, but `~/.claude/CLAUDE.md` gives 5500 to use-case-insurance-fnol-intake. The next free port is **5900**: move housefile there (`package.json` dev/start/dev:test/start:test, `playwright.config.ts` default) and add the row to the table in the same commit (D-4 said to confirm).
+2. Clone rows: `saas-foundation/CLONES.md` (v1.3.0) and this repo's `CLONES.md`.
+3. Reuse scan: `cd ~/Projects && python3 reuse-scan.py check housefile/docs/phase-1-tasks.md housefile`; record it under D-33.
+4. D-5: unwire billing and share links.
+5. `npm run db:migrate` locally (v1.3.0 `scorekeeper` enum), then full `npm test` + `npm run typecheck` on the Mac (never run in the container).
+6. Phase 1 gate: write `docs/phase-2-tasks.md` and stop for review.
 
 **2026-10-19 task 1.12 CI gate DONE.** `.github/workflows/ci.yml` job `phase1-gate` (no DB, `TZ=America/Chicago`): `fixtures:check`, `model:lint`, `money:lint` (new, `scripts/money-lint.ts`: a line naming cents/amount may not use parseFloat, toFixed, Math.round-family, a decimal literal or /100), `typecheck:phase1`, `test:phase1`, `import:eval`; every step runs even after one fails.
 - **Red:** https://github.com/shanelabountyai/housefile/actions/runs/39292269677 — throwaway PR #3 (closed, branch deleted), `FIRST_NICKNAME` 15→10: `model:lint` red (hash b5ae0211… ≠ D-16 40312dfe…), `test:phase1` red (zero-drift and model-is-data cases), `import:eval` red; `fixtures:check`, `money:lint`, typecheck green. `ci` job's vitest also red.
@@ -87,7 +99,7 @@ Two dry-runs of each fixture file were byte-identical (`cmp`); totals A 400 = 25
 
 **Left for Shane**
 - **1.9** labels DONE 2026-10-19: `eval/labels/shane-30.json` (30 labels: 26 MERGE, 4 SAME_HOUSEHOLD, 0 KEEP_SEPARATE; answer key not opened). Compared 2026-10-19: `import:eval` prints agreement after its reference block, **30 / 30** (caveats in `docs/EVAL.md`: synthetic, no true KEEP_SEPARATE in the sample, option picked was listed first every time). Threshold sweep: any MERGE threshold below 70 adds wrong merges. O-2 (thresholds unchanged, D-41) and O-3 (GA-05 keeps auto-merging, D-42) decided 2026-10-19. **Task 1.9 complete.**
-- **Finding from labelling (needs a decision, not yet logged):** pairs A-0064 and A-0185 show `DOB_DIFF` although both sides are the same date. `tools/matchlib.py` `norm_date` (line 348) maps two-digit years < 70 to 20xx, so DOB `4/3/51` becomes 2051. Right for gift dates, wrong for birth dates. A fix (e.g. DOB pivot: a parsed year after `asOf` drops 100 years) changes the oracle, the brief N6 and the fixtures, so it needs a `docs/decisions.md` entry first.
+- **Finding from labelling — DECIDED as D-43 2026-10-19 (see top):** pairs A-0064 and A-0185 show `DOB_DIFF` although both sides are the same date. `tools/matchlib.py` `norm_date` (line 348) maps two-digit years < 70 to 20xx, so DOB `4/3/51` becomes 2051. Right for gift dates, wrong for birth dates. A fix (e.g. DOB pivot: a parsed year after `asOf` drops 100 years) changes the oracle, the brief N6 and the fixtures, so it needs a `docs/decisions.md` entry first.
 - **1.12** DONE 2026-10-19, runs linked at the top.
 - Remaining 1.1 items: port-5500 row in `~/.claude/CLAUDE.md`, clone row in `saas-foundation/CLONES.md` and this repo's `CLONES.md`, reuse scan (`~/Projects/reuse-scan.py`) recorded under D-33, D-5 billing/share-link unwiring. None were reachable from the build container.
 - Not run here (no Prisma engines in the container): full `npm test` and `npm run typecheck`; Phase 1 code was checked with `tsconfig.phase1.json` and `vitest run tests/unit/import tests/unit/matching` instead. The new tests have no DB dependency and should pass inside `npm test` as well.
