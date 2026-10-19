@@ -1,6 +1,6 @@
 # NEXT
 
-## ▶ Next session (Shane, on the Mac): review branch `phase-1`, then finish 1.9 / 1.12 and gate Phase 1
+## ▶ Next session: task 1.12 (CI gate), then decide the two-digit DOB year finding, then gate Phase 1 (1.9 done 2026-10-19)
 
 **2026-10-17 (unattended Phase 1 build, branch `phase-1`, pushed; PR open, not merged):** tasks 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.10, 1.11 and the 1.1 npm scripts are built and committed in small commits (`git log --oneline main..phase-1`). Nothing touched the database, Prisma, the UI, `fixtures/`, `src/core/**`, `tests/invariants/**` or `.github/workflows`.
 
