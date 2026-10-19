@@ -6,7 +6,7 @@ Order is CLAUDE.md's TDD order. Every task writes the failing test first against
 
 **Written at the Phase 1 gate, 2026-10-19.** Gate output: `fixtures:check` OK, `model:lint` OK (40312dfe…), `money:lint` OK, `typecheck:phase1` clean, `test:phase1` 228/228, `import:eval` A 259/55/71 · 679 pairs · P 1.0 · R 0.9464, B 166/33/37 · 394 pairs · P 1.0 · R 0.9548, drift 0 rows; `npm test` 382/382 and `npm run typecheck` clean on the Mac (NEXT.md, same day).
 
-## Proposals for review (defaults in force until Shane changes them; each becomes a D-entry when confirmed)
+## Proposals (reviewed 2026-10-19: P-1, P-2, P-6, P-7 decided by Shane as written; P-3..P-5 defaults in force — D-45..D-51)
 
 | # | Proposal | Why | Alternative |
 |---|---|---|---|
