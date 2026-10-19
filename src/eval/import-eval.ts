@@ -202,3 +202,45 @@ export function runEval(fixtures = 'fixtures', opts: { asOf?: string; model?: Mo
   const text = [`thresholds: MERGE>=${model.thresholds.MERGE} REVIEW>=${model.thresholds.REVIEW}`, ...files.map(formatFileEval)].join('\n') + '\n';
   return { files, text, drift: files.flatMap((f) => f.drift.map((d) => `${f.file} ${d}`)) };
 }
+
+export type LabelTruth = 'MERGE' | 'SAME_HOUSEHOLD' | 'KEEP_SEPARATE';
+export type LabelRow = { rowId: string; target: string; label: LabelTruth; truth: LabelTruth; score: number; reasons: string };
+
+/**
+ * Task 1.9 / D-31: Shane's blind labels against the truth. A pair is MERGE when both sides are the same true
+ * person, SAME_HOUSEHOLD when they are different people in one true household, else KEEP_SEPARATE. Target is a
+ * CRM id (C####) or an earlier row of the same file (A-####). Score and reasons come from decisions_<x>.csv.
+ */
+export function labelAgreement(labels: { row_id: string; target: string; label: LabelTruth }[], fixtures = 'fixtures', tag = 'a'): LabelRow[] {
+  const key = new Map(csvRows(join(fixtures, `answer_key_${tag}.csv`)).map((k) => [k.row_id!, k]));
+  const dec = new Map(csvRows(join(fixtures, `decisions_${tag}.csv`)).map((d) => [d.row_id!, d]));
+  const persons = csvRows(join(fixtures, 'truth_persons.csv'));
+  const personOfCrm = new Map(persons.filter((p) => p.crm_constituent_id).map((p) => [p.crm_constituent_id!, p.person_id!]));
+  const householdOf = new Map(persons.map((p) => [p.person_id!, p.household_id!]));
+  const personOf = (id: string) => (id.startsWith('C') ? personOfCrm.get(id) : key.get(id)?.true_person_id);
+  return labels.map((l) => {
+    const a = personOf(l.row_id);
+    const b = personOf(l.target);
+    if (!a || !b) throw new Error(`no truth for pair ${l.row_id} -> ${l.target}`);
+    const truth: LabelTruth = a === b ? 'MERGE' : householdOf.get(a) === householdOf.get(b) ? 'SAME_HOUSEHOLD' : 'KEEP_SEPARATE';
+    const d = dec.get(l.row_id);
+    if (d?.target !== l.target) throw new Error(`label ${l.row_id} -> ${l.target} is not the pair in decisions_${tag}.csv`);
+    return { rowId: l.row_id, target: l.target, label: l.label, truth, score: Number(d.score), reasons: d.reasons! };
+  });
+}
+
+export function formatLabelAgreement(rows: LabelRow[]): string {
+  const agree = rows.filter((r) => r.label === r.truth).length;
+  const merge = rows.filter((r) => r.label === 'MERGE');
+  const apart = rows.filter((r) => r.label !== 'MERGE');
+  const pct = (n: number) => `${((100 * n) / rows.length).toFixed(1)}%`;
+  return [
+    `labels: ${rows.length} pairs (eval/labels/shane-30.json; model decided all of them REVIEW)`,
+    `labels agreement (3-way): ${agree} / ${rows.length} (${pct(agree)})`,
+    `labels agreement (merge vs not): ${rows.filter((r) => (r.label === 'MERGE') === (r.truth === 'MERGE')).length} / ${rows.length}`,
+    `labels would merge (model held for review): ${merge.length}, truly same person: ${merge.filter((r) => r.truth === 'MERGE').length}`,
+    `labels would keep apart: ${apart.length}, truly different people: ${apart.filter((r) => r.truth !== 'MERGE').length}`,
+    ...rows.map((r) => `  ${r.label === r.truth ? 'ok  ' : 'DIFF'} ${r.rowId} -> ${r.target} score ${r.score} label ${r.label} truth ${r.truth} [${r.reasons}]`),
+    '',
+  ].join('\n');
+}

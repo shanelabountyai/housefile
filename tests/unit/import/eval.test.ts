@@ -1,7 +1,7 @@
 // SNAPSHOT NOTE (review 2026-10-17): values in this file other than the reference-output and decisions_*.csv comparisons were measured by this code, not by the oracle. See docs/EVAL.md "Which tests are oracle agreement".
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { evalFile, runEval } from '@/eval/import-eval';
+import { evalFile, labelAgreement, runEval } from '@/eval/import-eval';
 import { loadConstituents } from '@/import/crm';
 import { parseCsv } from '@/import/csv';
 import { createMatchState, resolveBatch } from '@/import/resolve';
@@ -85,5 +85,17 @@ describe('resolveBatch tie-break', () => {
     expect(decisions[0]!.decision).toBe('REVIEW');
     expect(decisions[0]!.target).toBe('C0002');
     expect(decisions[0]!.tieBreak).toBe('2 candidates scored 50; highest id wins (C0002)');
+  });
+});
+
+describe('labelAgreement (task 1.9)', () => {
+  it('derives truth from true person and household ids, and refuses a pair the matcher never proposed', () => {
+    const [same, house] = labelAgreement([
+      { row_id: 'A-0001', target: 'C0192', label: 'KEEP_SEPARATE' },
+      { row_id: 'A-0052', target: 'C0078', label: 'MERGE' },
+    ]);
+    expect(same).toMatchObject({ truth: 'MERGE', score: 50 });
+    expect(house).toMatchObject({ truth: 'SAME_HOUSEHOLD', score: 80 });
+    expect(() => labelAgreement([{ row_id: 'A-0001', target: 'C0001', label: 'MERGE' }])).toThrow(/not the pair/);
   });
 });
