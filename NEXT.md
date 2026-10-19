@@ -9,7 +9,7 @@
 **Next, in order (1.1 leftovers, then the gate):**
 1. ~~Port collision~~ **DONE 2026-10-19 (D-44):** housefile is on **5900** (package.json, playwright.config.ts, CI `APP_URL`); row added to `~/.claude/CLAUDE.md`, *next project* now 6000.
 2. ~~Clone rows~~ **DONE 2026-10-19:** housefile row in `saas foundation/CLONES.md` (e13c770, v1.3.0, port 5900); this repo's copy synced to it. The foundation still has an uncommitted footnote row from another session — left alone.
-3. Reuse scan: `cd ~/Projects && python3 reuse-scan.py check housefile/docs/phase-1-tasks.md housefile`; record it under D-33.
+3. ~~Reuse scan~~ **DONE 2026-10-19 (D-33):** 0 items parsed (the scanner reads tables, not the checkbox list; its index holds 1 project), recorded as inconclusive; the manual port lineage stands.
 4. D-5: unwire billing and share links.
 5. `npm run db:migrate` locally (v1.3.0 `scorekeeper` enum), then full `npm test` + `npm run typecheck` on the Mac (never run in the container).
 6. Phase 1 gate: write `docs/phase-2-tasks.md` and stop for review.
