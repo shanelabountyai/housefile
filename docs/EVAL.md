@@ -108,12 +108,48 @@ All nine equal `docs/domain-brief.md` §12 and `fixtures/MANIFEST.json`.
 `40312dfedce1ed59481bb610e4155ff90006f041700974825c48c63b37ee635b`, recorded under D-16. `model:lint` printed OK
 on 2026-10-17: schema valid, hash equal, no forbidden token under `src/matching/`.
 
-## Hand labels — pending (task 1.9)
+## Hand labels (task 1.9) — `npm run import:eval`, 2026-10-19
 
-`eval/labels/shane-30.json` does not exist yet. Shane labels the first 30 `REVIEW` rows of
-`fixtures/decisions_a.csv` blind (D-31); then the eval prints agreement with the key (count and share), how
-many he would have merged that the model held, how many he would have kept separate, and the score of each,
-and O-2 / O-3 get a dated entry. Until then every number on this page is synthetic-only.
+Shane labelled the first 30 `REVIEW` rows of `fixtures/decisions_a.csv` on 2026-10-19 (D-31), in
+`eval/labels/shane-30.json`. `import:eval` compares them with the truth after its reference-format block:
+same true person = `MERGE`, different people in one true household = `SAME_HOUSEHOLD`, else `KEEP_SEPARATE`
+(`labelAgreement` in `src/eval/import-eval.ts`).
+
+| Measure | Value |
+|---|---|
+| Agreement, three-way | 30 / 30 |
+| Agreement, merge vs not | 30 / 30 |
+| Would merge (model held for review) | 26, all 26 truly the same person |
+| Would keep apart | 4 (all `SAME_HOUSEHOLD`), all 4 truly different people |
+| Truly `KEEP_SEPARATE` in the sample | 0 |
+
+Scores of the 30: twenty-one at 50, two each at 55 and 65, and one each at 20, 25, 30, 45 and 80. The four household pairs
+scored 80, 65, 30 and 25: A-0052 (80) was held by the first-name cap, A-0199 (65) fell in the review band, and the
+other two by the identifier floor. Per-pair lines are in the `import:eval` output.
+
+**What this does and does not show.**
+- It is 30 pairs of synthetic data whose defects are clean by construction. It shows the review band is
+  readable by a person, not that the matcher is right on real files.
+- The sample contains no true `KEEP_SEPARATE` pair, so it says nothing about that class.
+- The labeller saw the matcher's reason codes, and picked from options that Claude drafted and ordered. The
+  option Shane picked was listed first on all 30 pairs. Treat the 30 / 30 as an upper bound on independent
+  agreement.
+
+**Threshold check for O-2** (`import:eval --model <copy>` with only `thresholds.MERGE` changed, 2026-10-19):
+
+| MERGE ≥ | A review rows | A wrong merges | B review rows | B wrong merges |
+|---|---|---|---|---|
+| 70 (v1) | 58 | 0 | 33 | 0 |
+| 65 | 57 | 2 | 31 | 1 |
+| 60 | 56 | 3 | 31 | 1 |
+| 55 | 51 | 3 | 24 | 1 |
+| 50 | 15 | 3 | 10 | 1 |
+
+Every lower merge threshold adds wrong merges. 26 of 30 review pairs being true merges is the cost of 0 wrong
+merges at 70, not slack in the threshold.
+
+**Finding.** A-0064 (score 20) and A-0185 (65) carry `DOB_DIFF` although both sides are the same date: N6 reads
+a two-digit year below 70 as 20xx, so a DOB of `4/3/51` becomes 2051. Not yet a decision; see `NEXT.md`.
 
 ## Which tests are oracle agreement and which are snapshots
 
