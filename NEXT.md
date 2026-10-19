@@ -1,6 +1,12 @@
 # NEXT
 
-## ▶ Next session: task 1.12 (CI gate), then decide the two-digit DOB year finding, then gate Phase 1 (1.9 done 2026-10-19)
+## ▶ Next session: decide the two-digit DOB year finding, finish the 1.1 leftovers, then gate Phase 1 (1.12 done 2026-10-19)
+
+**2026-10-19 task 1.12 CI gate DONE.** `.github/workflows/ci.yml` job `phase1-gate` (no DB, `TZ=America/Chicago`): `fixtures:check`, `model:lint`, `money:lint` (new, `scripts/money-lint.ts`: a line naming cents/amount may not use parseFloat, toFixed, Math.round-family, a decimal literal or /100), `typecheck:phase1`, `test:phase1`, `import:eval`; every step runs even after one fails.
+- **Red:** https://github.com/shanelabountyai/housefile/actions/runs/39292269677 — throwaway PR #3 (closed, branch deleted), `FIRST_NICKNAME` 15→10: `model:lint` red (hash b5ae0211… ≠ D-16 40312dfe…), `test:phase1` red (zero-drift and model-is-data cases), `import:eval` red; `fixtures:check`, `money:lint`, typecheck green. `ci` job's vitest also red.
+- **Green:** https://github.com/shanelabountyai/housefile/actions/runs/39292725637 — `phase-1` at 958d6a7: all three jobs green, `drift vs fixtures/decisions_*.csv: 0 rows`.
+- PR #1 had stopped running CI because it conflicted with `main` (foundation v1.3.0, NEXT.md only); `main` merged into `phase-1` (958d6a7), PR #1 now mergeable. **Run `npm run db:migrate` locally** (v1.3.0 adds the `scorekeeper` enum value).
+
 
 **2026-10-17 (unattended Phase 1 build, branch `phase-1`, pushed; PR open, not merged):** tasks 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.10, 1.11 and the 1.1 npm scripts are built and committed in small commits (`git log --oneline main..phase-1`). Nothing touched the database, Prisma, the UI, `fixtures/`, `src/core/**`, `tests/invariants/**` or `.github/workflows`.
 
@@ -82,7 +88,7 @@ Two dry-runs of each fixture file were byte-identical (`cmp`); totals A 400 = 25
 **Left for Shane**
 - **1.9** labels DONE 2026-10-19: `eval/labels/shane-30.json` (30 labels: 26 MERGE, 4 SAME_HOUSEHOLD, 0 KEEP_SEPARATE; answer key not opened). Compared 2026-10-19: `import:eval` prints agreement after its reference block, **30 / 30** (caveats in `docs/EVAL.md`: synthetic, no true KEEP_SEPARATE in the sample, option picked was listed first every time). Threshold sweep: any MERGE threshold below 70 adds wrong merges. O-2 (thresholds unchanged, D-41) and O-3 (GA-05 keeps auto-merging, D-42) decided 2026-10-19. **Task 1.9 complete.**
 - **Finding from labelling (needs a decision, not yet logged):** pairs A-0064 and A-0185 show `DOB_DIFF` although both sides are the same date. `tools/matchlib.py` `norm_date` (line 348) maps two-digit years < 70 to 20xx, so DOB `4/3/51` becomes 2051. Right for gift dates, wrong for birth dates. A fix (e.g. DOB pivot: a parsed year after `asOf` drops 100 years) changes the oracle, the brief N6 and the fixtures, so it needs a `docs/decisions.md` entry first.
-- **1.12** CI gate in `.github/workflows` (import:eval drift, fixtures:check, model:lint, float-into-cents lint); prove red/green on a throwaway branch and link both runs here. The commands exit non-zero as required (verified locally with a FIRST_NICKNAME=10 model copy: 60 drifting rows, exit 1).
+- **1.12** DONE 2026-10-19, runs linked at the top.
 - Remaining 1.1 items: port-5500 row in `~/.claude/CLAUDE.md`, clone row in `saas-foundation/CLONES.md` and this repo's `CLONES.md`, reuse scan (`~/Projects/reuse-scan.py`) recorded under D-33, D-5 billing/share-link unwiring. None were reachable from the build container.
 - Not run here (no Prisma engines in the container): full `npm test` and `npm run typecheck`; Phase 1 code was checked with `tsconfig.phase1.json` and `vitest run tests/unit/import tests/unit/matching` instead. The new tests have no DB dependency and should pass inside `npm test` as well.
 - Before Phase 2: the "FIRST_NICKNAME → 10 moves the review count and fails the drift check" check is already a vitest case and was run by hand; write `docs/phase-2-tasks.md` and stop for review.
