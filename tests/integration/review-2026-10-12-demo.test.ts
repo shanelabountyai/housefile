@@ -72,8 +72,8 @@ describe('a demo session cannot destroy the demo or change who owns it', () => {
     expect(await db.membership.count({ where: { userId: member.id, role: 'member' } })).toBe(1);
   });
 
-  // Owner decision 2026-10-13. Billing is a removable module, so its half is in tests/invariants/inv-12-webhooks.test.ts.
-  it('creating an org is refused; adding a project and sharing it still work', async () => {
+  // Owner decision 2026-10-13. D-5 removed billing and the share actions, so only the project half remains.
+  it('creating an org is refused; adding a project still works', async () => {
     await seedDemo();
     await viaDemo('owner@acme.demo.test');
     const orgs = await db.org.count();
@@ -82,10 +82,9 @@ describe('a demo session cannot destroy the demo or change who owns it', () => {
     expect(await startOrg({ name: 'Mine' })).toEqual({ error: expect.stringMatching(DEMO) });
     expect(await db.org.count()).toBe(orgs);
 
-    const { addProject, shareProject } = await import('@/app/o/[org]/projects/actions');
+    const { addProject } = await import('@/app/o/[org]/projects/actions');
     await expect(addProject('acme', { name: 'Demo project' })).rejects.toThrow('redirect /o/acme/projects');
-    const p = await db.project.findFirstOrThrow({ where: { name: 'Demo project' } });
-    expect(await shareProject('acme', { id: p.id, days: '7' })).toEqual({ notice: expect.stringContaining('/s/') });
+    expect(await db.project.count({ where: { name: 'Demo project' } })).toBe(1);
   });
 
   it('a real account is not affected', async () => {
