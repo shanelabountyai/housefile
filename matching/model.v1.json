@@ -7,7 +7,7 @@
     "EMAIL_EXACT": 45,
     "PHONE_EXACT": 25,
     "FIRST_EXACT": 15,
-    "FIRST_NICKNAME": 15,
+    "FIRST_NICKNAME": 10,
     "FIRST_CLOSE": 10,
     "FIRST_INITIAL": 5,
     "FIRST_DIFF": -25,
