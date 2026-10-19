@@ -46,9 +46,9 @@ describe('dry-run preview', () => {
       expect(preview(tag).text).toBe(preview(tag).text);
     });
   }
-  it('file A numbers: 256/58/71/15; DUP_GIFT 2, DUP_GIFT_IN_FILE 19, 7 date+cents matches with a different reference', () => {
+  it('file A numbers: 259/55/71/15 (D-43); DUP_GIFT 2, DUP_GIFT_IN_FILE 19, 7 date+cents matches with a different reference', () => {
     const t = preview('A').p.totals;
-    expect([t.merged, t.reviewed, t.new, t.rejected]).toEqual([256, 58, 71, 15]);
+    expect([t.merged, t.reviewed, t.new, t.rejected]).toEqual([259, 55, 71, 15]);
     expect([t.dupGift, t.dupGiftInFile, t.dateCentsMatchedRefDiffered]).toEqual([2, 19, 7]);
   });
   it('file B alone (fresh CRM): 166/32/38/14; DUP_GIFT 4 (no reference column: date and cents), DUP_GIFT_IN_FILE 7', () => {
@@ -91,7 +91,7 @@ describe('dry-run preview', () => {
     const { text } = preview('A');
     expect(text).toContain('extras (kept, unmapped): "Table #" "Notes"');
     expect(text).toContain('FUND_UNKNOWN');
-    expect(text).toContain('rows 400 = merged 256 + reviewed 58 + new 71 + rejected 15');
+    expect(text).toContain('rows 400 = merged 259 + reviewed 55 + new 71 + rejected 15');
     expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:/); // no timestamps anywhere
   });
 });

@@ -59,3 +59,12 @@ export function normDate(raw: string | null | undefined): NormalizedDate {
   if (m && Object.hasOwn(MONTHS, m[2]!)) return mkdate(Number(m[3]), MONTHS[m[2]!]!, Number(m[1]));
   return { value: '', code: 'DATE_INVALID', rule: RULE };
 }
+
+/** N6 for a birth date (D-43): a two-digit year that lands after `asOf` is the previous century. Gift dates keep normDate. */
+export function normDob(raw: string | null | undefined, asOf: string): NormalizedDate {
+  const n = normDate(raw);
+  if (n.value && n.value > asOf && /^\s*\d{1,2}[/-]\d{1,2}[/-]\d{2}\s*$/.test(raw ?? '')) {
+    return { ...n, value: iso(Number(n.value.slice(0, 4)) - 100, Number(n.value.slice(5, 7)), Number(n.value.slice(8, 10))) };
+  }
+  return n;
+}

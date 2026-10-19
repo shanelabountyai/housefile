@@ -18,11 +18,11 @@ const B = run.files[1]!;
 
 describe('import:eval reproduces the reference matcher on the frozen fixtures', () => {
   it('zero per-pair decision drift on both files (650 rows)', () => expect(run.drift).toEqual([]));
-  it('file A: precision 1.000, recall 0.946, 58 rows in review, 685 pairs, 15 rejected, 256/58/71', () => {
-    expect([A.pair_precision, A.pair_recall, A.rows_review, A.pairs_compared, A.rejected]).toEqual([1, 0.9462, 58, 685, 15]);
-    expect([A.rows_merge, A.rows_review, A.rows_new]).toEqual([256, 58, 71]);
-    expect([A.auto_merge_correct, A.auto_merge_wrong, A.true_pairs_scored_below_review, A.true_pairs_not_blocked]).toEqual([264, 0, 13, 2]);
-    expect([A.review_pairs, A.review_pairs_true, A.validation_mismatches]).toEqual([128, 70, 0]);
+  it('file A: precision 1.000, recall 0.946, 55 rows in review, 679 pairs, 15 rejected, 259/55/71 (D-43)', () => {
+    expect([A.pair_precision, A.pair_recall, A.rows_review, A.pairs_compared, A.rejected]).toEqual([1, 0.9464, 55, 679, 15]);
+    expect([A.rows_merge, A.rows_review, A.rows_new]).toEqual([259, 55, 71]);
+    expect([A.auto_merge_correct, A.auto_merge_wrong, A.true_pairs_scored_below_review, A.true_pairs_not_blocked]).toEqual([265, 0, 13, 2]);
+    expect([A.review_pairs, A.review_pairs_true, A.validation_mismatches]).toEqual([124, 66, 0]);
     expect(A.unblocked.map((u) => u.split(' ')[0])).toEqual(['A-0238', 'A-0312']);
   });
   it('file B: precision 1.000, recall 0.955, 33 rows in review, 394 pairs, 14 rejected, 166/33/37', () => {
@@ -34,7 +34,7 @@ describe('import:eval reproduces the reference matcher on the frozen fixtures', 
   it('row confusion tables match the reference', () => {
     expect(A.row_confusion).toEqual({
       'DUP_IN_FILE->MERGE': 65, 'DUP_IN_FILE->NEW': 6, 'DUP_IN_FILE->REJECT': 2, 'DUP_IN_FILE->REVIEW': 9,
-      'EXISTING->MERGE': 191, 'EXISTING->NEW': 5, 'EXISTING->REJECT': 9, 'EXISTING->REVIEW': 43,
+      'EXISTING->MERGE': 194, 'EXISTING->NEW': 5, 'EXISTING->REJECT': 9, 'EXISTING->REVIEW': 40,
       'NEW->NEW': 60, 'NEW->REJECT': 4, 'NEW->REVIEW': 6,
     });
     expect(B.row_confusion).toEqual({

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { civilFromDays, decodeBytes, normAddress, normAmount, normDate, normEmail, normPhone, normState, normZip, parseName } from '@/import/normalize';
+import { civilFromDays, decodeBytes, normAddress, normAmount, normDate, normDob, normEmail, normPhone, normState, normZip, parseName } from '@/import/normalize';
 import { canonicalSet, setsIntersect } from '@/matching/nicknames';
 import { line1Key } from '@/matching/types';
 
@@ -37,6 +37,12 @@ describe('N8 state', () => {
 describe('N6 dates', () => {
   it('GN-08 Excel 46113 -> 2026-04-01', () => expect(normDate('46113')).toEqual({ value: '2026-04-01', code: 'DATE_EXCEL_SERIAL', rule: 'N6' }));
   it('GN-09 5/4/26 -> 2026-05-04', () => expect(normDate('5/4/26')).toEqual({ value: '2026-05-04', code: '', rule: 'N6' }));
+  it('GN-21 DOB 4/3/51 -> 1951-04-03 (D-43); 5/4/26 stays 2026; a gift date 4/3/51 stays 2051', () => {
+    expect(normDob('4/3/51', '2026-10-14')).toEqual({ value: '1951-04-03', code: '', rule: 'N6' });
+    expect(normDob('5/4/26', '2026-10-14').value).toBe('2026-05-04');
+    expect(normDob('2051-04-03', '2026-10-14').value).toBe('2051-04-03');
+    expect(normDate('4/3/51').value).toBe('2051-04-03');
+  });
   it('GN-10 Sep 19, 2026 -> 2026-09-19', () => expect(normDate('Sep 19, 2026')).toEqual({ value: '2026-09-19', code: '', rule: 'N6' }));
   it('ISO passes through', () => expect(normDate('2026-10-14').value).toBe('2026-10-14'));
   it('M/D/YYYY', () => expect(normDate('8/8/2026').value).toBe('2026-08-08'));

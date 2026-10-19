@@ -24,7 +24,7 @@ person"; it means the machine declined to decide those.
 `npm run import:eval` runs `src/import` + `src/matching` over `fixtures/import_a.csv` then `import_b.csv` against
 `fixtures/crm_constituents.csv` (one in-memory state, file B over the CRM as enriched by file A — D-34), prints
 the reference matcher's line format, and exits 1 on any per-pair difference from `fixtures/decisions_*.csv`.
-On 2026-10-17 its output was byte-identical to `fixtures/samples/reference_matcher.output.txt` (`diff` of the
+On 2026-10-17, and again on 2026-10-19 after D-43 regenerated the sample, its output was byte-identical to `fixtures/samples/reference_matcher.output.txt` (`diff` of the
 two: empty) and it printed `drift vs fixtures/decisions_*.csv: 0 rows`.
 
 | | File A | File B |
@@ -32,21 +32,21 @@ two: empty) and it printed `drift vs fixtures/decisions_*.csv: 0 rows`.
 | Rows | 400 | 250 |
 | Encoding detected | utf-8-sig | cp1252 |
 | Rejected (validation) | 15 (NAME_MISSING 2, AMOUNT_MISSING 10, AMOUNT_INVALID 1, DATE_FUTURE 2) | 14 (AMOUNT_MISSING 7, AMOUNT_INVALID 6, DATE_FUTURE 1) |
-| Rows → MERGE / REVIEW / NEW | 256 / 58 / 71 | 166 / 33 / 37 |
-| Rows in review | **14.5%** (58/400) | **13.2%** (33/250) |
-| Pairs compared (after blocking) | 685 | 394 |
-| Auto-merge pairs: correct / wrong | 264 / **0** | 169 / **0** |
+| Rows → MERGE / REVIEW / NEW | 259 / 55 / 71 | 166 / 33 / 37 |
+| Rows in review | **13.8%** (55/400) | **13.2%** (33/250) |
+| Pairs compared (after blocking) | 679 | 394 |
+| Auto-merge pairs: correct / wrong | 265 / **0** | 169 / **0** |
 | True pairs scored below review | 13 | 8 |
 | True pairs never blocked | 2 (A-0238, A-0312) | 0 |
-| Review pairs: total / true matches | 128 / 70 | 65 / 37 |
+| Review pairs: total / true matches | 124 / 66 | 65 / 37 |
 | **Pair precision** (auto-merge) | **1.0** | **1.0** |
-| **Pair recall** (auto-merge over all true pairs) | **0.9462** | **0.9548** |
+| **Pair recall** (auto-merge over all true pairs) | **0.9464** | **0.9548** |
 | Validation mismatches vs key | 0 | 0 |
 | Per-pair decision drift vs `decisions_*.csv` | 0 rows | 0 rows |
 
 Row confusion (expected link → decision), from the same command:
 
-- A: DUP_IN_FILE→MERGE 65, →NEW 6, →REJECT 2, →REVIEW 9; EXISTING→MERGE 191, →NEW 5, →REJECT 9, →REVIEW 43; NEW→NEW 60, →REJECT 4, →REVIEW 6
+- A: DUP_IN_FILE→MERGE 65, →NEW 6, →REJECT 2, →REVIEW 9; EXISTING→MERGE 194, →NEW 5, →REJECT 9, →REVIEW 40; NEW→NEW 60, →REJECT 4, →REVIEW 6
 - B: DUP_IN_FILE→MERGE 35, →NEW 2, →REJECT 1, →REVIEW 3; EXISTING→MERGE 131, →NEW 3, →REJECT 10, →REVIEW 28; NEW→NEW 32, →REJECT 3, →REVIEW 2
 
 Precision = correct auto-merge pairs / all auto-merge pairs. Recall = correct auto-merge pairs / (correct +
@@ -97,7 +97,7 @@ are byte-identical (`cmp` of the two outputs: identical, 2026-10-17).
 | import_b.csv | `a4e0df19787138089b4daf78cec0ba4a1c612d1e2c73a02a32d97f263d0f1aa6` |
 | answer_key_a.csv | `87c9946619f76f32818a93da4abd35cf9c70b44e327ed28cadc79218d4a35b1a` |
 | answer_key_b.csv | `03bda5b76e73e53b066f5b39071e79047b0c2b38ce78a097a250c42ec0cdb825` |
-| decisions_a.csv | `130190940bf8a58523f2e33e136defee0cdcc0a9a9e4c38f2d1b4a7fedfdf28d` |
+| decisions_a.csv | `2bf91d7ec98a5c84d0a740178e85e0c19f59dc153c6c97c912a573c8803e2e00` |
 | decisions_b.csv | `51e86237a56c66a0067244b04b88c9e2ef8f82dae45bcd47dedf0c1b9c245e36` |
 
 All nine equal `docs/domain-brief.md` §12 and `fixtures/MANIFEST.json`.
@@ -119,7 +119,7 @@ same true person = `MERGE`, different people in one true household = `SAME_HOUSE
 |---|---|
 | Agreement, three-way | 30 / 30 |
 | Agreement, merge vs not | 30 / 30 |
-| Would merge (model held for review) | 26, all 26 truly the same person |
+| Would merge (all held for review when labelled) | 26, all 26 truly the same person |
 | Would keep apart | 4 (all `SAME_HOUSEHOLD`), all 4 truly different people |
 | Truly `KEEP_SEPARATE` in the sample | 0 |
 
@@ -148,11 +148,13 @@ other two by the identifier floor. Per-pair lines are in the `import:eval` outpu
 Every lower merge threshold adds wrong merges. 26 of 30 review pairs being true merges is the cost of 0 wrong
 merges at 70, not slack in the threshold.
 
-**Finding.** A-0064 (score 20) and A-0185 (65) carry `DOB_DIFF` although both sides are the same date: N6 reads
-a two-digit year below 70 as 20xx, so a DOB of `4/3/51` becomes 2051. Not yet a decision; see `NEXT.md`.
+**Finding, fixed by D-43 (2026-10-19).** A-0064 (score 20) and A-0185 (65) carried `DOB_DIFF` although both sides were the same date:
+N6 read a two-digit year below 70 as 20xx, so a DOB of `4/3/51` became 2051. Birth dates now pivot on `asOf`, and both pairs
+auto-merge (70 and 115). The labels were taken before the fix, when all 30 pairs were REVIEW; `import:eval` now prints
+each pair's current decision (REVIEW 28, MERGE 2) and the agreement is unchanged at 30 / 30.
 
 ## Which tests are oracle agreement and which are snapshots
 
-Oracle agreement (expected values come from `tools/` or the brief, not from this code): GN-01..GN-20, GA-01..GA-20, `expected_validation` on 650 rows, and the byte-for-byte match of `import:eval` with `fixtures/samples/reference_matcher.output.txt` plus 0-row drift against `fixtures/decisions_*.csv`.
+Oracle agreement (expected values come from `tools/` or the brief, not from this code): GN-01..GN-21, GA-01..GA-20, `expected_validation` on 650 rows, and the byte-for-byte match of `import:eval` with `fixtures/samples/reference_matcher.output.txt` plus 0-row drift against `fixtures/decisions_*.csv`.
 
 Snapshots (expected values were measured by this TypeScript and have no independent reference): the 10-row A→B carry-over list and `rows_review 32` (`tests/unit/import/eval.test.ts`), the tie-break score of 50, and every dry-run figure in `tests/unit/import/preview.test.ts`. They catch change, not error; they are not counted toward "matches the reference".

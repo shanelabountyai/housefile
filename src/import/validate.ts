@@ -2,7 +2,7 @@
 // the closed code set. A REJECT row stops here: it is never matched or indexed (D-32).
 // The as-of date is an explicit input (ISO string); nothing here reads a clock.
 import type { ColumnMap } from './map';
-import { normAddress, normAmount, normDate, normEmail, normPhone, parseName } from './normalize';
+import { normAddress, normAmount, normDate, normDob, normEmail, normPhone, parseName } from './normalize';
 import type { MatchRecord } from '../matching/types';
 
 export const REJECT_CODES = ['NAME_MISSING', 'AMOUNT_MISSING', 'AMOUNT_INVALID', 'GIFT_DATE_MISSING', 'GIFT_DATE_INVALID', 'DATE_FUTURE'] as const;
@@ -52,7 +52,7 @@ export function validateRow(id: string, index: number, cells: Record<string, str
   if (g('line1') || g('line2')) rules.push('N4:address');
   if (g('zip')) rules.push('N5:zip');
   if (g('state')) rules.push('N8:state');
-  const dobN = normDate(g('dob'));
+  const dobN = normDob(g('dob'), opts.asOf);
   let dob = dobN.value;
   if (dobN.code && dobN.code !== 'DATE_MISSING') {
     warnings.push(`DOB_${dobN.code}` as WarnCode);

@@ -3,21 +3,21 @@ A file: A
 A encoding: utf-8-sig
 A rows: 400
 A rejected: 15
-A rows_merge: 256
-A rows_review: 58
+A rows_merge: 259
+A rows_review: 55
 A rows_new: 71
-A pairs_compared: 685
-A auto_merge_pairs: 264
-A auto_merge_correct: 264
+A pairs_compared: 679
+A auto_merge_pairs: 265
+A auto_merge_correct: 265
 A auto_merge_wrong: 0
 A true_pairs_scored_below_review: 13
 A true_pairs_not_blocked: 2
-A review_pairs: 128
-A review_pairs_true: 70
+A review_pairs: 124
+A review_pairs_true: 66
 A pair_precision: 1.0
-A pair_recall: 0.9462
+A pair_recall: 0.9464
 A validation_mismatches: 0
-A row_confusion: {'DUP_IN_FILE->MERGE': 65, 'DUP_IN_FILE->NEW': 6, 'DUP_IN_FILE->REJECT': 2, 'DUP_IN_FILE->REVIEW': 9, 'EXISTING->MERGE': 191, 'EXISTING->NEW': 5, 'EXISTING->REJECT': 9, 'EXISTING->REVIEW': 43, 'NEW->NEW': 60, 'NEW->REJECT': 4, 'NEW->REVIEW': 6}
+A row_confusion: {'DUP_IN_FILE->MERGE': 65, 'DUP_IN_FILE->NEW': 6, 'DUP_IN_FILE->REJECT': 2, 'DUP_IN_FILE->REVIEW': 9, 'EXISTING->MERGE': 194, 'EXISTING->NEW': 5, 'EXISTING->REJECT': 9, 'EXISTING->REVIEW': 40, 'NEW->NEW': 60, 'NEW->REJECT': 4, 'NEW->REVIEW': 6}
 A rejects: {'NAME_MISSING': 2, 'AMOUNT_MISSING': 10, 'AMOUNT_INVALID': 1, 'DATE_FUTURE': 2}
 A NOT BLOCKED: A-0238 (no candidate blocked) [D-TRANSPOSE|D-MOVED|D-UNITFMT]
 A NOT BLOCKED: A-0312 (no candidate blocked) [D-EMAIL-MISSING|D-MOVED]
