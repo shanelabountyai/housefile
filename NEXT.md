@@ -11,3 +11,5 @@ Kickoff measurements (reference matcher on the frozen fixtures, thresholds 70/45
 Kit was reviewed by a product owner and a CRM data-quality specialist before handoff; see `docs/decisions.md` §Review log. Open items O-1..O-9 have defaults in force.
 
 Not verified from this workspace: the donor repos' file paths named in `docs/portfolio-overlap.md` (read the donors before porting); whether `reuse-scan.py` parses a checkbox task list; whether saas-foundation v1.2.1 has a module switch for billing and share links (D-5 says what to do either way).
+
+**2026-10-19 (foundation upgrade):** saas-foundation v1.2.1 -> v1.3.0 (security release, due 2026-10-21) is merged on branch `foundation-v1.3.0`, PR open against `main`, awaiting merge. After it merges, update housefile's row in the template's `CLONES.md` to v1.3.0 and run `npm run db:migrate` locally (adds the `scorekeeper` enum value). The `phase-1` branch will need `main` merged in after that.
