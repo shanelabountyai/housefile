@@ -1,6 +1,16 @@
 # NEXT
 
-## ▶ Next session: Phase 1 gate — write `docs/phase-2-tasks.md` and stop for review
+## ▶ Next session: Shane reviews `docs/phase-2-tasks.md` (P-1..P-7), then task 2.1
+
+**2026-10-19 Phase 1 gate PASSED; Phase 2 task list written, stopped for review.** Gate re-run this session: `fixtures:check` OK, `model:lint` OK (40312dfe…), `money:lint` OK, `typecheck:phase1` clean, `test:phase1` 228/228, `import:eval` A 259/55/71 · 679 pairs · P 1.0 · R 0.9464, B 166/33/37 · 394 pairs · P 1.0 · R 0.9548, drift 0 rows, no forbidden import under `src/matching/`. Phase 1 boxes 1.2–1.8, 1.10, 1.11 ticked (built 2026-10-17, gated today).
+- `docs/phase-2-tasks.md`: tasks 2.1–2.10 in CLAUDE.md's TDD order, exit criteria, and **seven proposals P-1..P-7 with defaults in force**. On confirmation each becomes a D-entry (D-45 onward). The ones that change the schema: P-1 (aliases/alternates/household inside `ConstituentVersion`), P-2 (MergeEvent for every merge, incl. row merges), P-3 (immutable ImportBatch + event rows), P-4 (`giftRef` stable across supersession).
+- Phase 2 work goes on a new branch off `phase-1` (or off `main` once PR #1 merges).
+
+**Next:** confirm or change P-1..P-7, record them in `docs/decisions.md`, then start 2.1 (schema and triggers). Model: Fable/Opus (schema, hashes, undo).
+
+---
+
+## Earlier: Next session: Phase 1 gate — write `docs/phase-2-tasks.md` and stop for review
 
 **2026-10-19 D-5 DONE, task 1.1 complete.** Billing deleted by the template manifest plus clone migration `20261019000000_housefile_drop_billing` (drops `BillingAccount`, `StripeEvent`); share links unwired (share/revoke gone from the Projects example; `src/core/share`, `/s/[token]`, INV-07/08/09 untouched). Shane chose both options; recorded in D-5.
 - Gate, local, 2026-10-19: `foundation:drift` clean against v1.3.0 (modules removed: billing), `npm test` **382/382** on `housefile_test`, `npm run typecheck` clean, `fixtures:check` OK, `model:lint` OK, `test:phase1` 228/228, `import:eval` drift 0 rows. `db:migrate` (dev) and `db:migrate:test` applied, schema diff empty.
