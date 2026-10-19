@@ -34,6 +34,7 @@
     "import:dry-run": "tsx scripts/import-dry-run.ts",
     "fixtures:check": "python3 tools/verify_fixtures.py && python3 tools/golden_answers.py && git diff --exit-code fixtures/ && test -z \"$(git status --porcelain fixtures/)\"",
     "model:lint": "tsx scripts/model-lint.ts",
+    "money:lint": "tsx scripts/money-lint.ts",
     "typecheck:phase1": "tsc -p tsconfig.phase1.json --noEmit",
     "test:phase1": "vitest run tests/unit/import tests/unit/matching"
   },

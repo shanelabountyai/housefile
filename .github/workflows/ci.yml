@@ -47,6 +47,28 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
 
+  # Phase 1 gate (task 1.12): no database. Each step exits non-zero on its own failure.
+  phase1-gate:
+    runs-on: ubuntu-latest
+    env:
+      TZ: America/Chicago # non-UTC, so a date that leans on the runner's zone goes red here
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run fixtures:check
+      - run: npm run model:lint
+      - run: npm run money:lint
+      - run: npm run typecheck:phase1
+      - run: npm run test:phase1
+      - run: npm run import:eval
+
   # Spec §4 / §13.3: both modules deleted by the manifest, and the tree must still generate, typecheck, build and pass drift.
   modules-removed:
     runs-on: ubuntu-latest
