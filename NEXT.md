@@ -7,7 +7,7 @@
 - Gate, local, 2026-10-19: `fixtures:check` OK, `model:lint` OK, `money:lint` OK, `typecheck:phase1` clean, `test:phase1` 228/228, `import:eval` byte-identical to the sample, drift 0 rows.
 
 **Next, in order (1.1 leftovers, then the gate):**
-1. **Port collision.** `package.json` and `playwright.config.ts` use **5500**, but `~/.claude/CLAUDE.md` gives 5500 to use-case-insurance-fnol-intake. The next free port is **5900**: move housefile there (`package.json` dev/start/dev:test/start:test, `playwright.config.ts` default) and add the row to the table in the same commit (D-4 said to confirm).
+1. ~~Port collision~~ **DONE 2026-10-19 (D-44):** housefile is on **5900** (package.json, playwright.config.ts, CI `APP_URL`); row added to `~/.claude/CLAUDE.md`, *next project* now 6000.
 2. Clone rows: `saas-foundation/CLONES.md` (v1.3.0) and this repo's `CLONES.md`.
 3. Reuse scan: `cd ~/Projects && python3 reuse-scan.py check housefile/docs/phase-1-tasks.md housefile`; record it under D-33.
 4. D-5: unwire billing and share links.

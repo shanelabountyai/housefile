@@ -17,7 +17,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/housefile_test?connection_limit=10&pool_timeout=20
       DIRECT_URL: postgresql://postgres:postgres@localhost:5432/housefile_test?connection_limit=10&pool_timeout=20
       AUTH_SECRET: ci-only-secret-not-for-real-use-0123456789abc
-      APP_URL: http://localhost:5500
+      APP_URL: http://localhost:5900
     services:
       postgres:
         image: postgres:17
