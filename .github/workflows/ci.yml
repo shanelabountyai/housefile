@@ -63,11 +63,17 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: npm run fixtures:check
+        if: ${{ !cancelled() }} # every gate reports, not just the first red
       - run: npm run model:lint
+        if: ${{ !cancelled() }}
       - run: npm run money:lint
+        if: ${{ !cancelled() }}
       - run: npm run typecheck:phase1
+        if: ${{ !cancelled() }}
       - run: npm run test:phase1
+        if: ${{ !cancelled() }}
       - run: npm run import:eval
+        if: ${{ !cancelled() }}
 
   # Spec §4 / §13.3: both modules deleted by the manifest, and the tree must still generate, typecheck, build and pass drift.
   modules-removed:
