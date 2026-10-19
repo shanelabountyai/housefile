@@ -1,6 +1,18 @@
 # NEXT
 
-## ▶ Next session: Phase 2 task 2.1 — schema and triggers
+## ▶ Next session: Phase 2 task 2.2 — effective state and seed
+
+**2026-10-19 task 2.1 DONE (branch `phase-2`).** `prisma/schema/housefile.prisma` (13 tables), `Org` back-relations marked `// app`, migration `20261019212236_housefile_init` with hand-written SQL: `housefile_append_only()` trigger on `ConstituentVersion`, `Gift`, `ImportBatch`, `ImportBatchEvent`, `ReviewDecision`, `MergeEvent`; CHECKs for one writer (version, gift, merge), `amountCents > 0`, supersede reason, review reason (D-22), merge kind shape. Choices recorded as **D-52** (org FK Restrict, etc.). `money:lint` now also fails a `Float`/`Decimal` cents column in `prisma/schema/` (red on a planted `Float`, then green).
+- Gate, local: `tests/integration/housefile-append-only.test.ts` 11/11 (red first: tables absent), `npm test` **393/393**, `typecheck` clean, `db:migrate` + `db:migrate:test` applied, `migrate diff` vs test DB: no difference, `foundation:drift` clean vs v1.3.0, `fixtures:check` OK, `model:lint` OK, `money:lint` OK, `test:phase1` 228/228, `import:eval` drift 0 rows.
+- Found and fixed: INV-14 was red on `phase-1` since 1a0a09c (D-5 dropped the `STRIPE_*` names from `.env.example`, template-owned `src/core/env.ts` still declares them). Names restored, empty, with a comment.
+- Gotchas: never run `prisma format` on `core.prisma` (it realigns template lines = drift); `prisma migrate dev` re-adds a header to `migration_lock.toml` — `git checkout` it before committing.
+- For 2.2: a seeded version needs a writer (D-52b): the seed writes with a `userId`.
+
+**Next:** 2.2 (pure `effectiveStateHash`, `loadEffectiveState`, `db:seed:fixtures`). Model: Opus/Fable (hashes).
+
+---
+
+## Earlier: Phase 2 task 2.1 — schema and triggers
 
 **2026-10-19 Phase 1 gate PASSED; Phase 2 task list written, stopped for review.** Gate re-run this session: `fixtures:check` OK, `model:lint` OK (40312dfe…), `money:lint` OK, `typecheck:phase1` clean, `test:phase1` 228/228, `import:eval` A 259/55/71 · 679 pairs · P 1.0 · R 0.9464, B 166/33/37 · 394 pairs · P 1.0 · R 0.9548, drift 0 rows, no forbidden import under `src/matching/`. Phase 1 boxes 1.2–1.8, 1.10, 1.11 ticked (built 2026-10-17, gated today).
 - `docs/phase-2-tasks.md`: tasks 2.1–2.10 in CLAUDE.md's TDD order, exit criteria, and **seven proposals P-1..P-7 with defaults in force**. On confirmation each becomes a D-entry (D-45 onward). The ones that change the schema: P-1 (aliases/alternates/household inside `ConstituentVersion`), P-2 (MergeEvent for every merge, incl. row merges), P-3 (immutable ImportBatch + event rows), P-4 (`giftRef` stable across supersession).

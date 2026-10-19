@@ -1,0 +1,300 @@
+// Housefile domain tables (task 2.1). Clone-owned. Rows reference Org with onDelete: Restrict (D-52):
+// an org holding donor records cannot be deleted by cascade, because six of these tables are
+// append-only (migration 20261019212236_housefile_init) and a cascaded DELETE would hit the trigger.
+// userId columns carry no FK, as in AuditEvent: the record survives the user.
+
+enum ConstituentKind {
+  PERSON // seam for organizations (brief §2)
+}
+
+enum ConstituentStatus {
+  ACTIVE
+  RETIRED
+}
+
+enum GiftStatus {
+  ACTIVE
+  VOIDED
+}
+
+enum ImportBatchEventKind {
+  COMMITTED
+  UNDONE
+  UNDO_FAILED
+}
+
+enum ReviewAction {
+  MERGE
+  KEEP_SEPARATE
+  SAME_HOUSEHOLD
+  DEFER
+}
+
+enum MergeKind {
+  ROW_INTO_CONSTITUENT
+  CONSTITUENT_INTO_CONSTITUENT
+}
+
+/// Identity only; every field lives on ConstituentVersion (D-7). Effective = latest version.
+model Constituent {
+  id             String               @id @default(uuid()) @db.Uuid
+  orgId          String               @db.Uuid
+  org            Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  businessId     String // C0001; stable across versions, the hash key (D-11)
+  kind           ConstituentKind      @default(PERSON)
+  createdAt      DateTime             @default(now()) @db.Timestamptz(6)
+  versions       ConstituentVersion[]
+  gifts          Gift[]
+  softCredits    SoftCredit[]
+  reviewItems    ReviewItem[]
+  mergesSurvived MergeEvent[]         @relation("MergeSurvivor")
+  mergesLost     MergeEvent[]         @relation("MergeLoser")
+
+  @@unique([orgId, businessId])
+}
+
+model Household {
+  id         String               @id @default(uuid()) @db.Uuid
+  orgId      String               @db.Uuid
+  org        Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  businessId String // H0001
+  createdAt  DateTime             @default(now()) @db.Timestamptz(6)
+  versions   ConstituentVersion[]
+
+  @@unique([orgId, businessId])
+}
+
+/// Append-only. The full field set; aliases, alternates and the household link live here (D-45).
+/// Writer: exactly one of importBatchId / mergeEventId / reviewDecisionId / userId (CHECK in SQL).
+model ConstituentVersion {
+  id               String            @id @default(uuid()) @db.Uuid
+  orgId            String            @db.Uuid
+  org              Org               @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  constituentId    String            @db.Uuid
+  constituent      Constituent       @relation(fields: [constituentId], references: [id])
+  version          Int
+  status           ConstituentStatus @default(ACTIVE)
+  firstName        String            @default("")
+  middleName       String            @default("")
+  lastName         String            @default("")
+  suffix           String            @default("")
+  email            String            @default("")
+  phone            String            @default("")
+  addressLine1     String            @default("")
+  addressLine2     String            @default("")
+  city             String            @default("")
+  state            String            @default("")
+  zip              String            @default("")
+  dob              DateTime?         @db.Date
+  fieldMeta        Json              @default("{}") // { email: { asOf, source }, ... } per field (S2)
+  aliases          Json              @default("[]") // prior names: [{ first, middle, last, suffix, source, asOf }] (S3)
+  alternates       Json              @default("[]") // losing values: [{ field, value, source, asOf }] (S2)
+  householdId      String?           @db.Uuid
+  household        Household?        @relation(fields: [householdId], references: [id])
+  importBatchId    String?           @db.Uuid
+  importBatch      ImportBatch?      @relation(fields: [importBatchId], references: [id])
+  mergeEventId     String?           @db.Uuid
+  mergeEvent       MergeEvent?       @relation(fields: [mergeEventId], references: [id])
+  reviewDecisionId String?           @db.Uuid
+  reviewDecision   ReviewDecision?   @relation(fields: [reviewDecisionId], references: [id])
+  userId           String?           @db.Uuid
+  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
+
+  @@unique([constituentId, version])
+  @@index([orgId])
+  @@index([importBatchId])
+  @@index([mergeEventId])
+}
+
+model Fund {
+  id    String @id @default(uuid()) @db.Uuid
+  orgId String @db.Uuid
+  org   Org    @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  code  String // BLDG
+  gifts Gift[]
+
+  @@unique([orgId, code])
+}
+
+model Campaign {
+  id      String   @id @default(uuid()) @db.Uuid
+  orgId   String   @db.Uuid
+  org     Org      @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  code    String // AF2024
+  appeals Appeal[]
+
+  @@unique([orgId, code])
+}
+
+/// An appeal belongs to one campaign; a gift references one appeal (D-9).
+model Appeal {
+  id         String   @id @default(uuid()) @db.Uuid
+  orgId      String   @db.Uuid
+  org        Org      @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  campaignId String   @db.Uuid
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  name       String // "Year-End 2024"
+  gifts      Gift[]
+
+  @@unique([orgId, name])
+}
+
+/// Append-only (D-6). A correction, move or void is a new row superseding the old one, same giftRef (D-48).
+/// Active = no row supersedes it. Writer: exactly one of importBatchId / mergeEventId / reviewDecisionId / userId.
+model Gift {
+  id               String          @id @default(uuid()) @db.Uuid
+  orgId            String          @db.Uuid
+  org              Org             @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  giftRef          String // G00001; stable across supersession, the hash key
+  constituentId    String          @db.Uuid
+  constituent      Constituent     @relation(fields: [constituentId], references: [id])
+  giftDate         DateTime        @db.Date
+  amountCents      Int // integer cents, > 0 (CHECK in SQL)
+  fundId           String          @db.Uuid
+  fund             Fund            @relation(fields: [fundId], references: [id])
+  appealId         String?         @db.Uuid // import files carry a fund, not an appeal
+  appeal           Appeal?         @relation(fields: [appealId], references: [id])
+  giftType         String          @default("GIFT")
+  externalRef      String          @default("")
+  supersedesGiftId String?         @unique @db.Uuid // unique: one successor per row, so history is a chain
+  supersedes       Gift?           @relation("GiftSupersedes", fields: [supersedesGiftId], references: [id])
+  supersededBy     Gift?           @relation("GiftSupersedes")
+  status           GiftStatus      @default(ACTIVE)
+  reason           String? // required on a superseding row (CHECK in SQL)
+  importBatchId    String?         @db.Uuid
+  importBatch      ImportBatch?    @relation(fields: [importBatchId], references: [id])
+  mergeEventId     String?         @db.Uuid
+  mergeEvent       MergeEvent?     @relation(fields: [mergeEventId], references: [id])
+  reviewDecisionId String?         @db.Uuid
+  reviewDecision   ReviewDecision? @relation(fields: [reviewDecisionId], references: [id])
+  userId           String?         @db.Uuid
+  createdAt        DateTime        @default(now()) @db.Timestamptz(6)
+
+  @@index([orgId, giftRef])
+  @@index([constituentId])
+  @@index([importBatchId])
+}
+
+/// Table only; Phase 3 writes it. Never counted in raised totals.
+model SoftCredit {
+  id            String      @id @default(uuid()) @db.Uuid
+  orgId         String      @db.Uuid
+  org           Org         @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  giftRef       String
+  constituentId String      @db.Uuid
+  constituent   Constituent @relation(fields: [constituentId], references: [id])
+  createdAt     DateTime    @default(now()) @db.Timestamptz(6)
+
+  @@index([orgId, giftRef])
+}
+
+/// Append-only header written at preview (D-10, D-47). Status is derived from ImportBatchEvent rows.
+model ImportBatch {
+  id          String               @id @default(uuid()) @db.Uuid
+  orgId       String               @db.Uuid
+  org         Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  fileName    String
+  rawBytes    Bytes
+  contentHash String
+  encoding    String // utf-8-sig | utf-8 | cp1252
+  asOf        DateTime             @db.Date
+  map         Json // column map incl. extras
+  rows        Json // parsed and normalized rows with rule traces
+  plan        Json
+  planHash    String
+  beforeHash  String
+  userId      String?              @db.Uuid
+  createdAt   DateTime             @default(now()) @db.Timestamptz(6)
+  events      ImportBatchEvent[]
+  versions    ConstituentVersion[]
+  gifts       Gift[]
+  reviewItems ReviewItem[]
+  merges      MergeEvent[]
+
+  @@index([orgId, createdAt])
+}
+
+/// Append-only. UNDO_FAILED carries both hashes.
+model ImportBatchEvent {
+  id            String               @id @default(uuid()) @db.Uuid
+  orgId         String               @db.Uuid
+  org           Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  importBatchId String               @db.Uuid
+  importBatch   ImportBatch          @relation(fields: [importBatchId], references: [id])
+  kind          ImportBatchEventKind
+  expectedHash  String?
+  actualHash    String?
+  userId        String?              @db.Uuid
+  at            DateTime             @default(now()) @db.Timestamptz(6)
+
+  @@index([importBatchId, at])
+}
+
+/// One candidate pair in the review band. Open = no decision other than DEFER (derived).
+model ReviewItem {
+  id            String           @id @default(uuid()) @db.Uuid
+  orgId         String           @db.Uuid
+  org           Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  importBatchId String           @db.Uuid
+  importBatch   ImportBatch      @relation(fields: [importBatchId], references: [id])
+  rowIndex      Int // the import row's position in the stored batch
+  constituentId String           @db.Uuid // the candidate
+  constituent   Constituent      @relation(fields: [constituentId], references: [id])
+  score         Int
+  reasons       Json // the matcher's reasons and points
+  flags         String[] // EXISTING_PAIR (S6), ...
+  createdAt     DateTime         @default(now()) @db.Timestamptz(6)
+  decisions     ReviewDecision[]
+
+  @@index([importBatchId])
+}
+
+/// Append-only. Reason required for MERGE and KEEP_SEPARATE (CHECK in SQL, D-22).
+model ReviewDecision {
+  id           String               @id @default(uuid()) @db.Uuid
+  orgId        String               @db.Uuid
+  org          Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  reviewItemId String               @db.Uuid
+  reviewItem   ReviewItem           @relation(fields: [reviewItemId], references: [id])
+  action       ReviewAction
+  reason       String?
+  userId       String               @db.Uuid
+  at           DateTime             @default(now()) @db.Timestamptz(6)
+  versions     ConstituentVersion[]
+  gifts        Gift[]
+  merges       MergeEvent[]
+
+  @@index([reviewItemId, at])
+}
+
+/// Append-only (D-46). Both records' effective state before the merge, the survivorship choices, the gifts moved.
+/// Writer: exactly one of importBatchId (auto-merge) / reviewDecisionId / userId (CHECK in SQL).
+model MergeEvent {
+  id               String               @id @default(uuid()) @db.Uuid
+  orgId            String               @db.Uuid
+  org              Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  kind             MergeKind
+  survivorId       String               @db.Uuid
+  survivor         Constituent          @relation("MergeSurvivor", fields: [survivorId], references: [id])
+  loserId          String?              @db.Uuid // null for ROW_INTO_CONSTITUENT: the loser is the import row
+  loser            Constituent?         @relation("MergeLoser", fields: [loserId], references: [id])
+  rowIndex         Int? // set for ROW_INTO_CONSTITUENT
+  survivorSnapshot Json
+  loserSnapshot    Json // the loser constituent's effective state, or the import row
+  choices          Json // per field: { value, rule: S1..S6 }
+  giftRefsMoved    String[]
+  softCreditsMoved String[]
+  reason           String?
+  importBatchId    String?              @db.Uuid
+  importBatch      ImportBatch?         @relation(fields: [importBatchId], references: [id])
+  reviewDecisionId String?              @db.Uuid
+  reviewDecision   ReviewDecision?      @relation(fields: [reviewDecisionId], references: [id])
+  userId           String?              @db.Uuid
+  at               DateTime             @default(now()) @db.Timestamptz(6)
+  versions         ConstituentVersion[]
+  gifts            Gift[]
+
+  @@index([orgId, at])
+  @@index([survivorId])
+  @@index([loserId])
+}

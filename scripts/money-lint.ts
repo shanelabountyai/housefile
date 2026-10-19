@@ -31,6 +31,16 @@ for (const file of [...walk('src'), ...walk('scripts')]) {
     });
 }
 
+// The column itself: a cents field in the Prisma schema is Int, never Float or Decimal (task 2.1).
+for (const file of readdirSync('prisma/schema').map((f) => join('prisma/schema', f))) {
+  readFileSync(file, 'utf8')
+    .split('\n')
+    .forEach((line, i) => {
+      const code = line.replace(/\/\/.*$/, '');
+      if (MONEY.test(code) && /\b(Float|Decimal)\b/.test(code)) problems.push(`${file}:${i + 1}: ${line.trim()}`);
+    });
+}
+
 if (problems.length) {
   for (const p of problems) console.error(`money:lint FAIL float near a cents field: ${p}`);
   process.exit(1);

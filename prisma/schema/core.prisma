@@ -85,6 +85,19 @@ model Org {
   projects       Project[]
   // module back-relations: each line ends in its module marker (spec §4)
   outbox         Outbox[] // notifications
+  constituents   Constituent[] // app
+  households     Household[] // app
+  constituentVersions ConstituentVersion[] // app
+  funds          Fund[] // app
+  campaigns      Campaign[] // app
+  appeals        Appeal[] // app
+  gifts          Gift[] // app
+  softCredits    SoftCredit[] // app
+  importBatches  ImportBatch[] // app
+  importBatchEvents ImportBatchEvent[] // app
+  reviewItems    ReviewItem[] // app
+  reviewDecisions ReviewDecision[] // app
+  mergeEvents    MergeEvent[] // app
 }
 
 model Membership {
