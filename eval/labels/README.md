@@ -1,4 +1,4 @@
-# Hand labels (task 1.9) — pending
+# Hand labels (task 1.9) — labels recorded 2026-10-19; agreement numbers pending
 
 This directory is for Shane's 30 blind labels of review-band pairs from `fixtures/decisions_a.csv`
 (D-31): `shane-30.json`, one entry per pair with `row_id`, `target`, `label` (`MERGE` | `KEEP_SEPARATE` |

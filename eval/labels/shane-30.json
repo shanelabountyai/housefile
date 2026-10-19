@@ -1,0 +1,188 @@
+{
+  "labeller": "Shane",
+  "labelled_on": "2026-10-19",
+  "source": "fixtures/decisions_a.csv, first 30 REVIEW rows in file order (D-31)",
+  "blind": "Shown the import row, its target record and the matcher's reason codes; answer key and truth files not opened",
+  "labels": [
+    {
+      "row_id": "A-0001",
+      "target": "C0192",
+      "label": "MERGE",
+      "reason": "Nickname Ray/Raymond, same middle initial and address; email local part says raymond"
+    },
+    {
+      "row_id": "A-0014",
+      "target": "C0275",
+      "label": "MERGE",
+      "reason": "Full name including Sr suffix and middle initial plus same address"
+    },
+    {
+      "row_id": "A-0019",
+      "target": "C0162",
+      "label": "MERGE",
+      "reason": "Same first and last name at the same apartment; casing and ZIP padding are formatting only"
+    },
+    {
+      "row_id": "A-0038",
+      "target": "C0230",
+      "label": "MERGE",
+      "reason": "Same first and last name at the same street address; no field on either side disagrees"
+    },
+    {
+      "row_id": "A-0051",
+      "target": "C0240",
+      "label": "MERGE",
+      "reason": "Same name and exact DOB; different city reads as a move, not a different person"
+    },
+    {
+      "row_id": "A-0052",
+      "target": "C0078",
+      "label": "SAME_HOUSEHOLD",
+      "reason": "Noah vs Matthew is not a nickname; shared email, phone and address says one household"
+    },
+    {
+      "row_id": "A-0055",
+      "target": "C0113",
+      "label": "MERGE",
+      "reason": "Uncommon surname, same middle initial, same street address; only formatting differs"
+    },
+    {
+      "row_id": "A-0058",
+      "target": "C0229",
+      "label": "MERGE",
+      "reason": "Same full name with middle initial at the same street address; contact fields complement, not conflict"
+    },
+    {
+      "row_id": "A-0064",
+      "target": "C0156",
+      "label": "MERGE",
+      "reason": "Tony is Anthony; same middle initial, same PO box, and the birth dates are the same day once parsed"
+    },
+    {
+      "row_id": "A-0066",
+      "target": "C0241",
+      "label": "MERGE",
+      "reason": "Same full name with middle initial at the same apartment; Unit vs Apt is formatting"
+    },
+    {
+      "row_id": "A-0076",
+      "target": "C0190",
+      "label": "SAME_HOUSEHOLD",
+      "reason": "Different first name and DOB 16 years apart, phone one digit off; the shared email is Nancy's, used by a family member at the same address"
+    },
+    {
+      "row_id": "A-0080",
+      "target": "C0123",
+      "label": "MERGE",
+      "reason": "First, middle and last name match at the same PO box; nothing conflicts"
+    },
+    {
+      "row_id": "A-0081",
+      "target": "C0054",
+      "label": "MERGE",
+      "reason": "Rare surname, same middle initial and street address; state spelled out is formatting"
+    },
+    {
+      "row_id": "A-0084",
+      "target": "C0106",
+      "label": "MERGE",
+      "reason": "Same full name with middle initial at the same street address; contact fields complement"
+    },
+    {
+      "row_id": "A-0102",
+      "target": "C0006",
+      "label": "MERGE",
+      "reason": "Same full name with middle initial at the same street address; only formatting differs"
+    },
+    {
+      "row_id": "A-0115",
+      "target": "C0243",
+      "label": "MERGE",
+      "reason": "Larry is Lawrence; same middle initial and identical street address"
+    },
+    {
+      "row_id": "A-0119",
+      "target": "C0256",
+      "label": "MERGE",
+      "reason": "Mrk is a dropped-letter typo of Mark; same unusual middle name and same street address"
+    },
+    {
+      "row_id": "A-0131",
+      "target": "A-0078",
+      "label": "SAME_HOUSEHOLD",
+      "reason": "Neither first nor last name matches; the email is Anthony's, so Jason is another person at the same address"
+    },
+    {
+      "row_id": "A-0147",
+      "target": "C0243",
+      "label": "MERGE",
+      "reason": "Identical first, middle initial and last name at the same address; only East/E differs"
+    },
+    {
+      "row_id": "A-0163",
+      "target": "C0006",
+      "label": "MERGE",
+      "reason": "Same full name with middle initial at the same street address; a second gift from the same donor"
+    },
+    {
+      "row_id": "A-0170",
+      "target": "A-0006",
+      "label": "MERGE",
+      "reason": "Same full name with middle initial at an identical address; two gifts a month apart from one donor"
+    },
+    {
+      "row_id": "A-0179",
+      "target": "C0052",
+      "label": "MERGE",
+      "reason": "Same unusual middle name and unit 36 (Ste vs Apt is formatting); email local part is kevinnelson"
+    },
+    {
+      "row_id": "A-0180",
+      "target": "C0025",
+      "label": "MERGE",
+      "reason": "Bill is William; same middle initial and exact phone number"
+    },
+    {
+      "row_id": "A-0182",
+      "target": "A-0164",
+      "label": "MERGE",
+      "reason": "Same uncommon full name at the same street address; contact fields complement, not conflict"
+    },
+    {
+      "row_id": "A-0185",
+      "target": "C0040",
+      "label": "MERGE",
+      "reason": "Same name, middle initial, email and address; the birth dates are the same day once parsed"
+    },
+    {
+      "row_id": "A-0192",
+      "target": "C0260",
+      "label": "MERGE",
+      "reason": "Same full name with middle initial at apartment 9A; the file email is the CRM email with the domain cut off"
+    },
+    {
+      "row_id": "A-0199",
+      "target": "C0102",
+      "label": "SAME_HOUSEHOLD",
+      "reason": "Initial N and the email name point to Nathaniel; Lisa is another person on the shared household contacts"
+    },
+    {
+      "row_id": "A-0203",
+      "target": "C0222",
+      "label": "MERGE",
+      "reason": "Same first and last name at an identical address; no field on either side disagrees"
+    },
+    {
+      "row_id": "A-0215",
+      "target": "A-0053",
+      "label": "MERGE",
+      "reason": "Same first and last name at the same street address; contact fields complement"
+    },
+    {
+      "row_id": "A-0223",
+      "target": "C0247",
+      "label": "MERGE",
+      "reason": "Rick is Richard; same street address; no field on either side disagrees"
+    }
+  ]
+}
