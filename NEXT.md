@@ -1,6 +1,17 @@
 # NEXT
 
-## ▶ Next session: finish the 1.1 leftovers, then gate Phase 1 (D-43 done 2026-10-19)
+## ▶ Next session: Phase 1 gate — write `docs/phase-2-tasks.md` and stop for review
+
+**2026-10-19 D-5 DONE, task 1.1 complete.** Billing deleted by the template manifest plus clone migration `20261019000000_housefile_drop_billing` (drops `BillingAccount`, `StripeEvent`); share links unwired (share/revoke gone from the Projects example; `src/core/share`, `/s/[token]`, INV-07/08/09 untouched). Shane chose both options; recorded in D-5.
+- Gate, local, 2026-10-19: `foundation:drift` clean against v1.3.0 (modules removed: billing), `npm test` **382/382** on `housefile_test`, `npm run typecheck` clean, `fixtures:check` OK, `model:lint` OK, `test:phase1` 228/228, `import:eval` drift 0 rows. `db:migrate` (dev) and `db:migrate:test` applied, schema diff empty.
+- Drift needs the `v1.3.0` tag locally: `git fetch ~/Projects/"saas foundation" tag v1.3.0 --no-tags` (this repo has no foundation remote).
+- D-34..D-40 and task 1.9 were offered again this session; Shane kept them as decided. Don't reopen.
+
+**Next:** Phase 1 exit criteria all pass → write `docs/phase-2-tasks.md` (TDD order in CLAUDE.md: schema and triggers → preview/`beforeHash` → commit → review → survivorship/merge → unmerge → undo → tamper tests) and stop for review. Model: Fable/Opus (phase gate).
+
+---
+
+## Earlier: 1.1 leftovers (all done 2026-10-19)
 
 **2026-10-19 D-43 DONE (two-digit DOB years).** Shane chose to pivot on `asOf`: a DOB written `M/D/YY` whose 20xx reading falls after `asOf` loses 100 years. Gift dates are unchanged. Oracle `matchlib.norm_dob`, TS `normDob`, golden GN-21; `decisions_a.csv` and `fixtures/samples/reference_matcher.output.txt` regenerated from the oracle; brief §10–§12, EVAL.md and the snapshot tests updated. Commits 9fa52f5 (rule) and 3951ea6 (`import:eval` now prints each labelled pair's current decision: REVIEW 28, MERGE 2).
 - File A: 256/58/71 → **259/55/71**, pairs 685 → 679, auto-merge 265 correct / 0 wrong, recall 0.9462 → 0.9464, precision 1.0. File B unchanged. Labels still 30 / 30.
