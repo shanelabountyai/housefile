@@ -266,8 +266,26 @@ model ReviewDecision {
   versions     ConstituentVersion[]
   gifts        Gift[]
   merges       MergeEvent[]
+  pairMemories PairMemory[]
 
   @@index([reviewItemId, at])
+}
+
+/// D-22, D-59: a KEEP_SEPARATE decision remembers the pair and the identifiers (feature codes) that agreed. A later
+/// import re-queues the pair only when an identifier outside this list agrees. Mutable on purpose (memory, not ledger):
+/// a later KEEP_SEPARATE on the same pair widens `agreed`; undoing the batch of the decision removes the row.
+model PairMemory {
+  id               String         @id @default(uuid()) @db.Uuid
+  orgId            String         @db.Uuid
+  org              Org            @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  aId              String         @db.Uuid // constituent ids, aId < bId
+  bId              String         @db.Uuid
+  agreed           String[]
+  reviewDecisionId String         @db.Uuid
+  reviewDecision   ReviewDecision @relation(fields: [reviewDecisionId], references: [id])
+  createdAt        DateTime       @default(now()) @db.Timestamptz(6)
+
+  @@unique([orgId, aId, bId])
 }
 
 /// Append-only (D-46). Both records' effective state before the merge, the survivorship choices, the gifts moved.
