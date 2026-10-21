@@ -1,4 +1,4 @@
-# Housefile — Evaluation (Phase 1, measured by TypeScript)
+# Housefile — Evaluation (Phases 1 and 2, measured by TypeScript)
 
 Every number below names the command that produced it. Run the command; the number must come back the same.
 Built 2026-10-17 on branch `phase-1`, Node 22, fixtures seed 20261014.
@@ -152,6 +152,33 @@ merges at 70, not slack in the threshold.
 N6 read a two-digit year below 70 as 20xx, so a DOB of `4/3/51` became 2051. Birth dates now pivot on `asOf`, and both pairs
 auto-merge (70 and 115). The labels were taken before the fix, when all 30 pairs were REVIEW; `import:eval` now prints
 each pair's current decision (REVIEW 28, MERGE 2) and the agreement is unchanged at 30 / 30.
+
+## Phase 2 — commit, review, merge, undo, proven by hash (`npm run phase2:proof`, 2026-10-21)
+
+Measured by `scripts/phase2-proof.ts` on a fresh org seeded from the frozen fixtures (local `housefile_test`; the same step runs in CI's `ci` job). These are snapshots of this code's own hashes (D-53): the proof is that the hash *after* an undo or unmerge equals the hash recorded *before*, not that any hash matches an oracle.
+
+```
+$ npm run phase2:proof:test
+seed: 286 constituents, 878 gifts; stateHash 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb
+A: preview: rows 400 = merged 259 + reviewed 55 + new 71 + rejected 15; review load 55/400 = 13.8%; pending-target 14; beforeHash 7d3bd174…; planHash bf0e2926…
+A: commit: constituents 71, versions 172, gifts 298 (+11 waiting, 21 skipped), merges 246, review items 74 over 55 rows; stateHash 2c035193…
+B: preview: rows 250 = merged 180 + reviewed 39 + new 17 + rejected 14; review load 39/250 = 15.6%; pending-target 6; beforeHash 2c035193…; planHash f272ebb4…
+B: commit: constituents 17, versions 133, gifts 178 (+5 waiting, 11 skipped), merges 174, review items 49 over 39 rows; stateHash b6352902…
+undo B: retired 17, versions restored 89, gifts voided 178, merges reversed 174
+undo B: stateHash == beforeHash: 2c035193ee43d9b4c08425e79cebfa6406c69cfb4a75a228f9ae39422a1acbd8 == 2c035193ee43d9b4c08425e79cebfa6406c69cfb4a75a228f9ae39422a1acbd8
+undo A: retired 71, versions restored 76, gifts voided 298, merges reversed 246
+undo A: stateHash == beforeHash: 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb == 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb
+unmerge (constituent) survivor hash == snapshot: 9eab0c8a… == 9eab0c8a…
+unmerge (constituent) loser hash == snapshot: 5af937d9… == 5af937d9…
+unmerge (row 399) survivor hash == snapshot: 6af1c76a… == 6af1c76a…
+phase2:proof OK
+```
+
+**Review load.** File A against the seeded org: 55 of 400 rows (13.8%) wait for a person, as 74 items (one per tied candidate, D-35); 14 more rows wait on one of those 55 (D-55) and follow it automatically once it is decided, so they add no decisions. File B after A on the database: 39 of 250 rows (15.6%), 49 items, 6 waiting. B-after-A has no oracle (D-51): 180/39/17 here against 166/33/37 in the in-memory reference, because A also wrote 71 new constituents and left 55 rows open; the proof for B is the undo hash, not the counts.
+
+**Undo and unmerge, one line each:** `npm run import:undo -- --batch <id>` prints `stateHash <h> == beforeHash <h>` or `UNDO_FAILED expected <h> actual <h>`; `npm run constituents:unmerge -- --event <id>` prints both records' hashes next to their snapshots. The tamper tests (`tests/integration/housefile-tamper.test.ts`) show the failing side: a changed gift or version → `STATE_MOVED`, a changed stored plan → `PLAN_TAMPERED`, a change after commit → `UNDO_FAILED` with both hashes and nothing else written.
+
+**What this does not show.** The counts for B-after-A and the pending-target follow rule (D-55) have no reference value; whether a planned auto-merge should follow a *human* MERGE transitively is open for Shane (D-55). Soft credits are not moved by a merge (Phase 3 writes the table). All data is synthetic.
 
 ## Which tests are oracle agreement and which are snapshots
 
