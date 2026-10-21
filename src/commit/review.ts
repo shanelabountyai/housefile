@@ -7,6 +7,7 @@ import { can } from '@/core/authz/permissions';
 import type { Tx } from './db-state';
 import { giftForRow, loadBatchCtx, nextId, writeNewConstituent, writeRowMerge, carry, type BatchCtx } from './write';
 import { latestVersion } from './db-state';
+import { mergeConstituentsTx } from './merge';
 import { displayAddress, displayName } from '../import/preview';
 import type { ImportRow } from '../import/validate';
 import type { StoredRows } from './preview';
@@ -90,7 +91,14 @@ export async function decideReview(db: PrismaClient, input: DecideInput): Promis
       const row = ctx.rows[item.rowIndex]!;
       const writer = { reviewDecisionId: decision.id };
       let became: string;
-      if (input.action === 'MERGE') {
+      const mergedInto = item.flags.find((f) => f.startsWith('MERGED_INTO:'))?.slice('MERGED_INTO:'.length);
+      if (input.action === 'MERGE' && item.flags.includes('PAIR_MEMORY') && mergedInto) {
+        // D-59: the row already merged into X; MERGE here says X and the candidate are one person
+        const x = await tx.constituent.findUniqueOrThrow({ where: { orgId_businessId: { orgId: item.orgId, businessId: mergedInto } } });
+        const m = await mergeConstituentsTx(tx, { aId: x.id, bId: candidate!, reviewDecisionId: decision.id, reason: `review MERGE (pair memory): ${reason}` });
+        if (m.status === 'REFUSED') throw new Error(`decideReview: constituent merge refused: ${m.code}`);
+        became = m.survivorId;
+      } else if (input.action === 'MERGE') {
         const { gift } = await giftForRow(tx, ctx, row, candidate);
         await writeRowMerge(tx, ctx, row, candidate!, writer, `review MERGE: ${reason}`, gift);
         became = candidate!;

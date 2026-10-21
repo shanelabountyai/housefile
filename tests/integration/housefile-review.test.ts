@@ -177,18 +177,28 @@ describe('review actions (task 2.5)', () => {
 
     const p2 = await previewBatch(db, { orgId, userId: owner.id, fileName: 'phone.csv', bytes: withPhone, map: MAP_A, asOf: '2026-10-14' });
     expect(p2.decisions[0]!.decision).toBe('MERGE');
-    expect([created.businessId, target.businessId]).toContain(p2.decisions[0]!.target); // the phone may now make the target the better candidate
-    const other = p2.decisions[0]!.target === created.businessId ? target : created;
-    expect(p2.plan.memoryQueue).toHaveLength(1);
-    expect(p2.plan.memoryQueue[0]).toMatchObject({ rowId: 'R-0001', target: other.businessId, mergedInto: p2.decisions[0]!.target });
-    expect(p2.plan.memoryQueue[0]!.newlyAgreed).toContain('PHONE_EXACT');
-    expect(p2.plan.memoryQueue[0]!.agreedBefore).toEqual(item.reasons);
+    const tCand = p2.decisions[0]!.candidates.find((c) => c.id === target.businessId)!;
+    expect(tCand.score.reasons).toContain('PHONE_EXACT');
     const c2 = await commitBatch(db, { batchId: p2.batchId, userId: owner.id });
     expect(c2.status).toBe('COMMITTED');
     const queued = await db.reviewItem.findMany({ where: { importBatchId: p2.batchId } });
-    expect(queued).toHaveLength(1);
-    expect(queued[0]).toMatchObject({ constituentId: other.id, rowIndex: 0 });
-    expect(queued[0]!.flags).toContain('PAIR_MEMORY');
+    if (tCand.score.decision === 'MERGE') {
+      // the phone lifts the remembered pair to MERGE level against both: S6 review, the remembered side flagged with what newly agreed
+      expect(p2.plan.totals).toMatchObject({ merged: 0, reviewed: 1, memoryQueued: 0 });
+      expect(p2.plan.review.map((r) => r.target).sort()).toEqual([created.businessId, target.businessId].sort());
+      expect(p2.plan.review.find((r) => r.target === target.businessId)!.flags).toEqual(expect.arrayContaining(['EXISTING_PAIR', 'PAIR_MEMORY', 'NEWLY_AGREED:PHONE_EXACT']));
+      expect(queued).toHaveLength(2);
+      expect(queued.find((q) => q.constituentId === target.id)!.flags).toContain('PAIR_MEMORY');
+    } else {
+      // the row still merges into the constituent it matches; the remembered pair is re-queued because the phone newly agrees
+      expect(p2.decisions[0]!.target).toBe(created.businessId);
+      expect(p2.plan.memoryQueue).toHaveLength(1);
+      expect(p2.plan.memoryQueue[0]).toMatchObject({ rowId: 'R-0001', target: target.businessId, mergedInto: created.businessId, agreedBefore: item.reasons });
+      expect(p2.plan.memoryQueue[0]!.newlyAgreed).toContain('PHONE_EXACT');
+      expect(queued).toHaveLength(1);
+      expect(queued[0]).toMatchObject({ constituentId: target.id, rowIndex: 0 });
+      expect(queued[0]!.flags).toContain('PAIR_MEMORY');
+    }
     expect(preview.batchId).toBeTruthy();
   });
 });
