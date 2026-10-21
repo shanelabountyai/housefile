@@ -6,7 +6,7 @@ import type { PrismaClient } from '@/generated/prisma/client';
 import { sha256Hex } from '../lib/canonical';
 import type { ColumnMap } from '../import/map';
 import { loadImportFile, type LoadedFile } from '../import/pipeline';
-import { buildPreview, type Preview } from '../import/preview';
+import { buildPreview, memKey, type PairMemoryMap, type Preview } from '../import/preview';
 import { createMatchState, resolveBatch, type RowDecision } from '../import/resolve';
 import { isoDate, loadEffectiveState, type Tx } from './db-state';
 import { effectiveStateHash, stateToCrm } from './state';
@@ -28,8 +28,7 @@ export async function computePreview(tx: Tx, input: PreviewInput): Promise<Compu
   const { crm, gifts } = stateToCrm(state);
   const file = loadImportFile(input.bytes, { tag: tagOf(input.fileName), asOf: input.asOf, map: input.map });
   const { decisions, pairsCompared } = resolveBatch(file.rows, createMatchState(crm)); // the state is cloned; crm stays the pre-batch CRM
-  const preview = buildPreview(file, decisions, crm, gifts, { path: input.fileName, asOf: input.asOf, beforeHash: effectiveStateHash(state) });
-  await applyPairMemory(tx, input.orgId, preview, decisions);
+  const preview = buildPreview(file, decisions, crm, gifts, { path: input.fileName, asOf: input.asOf, beforeHash: effectiveStateHash(state), pairMemory: await loadPairMemory(tx, input.orgId) });
   const plan = asJson(preview);
   return { preview, plan, planHash: sha256Hex(plan), beforeHash: preview.crm.beforeHash, decisions, file, pairsCompared };
 }
@@ -60,27 +59,10 @@ export async function rebuildPreview(tx: Tx, batchId: string): Promise<Computed>
   return computePreview(tx, { orgId: b.orgId, fileName: b.fileName, bytes: new Uint8Array(b.rawBytes), map: (b.map as StoredMap).fields, asOf: isoDate(b.asOf) });
 }
 
-/** D-22, D-59: a row merging into X while another candidate T is remembered as KEEP_SEPARATE from X is re-queued
- *  against T only when an identifier outside the remembered list now agrees. Reads PairMemory; writes nothing. */
-async function applyPairMemory(tx: Tx, orgId: string, preview: Preview, decisions: RowDecision[]): Promise<void> {
+/** D-59: KEEP_SEPARATE pairs by business id, for the plan. Reads only. */
+async function loadPairMemory(tx: Tx, orgId: string): Promise<PairMemoryMap | undefined> {
   const memories = await tx.pairMemory.findMany({ where: { orgId } });
-  if (!memories.length) return;
-  const cons = await tx.constituent.findMany({ where: { orgId }, select: { id: true, businessId: true } });
-  const idOf = new Map(cons.map((c) => [c.businessId, c.id]));
-  const key = (a: string, b: string) => [a, b].sort().join('|');
-  const agreedOf = new Map(memories.map((m) => [key(m.aId, m.bId), m.agreed]));
-  for (const d of decisions) {
-    if (d.decision !== 'MERGE') continue;
-    const x = idOf.get(d.target);
-    if (!x) continue;
-    for (const cand of d.candidates) {
-      const t = idOf.get(cand.id);
-      if (!t || t === x) continue;
-      const agreed = agreedOf.get(key(x, t));
-      if (!agreed) continue;
-      const newly = cand.score.reasons.filter((r) => !agreed.includes(r) && !r.endsWith('_DIFF') && !r.endsWith('_CONFLICT') && !r.endsWith('_MISSING'));
-      if (newly.length) preview.memoryQueue.push({ rowId: d.rowId, mergedInto: d.target, target: cand.id, agreedBefore: agreed, newlyAgreed: newly, score: cand.score.total });
-    }
-  }
-  preview.totals.memoryQueued = preview.memoryQueue.length;
+  if (!memories.length) return undefined;
+  const biz = new Map((await tx.constituent.findMany({ where: { orgId }, select: { id: true, businessId: true } })).map((c) => [c.id, c.businessId]));
+  return new Map(memories.map((m) => [memKey(biz.get(m.aId)!, biz.get(m.bId)!), m.agreed]));
 }

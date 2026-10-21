@@ -7,7 +7,7 @@ import type { CrmConstituent, CrmGift } from './crm';
 import type { ParsedCsv } from './csv';
 import type { ColumnMap } from './map';
 import type { LoadedFile } from './pipeline';
-import type { RowDecision } from './resolve';
+import type { CandidateScore, RowDecision } from './resolve';
 import type { ImportRow } from './validate';
 import { line1Key, type MatchRecord } from '../matching/types';
 
@@ -127,7 +127,10 @@ export function rowSurvivorship(target: { id: string; planned: Planned; name: st
 
 /** `opts.beforeHash`: the hash of the real effective state when the CRM came from the database (src/commit/preview);
  *  absent, the CRM is the raw fixture and the hash is computed from it (Phase 1 dry-run). */
-export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: CrmConstituent[], crmGifts: CrmGift[], opts: { path: string; asOf: string; after?: string; beforeHash?: string }): Preview {
+export type PairMemoryMap = Map<string, string[]>; // memKey(a, b) → feature codes that agreed when the pair was kept separate (D-59)
+export const memKey = (a: string, b: string) => [a, b].sort().join('|');
+
+export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: CrmConstituent[], crmGifts: CrmGift[], opts: { path: string; asOf: string; after?: string; beforeHash?: string; pairMemory?: PairMemoryMap }): Preview {
   const byId = new Map(crm.map((c) => [c.id, c]));
   const giftsByConstituent = new Map<string, CrmGift[]>();
   for (const g of crmGifts) {
@@ -209,6 +212,28 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
         planGift(row, d.rowId, d);
         break;
       case 'MERGE': {
+        // D-59 pair memory: for another candidate T remembered as KEEP_SEPARATE from the target, the identifiers that newly agree (null: no memory)
+        const newlyOf = (c: CandidateScore): string[] | null => {
+          const agreed = opts.pairMemory?.get(memKey(d.target, c.id));
+          return agreed ? c.score.reasons.filter((r) => !agreed.includes(r) && !/_(DIFF|CONFLICT|MISSING)$/.test(r)) : null;
+        };
+        // S6: a row at MERGE level against two existing constituents is never merged automatically; both pairs go to review.
+        // A remembered pair with nothing new agreeing does not count (the memory is what stops it returning).
+        const existingAtMerge = d.candidates.filter((c) => c.score.decision === 'MERGE' && byId.has(c.id) && (c.id === d.target || newlyOf(c)?.length !== 0));
+        if (existingAtMerge.length >= 2) {
+          out.totals.reviewed++;
+          out.totals.giftsPendingReview++;
+          for (const c of existingAtMerge) {
+            const newly = c.id === d.target ? null : newlyOf(c);
+            out.review.push({ rowId: d.rowId, target: c.id, score: c.score.total, reasons: c.score.reasons, flags: [...c.score.flags, 'EXISTING_PAIR', ...(newly?.length ? ['PAIR_MEMORY', `NEWLY_AGREED:${newly.join('+')}`] : [])], tieBreak: '' });
+          }
+          break;
+        }
+        for (const c of d.candidates) {
+          if (c.id === d.target || !byId.has(c.id)) continue;
+          const newly = newlyOf(c);
+          if (newly?.length) out.memoryQueue.push({ rowId: d.rowId, mergedInto: d.target, target: c.id, agreedBefore: opts.pairMemory!.get(memKey(d.target, c.id))!, newlyAgreed: newly, score: c.score.total });
+        }
         out.totals.merged++;
         const c = byId.get(d.target);
         if (c) {
@@ -230,6 +255,7 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
   out.totals.alternates = out.alternates.length;
   out.totals.aliases = out.aliases.length;
   out.totals.pendingTarget = out.pending.length;
+  out.totals.memoryQueued = out.memoryQueue.length;
   out.totals.giftsHeld = out.heldGifts.length;
   return out;
 }

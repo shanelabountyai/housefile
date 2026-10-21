@@ -49,6 +49,7 @@ async function applyPlan(tx: Tx, ctx: BatchCtx): Promise<Written> {
   const alternatesOf = groupBy(plan.alternates, (a) => a.rowId);
   const aliasesOf = groupBy(plan.aliases, (a) => a.rowId);
   const pending = new Map(plan.pending.map((p) => [p.rowId, p]));
+  const existingPairs = groupBy(plan.review.filter((r) => r.flags.includes('EXISTING_PAIR')), (r) => r.rowId); // S6
   const consByBiz = new Map((await tx.constituent.findMany({ where: { orgId }, select: { id: true, businessId: true } })).map((c) => [c.businessId, c.id]));
   const rowTarget = new Map<string, string>(); // row id → the constituent it became or merged into
   const resolve = (target: string): string | undefined => consByBiz.get(target) ?? rowTarget.get(target);
@@ -77,6 +78,18 @@ async function applyPlan(tx: Tx, ctx: BatchCtx): Promise<Written> {
       w.constituents++;
       w.versions++;
       if (g) w.gifts++;
+      continue;
+    }
+
+    const s6 = d.decision === 'MERGE' ? existingPairs.get(d.rowId) : undefined;
+    if (s6) {
+      for (const pair of s6) {
+        const cid = resolve(pair.target);
+        if (!cid) throw new Error(`commit: ${d.rowId} EXISTING_PAIR names unknown constituent ${pair.target}`);
+        await tx.reviewItem.create({ data: { orgId, importBatchId: batchId, rowIndex: row.index, constituentId: cid, score: pair.score, reasons: pair.reasons, flags: pair.flags } });
+        w.reviewItems++;
+      }
+      w.reviewRows++;
       continue;
     }
 

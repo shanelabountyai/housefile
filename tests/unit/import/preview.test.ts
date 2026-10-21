@@ -35,7 +35,7 @@ describe('dry-run preview', () => {
       expect(t.rows).toBe(tag === 'A' ? 400 : 250);
       expect(p.create).toHaveLength(t.new);
       expect(p.rejected).toHaveLength(t.rejected);
-      expect(p.review).toHaveLength(t.reviewed);
+      expect(new Set(p.review.map((r) => r.rowId)).size).toBe(t.reviewed); // one row may list two pairs (S6 EXISTING_PAIR, D-35 ties are items at commit)
       expect(p.gifts).toHaveLength(t.giftsToAdd);
       expect(p.skippedGifts).toHaveLength(t.dupGift + t.dupGiftInFile);
       // every accepted non-review row either adds a gift, skips one, or holds one (zero/negative, D-57), exactly once
