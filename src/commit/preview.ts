@@ -29,6 +29,7 @@ export async function computePreview(tx: Tx, input: PreviewInput): Promise<Compu
   const file = loadImportFile(input.bytes, { tag: tagOf(input.fileName), asOf: input.asOf, map: input.map });
   const { decisions, pairsCompared } = resolveBatch(file.rows, createMatchState(crm)); // the state is cloned; crm stays the pre-batch CRM
   const preview = buildPreview(file, decisions, crm, gifts, { path: input.fileName, asOf: input.asOf, beforeHash: effectiveStateHash(state) });
+  await applyPairMemory(tx, input.orgId, preview, decisions);
   const plan = asJson(preview);
   return { preview, plan, planHash: sha256Hex(plan), beforeHash: preview.crm.beforeHash, decisions, file, pairsCompared };
 }
@@ -57,4 +58,29 @@ export async function previewBatch(db: PrismaClient, input: PreviewInput & { use
 export async function rebuildPreview(tx: Tx, batchId: string): Promise<Computed> {
   const b = await tx.importBatch.findUniqueOrThrow({ where: { id: batchId } });
   return computePreview(tx, { orgId: b.orgId, fileName: b.fileName, bytes: new Uint8Array(b.rawBytes), map: (b.map as StoredMap).fields, asOf: isoDate(b.asOf) });
+}
+
+/** D-22, D-59: a row merging into X while another candidate T is remembered as KEEP_SEPARATE from X is re-queued
+ *  against T only when an identifier outside the remembered list now agrees. Reads PairMemory; writes nothing. */
+async function applyPairMemory(tx: Tx, orgId: string, preview: Preview, decisions: RowDecision[]): Promise<void> {
+  const memories = await tx.pairMemory.findMany({ where: { orgId } });
+  if (!memories.length) return;
+  const cons = await tx.constituent.findMany({ where: { orgId }, select: { id: true, businessId: true } });
+  const idOf = new Map(cons.map((c) => [c.businessId, c.id]));
+  const key = (a: string, b: string) => [a, b].sort().join('|');
+  const agreedOf = new Map(memories.map((m) => [key(m.aId, m.bId), m.agreed]));
+  for (const d of decisions) {
+    if (d.decision !== 'MERGE') continue;
+    const x = idOf.get(d.target);
+    if (!x) continue;
+    for (const cand of d.candidates) {
+      const t = idOf.get(cand.id);
+      if (!t || t === x) continue;
+      const agreed = agreedOf.get(key(x, t));
+      if (!agreed) continue;
+      const newly = cand.score.reasons.filter((r) => !agreed.includes(r) && !r.endsWith('_DIFF') && !r.endsWith('_CONFLICT') && !r.endsWith('_MISSING'));
+      if (newly.length) preview.memoryQueue.push({ rowId: d.rowId, mergedInto: d.target, target: cand.id, agreedBefore: agreed, newlyAgreed: newly, score: cand.score.total });
+    }
+  }
+  preview.totals.memoryQueued = preview.memoryQueue.length;
 }
