@@ -79,7 +79,7 @@ are byte-identical (`cmp` of the two outputs: identical, 2026-10-17).
 | gifts to add 306; pending review 58; DUP_GIFT 2; DUP_GIFT_IN_FILE 19 | gifts to add 193; pending review 32; DUP_GIFT 4; DUP_GIFT_IN_FILE 7 |
 | date+cents matched, reference differed: 7 (listed, added — D-39) | 0 (file B maps no reference column: date + cents only) |
 | field changes on existing constituents 52; alternates kept 18; aliases 63 | 38; 10; 79 |
-| beforeHash `dcd67106e94405e05fa1cbd01dc37292567b390136cceaf1e890b0db12fc23b5` | same (same CRM fixture) |
+| beforeHash `7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb` (D-53; was `dcd67106…` before task 2.2) | same (same CRM fixture) |
 
 `import:dry-run --after` was removed after review (2026-10-17): it planned against a state that never exists. The A-then-B sequence is measured by `import:eval` only (D-34).
 `FUND_UNKNOWN` is not implemented in Phase 1; the report says so.
