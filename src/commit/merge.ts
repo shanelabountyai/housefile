@@ -5,7 +5,7 @@
 import type { Gift, PrismaClient } from '@/generated/prisma/client';
 import { latestVersion, loadEffectiveConstituent, type ConstituentSnapshot, type Tx } from './db-state';
 import type { EffectiveConstituent } from './state';
-import { carry } from './write';
+import { carry, supersedeGift } from './write';
 
 export type MergeWriter = { userId: string } | { reviewDecisionId: string };
 export type MergeInput = { aId: string; bId: string; reason: string } & MergeWriter;
@@ -92,10 +92,6 @@ export async function mergeConstituentsTx(tx: Tx, input: MergeInput): Promise<Me
   });
   await tx.constituentVersion.create({ data: { ...data, version: sv.version + 1, mergeEventId: merge.id } });
   await tx.constituentVersion.create({ data: { ...carry(lv), status: 'RETIRED', version: lv.version + 1, mergeEventId: merge.id } });
-  for (const g of loserGifts) {
-    await tx.gift.create({
-      data: { orgId: g.orgId, giftRef: g.giftRef, constituentId: survivor.id, giftDate: g.giftDate, amountCents: g.amountCents, fundId: g.fundId, appealId: g.appealId, giftType: g.giftType, externalRef: g.externalRef, supersedesGiftId: g.id, status: 'ACTIVE', reason: `MERGED_INTO ${survivor.businessId}`, mergeEventId: merge.id },
-    });
-  }
+  for (const g of loserGifts) await supersedeGift(tx, g, { constituentId: survivor.id }, `MERGED_INTO ${survivor.businessId}`, { mergeEventId: merge.id });
   return { status: 'MERGED', mergeEventId: merge.id, survivorId: survivor.id, loserId: loser.id };
 }

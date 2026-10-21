@@ -1,7 +1,7 @@
 // The write primitives shared by commit (task 2.4) and the review actions (task 2.5): a batch context built from
 // the stored ImportBatch (D-10), ids, and the three writes a row can cause: a new constituent, a row merge, a gift.
 // Every write names its writer (the batch or the review decision), so undo can find it (D-14).
-import type { ConstituentVersion } from '@/generated/prisma/client';
+import type { ConstituentVersion, Gift } from '@/generated/prisma/client';
 import { parseCsv, type ParsedCsv } from '../import/csv';
 import type { ColumnMap, Field } from '../import/map';
 import { displayName, plannedFrom, rawCellsOf, resolveFund, rowSurvivorship, type PlannedGift, type Preview, type Survivorship } from '../import/preview';
@@ -9,9 +9,10 @@ import type { RowDecision } from '../import/resolve';
 import type { ImportRow } from '../import/validate';
 import { latestVersion, loadEffectiveConstituent, type Tx } from './db-state';
 import type { StoredMap, StoredRows } from './preview';
-import { crmConstituentOf, META_FIELDS, type AliasEntry, type AlternateEntry, type FieldMeta } from './state';
+import { sha256Hex } from '../lib/canonical';
+import { crmConstituentOf, META_FIELDS, type AliasEntry, type AlternateEntry, type EffectiveConstituent, type FieldMeta } from './state';
 
-export type Writer = { importBatchId: string } | { reviewDecisionId: string };
+export type Writer = { importBatchId: string } | { reviewDecisionId: string } | { userId: string };
 export type BatchCtx = {
   orgId: string; batchId: string; fileName: string; map: ColumnMap; parsed: ParsedCsv; hasRef: boolean;
   rows: ImportRow[]; decisions: RowDecision[]; plan: Preview;
@@ -141,4 +142,35 @@ export async function writeRowMerge(tx: Tx, ctx: BatchCtx, row: ImportRow, survi
   const versionWritten = sv.changes.length > 0 || sv.alternates.length > 0 || sv.aliases.length > 0;
   if (versionWritten) await survivorVersion(tx, ctx, row, await latestVersion(tx, survivorId), sv, merge.id);
   return { mergeEventId: merge.id, giftRef, versionWritten };
+}
+
+/** A version equal to `target` (an effective state, e.g. a MergeEvent snapshot or the pre-batch state) with the given
+ *  status, unless the record is already there. Returns whether a version was written. Used by unmerge and undo. */
+export async function restoreVersion(tx: Tx, constituentId: string, target: EffectiveConstituent, status: 'ACTIVE' | 'RETIRED', writer: Writer): Promise<boolean> {
+  const cur = await loadEffectiveConstituent(tx, constituentId);
+  if (cur.status === status && sha256Hex(cur.constituent) === sha256Hex(target)) return false;
+  const latest = await latestVersion(tx, constituentId);
+  const householdId = target.household ? (await tx.household.findUniqueOrThrow({ where: { orgId_businessId: { orgId: latest.orgId, businessId: target.household } } })).id : null;
+  await tx.constituentVersion.create({
+    data: {
+      orgId: latest.orgId, constituentId, version: latest.version + 1, status, ...writer,
+      firstName: target.firstName, middleName: target.middleName, lastName: target.lastName, suffix: target.suffix,
+      email: target.email, phone: target.phone, addressLine1: target.addressLine1, addressLine2: target.addressLine2, city: target.city, state: target.state, zip: target.zip,
+      dob: target.dob ? new Date(target.dob) : null, fieldMeta: target.fieldMeta, aliases: target.aliases, alternates: target.alternates, householdId,
+    },
+  });
+  return true;
+}
+
+/** The active row of a gift (no row supersedes it), by ref. */
+export const activeGift = (tx: Tx, orgId: string, giftRef: string) => tx.gift.findFirstOrThrow({ where: { orgId, giftRef, supersededBy: null } });
+
+/** A superseding row for a gift (D-6, D-48): same giftRef, the patch applied, a reason, one writer. */
+export async function supersedeGift(tx: Tx, g: Gift, patch: { constituentId?: string; status?: 'ACTIVE' | 'VOIDED' }, reason: string, writer: Writer | { mergeEventId: string }): Promise<Gift> {
+  return tx.gift.create({
+    data: {
+      orgId: g.orgId, giftRef: g.giftRef, constituentId: patch.constituentId ?? g.constituentId, giftDate: g.giftDate, amountCents: g.amountCents, fundId: g.fundId, appealId: g.appealId, giftType: g.giftType, externalRef: g.externalRef,
+      supersedesGiftId: g.id, status: patch.status ?? g.status, reason, ...writer,
+    },
+  });
 }
