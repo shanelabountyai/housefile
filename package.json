@@ -26,6 +26,8 @@
     "seed:demo": "dotenv -e .env.local -- tsx scripts/seed-demo.ts",
     "seed:demo:test": "dotenv -e .env.test -e .env.local -- tsx scripts/seed-demo.ts",
     "db:setup": "tsx scripts/db-setup.ts",
+    "db:seed:fixtures": "dotenv -e .env.local -- tsx scripts/seed-fixtures.ts",
+    "db:seed:fixtures:test": "dotenv -e .env.test -e .env.local -- tsx scripts/seed-fixtures.ts",
     "new-project": "tsx scripts/new-project.ts",
     "foundation:drift": "tsx scripts/foundation-drift.ts",
     "foundation:status": "tsx scripts/foundation-status.ts",

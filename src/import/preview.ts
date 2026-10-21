@@ -1,7 +1,7 @@
 // Stage 8, Preview (brief §4, §8; D-11, D-12, D-25): the write plan Phase 2 will execute, computed from the
 // batch resolution and the in-memory CRM. Nothing is written. Every number in the report comes from the lists
 // below, so totals reconcile by construction: rows = merged + reviewed + new + rejected.
-import { sha256Hex } from '../lib/canonical';
+import { effectiveStateHash, fixtureState } from '../commit/state';
 import type { CrmConstituent, CrmGift } from './crm';
 import type { LoadedFile } from './pipeline';
 import type { RowDecision } from './resolve';
@@ -38,19 +38,6 @@ export type Preview = {
   review: ReviewPair[];
   notImplemented: string[];
 };
-
-/** D-11: canonical JSON of every constituent (fields, minus created_at) and every gift, sorted by business id. */
-export function stateHash(constituents: CrmConstituent[], gifts: CrmGift[]): string {
-  const cons = constituents
-    .map((c) => {
-      const fields = { ...c.fields };
-      delete fields.created_at; // D-11 excludes createdAt
-      return { id: c.id, ...fields };
-    })
-    .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  const gs = gifts.map((g) => ({ ...g })).sort((a, b) => (a.gift_id < b.gift_id ? -1 : a.gift_id > b.gift_id ? 1 : 0));
-  return sha256Hex({ constituents: cons, gifts: gs });
-}
 
 const displayName = (r: MatchRecord) => [r.name.first, r.name.middle, r.name.last, r.name.suffix.toLowerCase()].filter(Boolean).join(' ');
 const displayAddress = (r: MatchRecord) => [line1Key(r.addr), r.addr.unit, r.addr.city, r.addr.state, r.addr.zip5].filter(Boolean).join(', ');
@@ -90,7 +77,7 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
       path: opts.path, after: opts.after, bytes: file.parsed.bytes, contentHash: file.parsed.contentHash, encoding: file.parsed.encoding, headers: file.parsed.headers,
       map: { ...(file.map as Record<string, string>) }, extras: file.extras, asOf: opts.asOf, rows: file.rows.length,
     },
-    crm: { constituents: crm.length, gifts: crmGifts.length, beforeHash: stateHash(crm, crmGifts) },
+    crm: { constituents: crm.length, gifts: crmGifts.length, beforeHash: effectiveStateHash(fixtureState(crm, crmGifts)) },
     totals: { rows: file.rows.length, merged: 0, reviewed: 0, new: 0, rejected: 0, giftsToAdd: 0, giftsPendingReview: 0, dupGift: 0, dupGiftInFile: 0, dateCentsMatchedRefDiffered: 0, inFileSameGiftNotSkipped: 0, fieldChanges: 0, alternates: 0, aliases: 0 },
     create: [], changes: [], alternates: [], aliases: [], gifts: [], skippedGifts: [], rejected: [], review: [],
     notImplemented: ['FUND_UNKNOWN (import/fund-synonyms.json and the default fund are not in the reference matcher; fund text is carried raw)'],
