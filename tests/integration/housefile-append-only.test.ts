@@ -1,4 +1,4 @@
-// Task 2.1: the six append-only tables refuse UPDATE and DELETE at the database, and the CHECKs
+// Task 2.1 (+2.7): the seven append-only tables refuse UPDATE and DELETE at the database, and the CHECKs
 // in migration 20261019212236_housefile_init hold. Raw SQL on purpose: the triggers, not the app, are the control.
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/core/db';
@@ -27,11 +27,12 @@ async function seedOne() {
   const merge = await db.mergeEvent.create({
     data: { orgId, kind: 'ROW_INTO_CONSTITUENT', survivorId: c.id, rowIndex: 3, survivorSnapshot: {}, loserSnapshot: {}, choices: {}, giftRefsMoved: [], softCreditsMoved: [], importBatchId: batch.id },
   });
-  return { orgId, c, fund, batch, item, ids: { ConstituentVersion: version.id, Gift: gift.id, ImportBatch: batch.id, ImportBatchEvent: event.id, ReviewDecision: decision.id, MergeEvent: merge.id } };
+  const unmerge = await db.unmergeEvent.create({ data: { orgId, mergeEventId: merge.id, survivorHash: 'h', loserHash: '', userId: USER } });
+  return { orgId, c, fund, batch, item, ids: { ConstituentVersion: version.id, Gift: gift.id, ImportBatch: batch.id, ImportBatchEvent: event.id, ReviewDecision: decision.id, MergeEvent: merge.id, UnmergeEvent: unmerge.id } };
 }
 
-describe('append-only tables (D-6, D-46, D-47)', () => {
-  for (const table of ['ConstituentVersion', 'Gift', 'ImportBatch', 'ImportBatchEvent', 'ReviewDecision', 'MergeEvent'] as const) {
+describe('append-only tables (D-6, D-46, D-47, D-62)', () => {
+  for (const table of ['ConstituentVersion', 'Gift', 'ImportBatch', 'ImportBatchEvent', 'ReviewDecision', 'MergeEvent', 'UnmergeEvent'] as const) {
     it(`${table} rejects UPDATE and DELETE`, async () => {
       const { ids } = await seedOne();
       const id = ids[table];
