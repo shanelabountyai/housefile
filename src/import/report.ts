@@ -25,6 +25,7 @@ export function formatPreview(p: Preview): string {
   L.push(`field changes on existing constituents ${t.fieldChanges}; alternates kept ${t.alternates}; name aliases ${t.aliases}`);
   L.push(`rows whose target is an earlier row still in review (written when that row is decided, D-55): ${t.pendingTarget}`);
   L.push(`gifts whose fund text is not in import/fund-synonyms.json (default fund used, FUND_UNKNOWN): ${t.fundUnknown}`);
+  L.push(`rows re-queued by pair memory (a KEEP_SEPARATE pair where a new identifier now agrees, D-59): ${t.memoryQueued}`);
   const cents = p.gifts.reduce((s, g) => s + g.cents, 0);
   L.push(`gift total to add: ${formatCents(cents)} (${cents} cents)`);
 
@@ -57,6 +58,9 @@ export function formatPreview(p: Preview): string {
 
   h(`ROWS WAITING ON A ROW IN REVIEW (D-55, ${p.pending.length})`);
   for (const r of p.pending) L.push(`${r.rowId} ${pad(r.decision, 6)} -> ${r.target} (${r.score}); written when ${r.target} is decided`);
+
+  h(`RE-QUEUED BY PAIR MEMORY (D-59, ${p.memoryQueue.length})`);
+  for (const m of p.memoryQueue) L.push(`${m.rowId} merges into ${m.mergedInto}; vs ${m.target} newly agrees ${m.newlyAgreed.join('+')} (remembered: ${m.agreedBefore.join('+') || 'none'}); queued for review`);
 
   h('NOT IMPLEMENTED IN PHASE 1');
   for (const n of p.notImplemented) L.push(n);

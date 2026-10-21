@@ -85,16 +85,21 @@ export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[]): 
 
 /** The effective state as the Phase 1 pipeline reads a CRM (src/import/crm): fixture column names, normalized record,
  *  per-field asOf from fieldMeta so survivorship (S2) plans against each field's own date, not the row's. */
+/** One effective constituent as the Phase 1 pipeline reads a CRM record: fixture column names, normalized record,
+ *  per-field asOf from fieldMeta so survivorship (S2) plans against each field's own date, not the row's. */
+export function crmConstituentOf(c: EffectiveConstituent): CrmConstituent {
+  const fields: Record<string, string> = {
+    constituent_id: c.id, first_name: c.firstName, middle_name: c.middleName, last_name: c.lastName, suffix: c.suffix,
+    email: c.email, phone: c.phone, address_line1: c.addressLine1, address_line2: c.addressLine2, city: c.city, state: c.state, zip: c.zip,
+    dob: c.dob, household_id: c.household,
+  };
+  const asOf = Object.fromEntries(META_FIELDS.map((k) => [k, c.fieldMeta[k]?.asOf ?? ''])) as Record<(typeof META_FIELDS)[number], string>;
+  return { id: c.id, fields, record: crmRecord(fields), asOf };
+}
+
+/** The effective state as the Phase 1 pipeline reads a CRM (src/import/crm). */
 export function stateToCrm(s: EffectiveState): { crm: CrmConstituent[]; gifts: CrmGift[] } {
-  const crm = s.constituents.map((c) => {
-    const fields: Record<string, string> = {
-      constituent_id: c.id, first_name: c.firstName, middle_name: c.middleName, last_name: c.lastName, suffix: c.suffix,
-      email: c.email, phone: c.phone, address_line1: c.addressLine1, address_line2: c.addressLine2, city: c.city, state: c.state, zip: c.zip,
-      dob: c.dob, household_id: c.household,
-    };
-    const asOf = Object.fromEntries(META_FIELDS.map((k) => [k, c.fieldMeta[k]?.asOf ?? ''])) as Record<(typeof META_FIELDS)[number], string>;
-    return { id: c.id, fields, record: crmRecord(fields), asOf };
-  });
+  const crm = s.constituents.map(crmConstituentOf);
   const gifts = s.gifts.map((g) => ({ gift_id: g.giftRef, constituent_id: g.constituent, gift_date: g.giftDate, amount_cents: g.amountCents, fund: g.fund, campaign: '', appeal: g.appeal, gift_type: g.giftType, external_ref: g.externalRef }));
   return { crm, gifts };
 }
