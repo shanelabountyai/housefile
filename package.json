@@ -36,6 +36,7 @@
     "import:dry-run": "tsx scripts/import-dry-run.ts",
     "import:preview": "dotenv -e .env.local -- tsx scripts/import-preview.ts",
     "import:commit": "dotenv -e .env.local -- tsx scripts/import-commit.ts",
+    "import:undo": "dotenv -e .env.local -- tsx scripts/import-undo.ts",
     "review:list": "dotenv -e .env.local -- tsx scripts/review-list.ts",
     "review:decide": "dotenv -e .env.local -- tsx scripts/review-decide.ts",
     "constituents:merge": "dotenv -e .env.local -- tsx scripts/constituents-merge.ts",
