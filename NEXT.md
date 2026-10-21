@@ -21,7 +21,7 @@
 **Decided (D-53..D-65 in `docs/decisions.md`, each with the alternative not taken).** The ones Shane should read: **D-55** (rows whose auto-merge target is a row still in review: 13 MERGE + 1 REVIEW rows in A, 5 in B; they wait and then *follow* the target row into whatever it became), D-56 (fund synonyms at plan time, default `GEN`), D-57 (zero/negative gifts held, never written), D-59 (open is per row; pair memory never suppresses on its own, it re-queues when a new identifier agrees), D-61 (S6 lives in the plan, not the matcher), D-63 (undo blocks on a later batch, or a later write that is not net neutral).
 
 **Left open — needs Shane**
-1. **D-55:** should a planned auto-merge follow a *human* MERGE transitively (A-0195 scored ≥ 70 against A-0001, never against the CRM record A-0001 was merged into), or be re-queued for a person? Built as "follow"; one flag flip in `followPending` (`src/commit/review.ts`) makes it "re-queue".
+1. ~~**D-55**~~ **DECIDED 2026-10-21: follow, as built** (recorded in D-55). Don't reopen.
 2. D-57: no refund/correction path for held gifts yet (seam: a superseding row with a reason, D-6).
 3. Names from a single full-name column (file B) land parsed and folded (lowercase) on new constituents.
 4. Soft credits are not moved by a merge (`softCreditsMoved: []`, ponytail seam in `merge.ts`) until Phase 3 writes the table.
@@ -50,7 +50,7 @@ $ npm run phase2:proof:test
 
 Gotchas learned: `prisma migrate dev` here did **not** regenerate the client (run `npx prisma generate` after a schema change, or the new column is "unknown argument"); `git checkout prisma/migrations/migration_lock.toml` before committing; a `@db.Date` reads back as a UTC-midnight Date (`isoDate` in `db-state.ts`).
 
-**Next:** Shane reviews PR #5 and decides D-55; then the Phase 2 gate (exit criteria in `docs/phase-2-tasks.md` all pass locally) → write `docs/phase-3-tasks.md` and stop for review. Model: Fable/Opus (phase gate).
+**Next:** Shane reviews PR #5 (D-55 decided 2026-10-21); then the Phase 2 gate (exit criteria in `docs/phase-2-tasks.md` all pass locally) → write `docs/phase-3-tasks.md` and stop for review. Model: Fable/Opus (phase gate).
 
 ---
 
