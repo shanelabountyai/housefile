@@ -43,6 +43,9 @@ jobs:
       - run: createdb housefile_test
       - run: npx prisma migrate deploy
       - run: npx vitest run
+      # Phase 2 proof (task 2.10): seed → preview → commit → undo for both files, a merge and its unmerge; every hash printed.
+      - run: npm run phase2:proof
+        if: ${{ !cancelled() }}
       # Production build, served — the way it ships. login.spec.ts drives a real page.
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
@@ -67,6 +70,8 @@ jobs:
       - run: npm run model:lint
         if: ${{ !cancelled() }}
       - run: npm run money:lint
+        if: ${{ !cancelled() }}
+      - run: npm run write:lint
         if: ${{ !cancelled() }}
       - run: npm run typecheck:phase1
         if: ${{ !cancelled() }}

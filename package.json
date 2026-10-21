@@ -45,6 +45,8 @@
     "model:lint": "tsx scripts/model-lint.ts",
     "money:lint": "tsx scripts/money-lint.ts",
     "write:lint": "tsx scripts/write-guard.ts",
+    "phase2:proof": "dotenv -e .env.local -- tsx scripts/phase2-proof.ts",
+    "phase2:proof:test": "dotenv -e .env.test -e .env.local -- tsx scripts/phase2-proof.ts",
     "typecheck:phase1": "tsc -p tsconfig.phase1.json --noEmit",
     "test:phase1": "vitest run tests/unit/import tests/unit/matching"
   },
