@@ -77,7 +77,7 @@ async function undoTx(tx: Tx, input: UndoInput): Promise<UndoResult> {
     }
     if (s.min === 1) {
       const cur = await loadEffectiveConstituent(tx, constituentId);
-      if (await restoreVersion(tx, constituentId, cur.constituent, 'RETIRED', writer)) reverted.constituentsRetired++;
+      if (await restoreVersion(tx, constituentId, cur.constituent, 'ACTIVE', writer)) reverted.constituentsRetired++; // THROWAWAY red run: created constituents are no longer retired, so undo cannot restore beforeHash
     } else {
       const pre = await tx.constituentVersion.findUniqueOrThrow({ where: { constituentId_version: { constituentId, version: s.min - 1 } }, include: { household: true, constituent: true } });
       if (await restoreVersion(tx, constituentId, effectiveOf(pre.constituent.businessId, pre, pre.household?.businessId ?? ''), pre.status, writer)) reverted.versionsRestored++;
