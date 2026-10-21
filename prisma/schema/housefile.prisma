@@ -314,8 +314,24 @@ model MergeEvent {
   at               DateTime             @default(now()) @db.Timestamptz(6)
   versions         ConstituentVersion[]
   gifts            Gift[]
+  unmerge          UnmergeEvent?
 
   @@index([orgId, at])
   @@index([survivorId])
   @@index([loserId])
+}
+
+/// Append-only (D-62). One per reversed merge: who, why, and the proof that each record hashed equal to its snapshot.
+/// A merge with an UnmergeEvent no longer blocks the unmerge of an earlier one (D-24 UNMERGE_BLOCKED).
+model UnmergeEvent {
+  id           String     @id @default(uuid()) @db.Uuid
+  orgId        String     @db.Uuid
+  org          Org        @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  mergeEventId String     @unique @db.Uuid
+  mergeEvent   MergeEvent @relation(fields: [mergeEventId], references: [id])
+  survivorHash String // effective-state hash of the survivor after the unmerge == its snapshot hash
+  loserHash    String // likewise for the loser (the re-created constituent for a row merge)
+  reason       String?
+  userId       String     @db.Uuid
+  at           DateTime   @default(now()) @db.Timestamptz(6)
 }

@@ -99,6 +99,7 @@ model Org {
   reviewDecisions ReviewDecision[] // app
   mergeEvents    MergeEvent[] // app
   pairMemories   PairMemory[] // app
+  unmergeEvents  UnmergeEvent[] // app
 }
 
 model Membership {
