@@ -3,7 +3,7 @@
 // beforeHash and the database's hash agree, and a commit followed by its undo hashes equal (D-13).
 // Excluded on purpose: row ids, createdAt, batch and event ids, audit rows, RETIRED constituents, superseded gifts.
 import { sha256Hex } from '../lib/canonical';
-import type { CrmConstituent, CrmGift } from '../import/crm';
+import { crmRecord, type CrmConstituent, type CrmGift } from '../import/crm';
 
 export type FieldMeta = Record<string, { asOf: string; source: string }>; // email | phone | dob | address (S2)
 export type AliasEntry = { first: string; middle: string; last: string; suffix: string; source: string; asOf: string }; // S3
@@ -81,4 +81,20 @@ export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[]): 
     gifts: gifts.map((g) => ({ giftRef: g.gift_id, constituent: g.constituent_id, giftDate: g.gift_date, amountCents: g.amount_cents, fund: g.fund, appeal: g.appeal, giftType: g.gift_type, externalRef: g.external_ref })),
     softCredits: [],
   });
+}
+
+/** The effective state as the Phase 1 pipeline reads a CRM (src/import/crm): fixture column names, normalized record,
+ *  per-field asOf from fieldMeta so survivorship (S2) plans against each field's own date, not the row's. */
+export function stateToCrm(s: EffectiveState): { crm: CrmConstituent[]; gifts: CrmGift[] } {
+  const crm = s.constituents.map((c) => {
+    const fields: Record<string, string> = {
+      constituent_id: c.id, first_name: c.firstName, middle_name: c.middleName, last_name: c.lastName, suffix: c.suffix,
+      email: c.email, phone: c.phone, address_line1: c.addressLine1, address_line2: c.addressLine2, city: c.city, state: c.state, zip: c.zip,
+      dob: c.dob, household_id: c.household,
+    };
+    const asOf = Object.fromEntries(META_FIELDS.map((k) => [k, c.fieldMeta[k]?.asOf ?? ''])) as Record<(typeof META_FIELDS)[number], string>;
+    return { id: c.id, fields, record: crmRecord(fields), asOf };
+  });
+  const gifts = s.gifts.map((g) => ({ gift_id: g.giftRef, constituent_id: g.constituent, gift_date: g.giftDate, amount_cents: g.amountCents, fund: g.fund, campaign: '', appeal: g.appeal, gift_type: g.giftType, external_ref: g.externalRef }));
+  return { crm, gifts };
 }

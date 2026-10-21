@@ -44,7 +44,9 @@ const displayAddress = (r: MatchRecord) => [line1Key(r.addr), r.addr.unit, r.add
 
 type Planned = { email: string; phone: string; dob: string; address: string; asOf: Record<PlannedField, string>; raw: Record<PlannedField, string> };
 
-export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: CrmConstituent[], crmGifts: CrmGift[], opts: { path: string; asOf: string; after?: string }): Preview {
+/** `opts.beforeHash`: the hash of the real effective state when the CRM came from the database (src/commit/preview);
+ *  absent, the CRM is the raw fixture and the hash is computed from it (Phase 1 dry-run). */
+export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: CrmConstituent[], crmGifts: CrmGift[], opts: { path: string; asOf: string; after?: string; beforeHash?: string }): Preview {
   const byId = new Map(crm.map((c) => [c.id, c]));
   const giftsByConstituent = new Map<string, CrmGift[]>();
   for (const g of crmGifts) {
@@ -64,7 +66,7 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
       const addrRaw = [c.fields.address_line1, c.fields.address_line2, c.fields.city, c.fields.state, c.fields.zip].filter(Boolean).join(', ');
       p = {
         email: c.record.email, phone: c.record.phone, dob: c.record.dob, address: line1Key(c.record.addr) ? displayAddress(c.record) : '',
-        asOf: { email: asOf, phone: asOf, dob: asOf, address: asOf },
+        asOf: { email: c.asOf?.email ?? asOf, phone: c.asOf?.phone ?? asOf, dob: c.asOf?.dob ?? asOf, address: c.asOf?.address ?? asOf },
         raw: { email: c.fields.email ?? '', phone: c.fields.phone ?? '', dob: c.fields.dob ?? '', address: addrRaw },
       };
       planned.set(c.id, p);
@@ -77,7 +79,7 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
       path: opts.path, after: opts.after, bytes: file.parsed.bytes, contentHash: file.parsed.contentHash, encoding: file.parsed.encoding, headers: file.parsed.headers,
       map: { ...(file.map as Record<string, string>) }, extras: file.extras, asOf: opts.asOf, rows: file.rows.length,
     },
-    crm: { constituents: crm.length, gifts: crmGifts.length, beforeHash: effectiveStateHash(fixtureState(crm, crmGifts)) },
+    crm: { constituents: crm.length, gifts: crmGifts.length, beforeHash: opts.beforeHash ?? effectiveStateHash(fixtureState(crm, crmGifts)) },
     totals: { rows: file.rows.length, merged: 0, reviewed: 0, new: 0, rejected: 0, giftsToAdd: 0, giftsPendingReview: 0, dupGift: 0, dupGiftInFile: 0, dateCentsMatchedRefDiffered: 0, inFileSameGiftNotSkipped: 0, fieldChanges: 0, alternates: 0, aliases: 0 },
     create: [], changes: [], alternates: [], aliases: [], gifts: [], skippedGifts: [], rejected: [], review: [],
     notImplemented: ['FUND_UNKNOWN (import/fund-synonyms.json and the default fund are not in the reference matcher; fund text is carried raw)'],

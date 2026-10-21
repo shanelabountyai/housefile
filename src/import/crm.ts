@@ -8,6 +8,7 @@ export type CrmConstituent = {
   id: string;
   fields: Record<string, string>; // the fixture columns as stored
   record: MatchRecord; // normalized view for matching; mutated by in-batch survivorship (D-15)
+  asOf?: Record<'email' | 'phone' | 'dob' | 'address', string>; // per-field asOf (S2); absent for the raw fixture, where created_at serves
 };
 
 export type CrmGift = {
