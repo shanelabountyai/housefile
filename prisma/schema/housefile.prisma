@@ -231,20 +231,23 @@ model ImportBatchEvent {
 }
 
 /// One candidate pair in the review band. Open = no decision other than DEFER (derived).
+/// The candidate is a constituent, or (D-55) an earlier row of the same batch that is itself still in review:
+/// exactly one of constituentId / candidateRowIndex (CHECK in SQL). Such an item resolves when that row is decided.
 model ReviewItem {
-  id            String           @id @default(uuid()) @db.Uuid
-  orgId         String           @db.Uuid
-  org           Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
-  importBatchId String           @db.Uuid
-  importBatch   ImportBatch      @relation(fields: [importBatchId], references: [id])
-  rowIndex      Int // the import row's position in the stored batch
-  constituentId String           @db.Uuid // the candidate
-  constituent   Constituent      @relation(fields: [constituentId], references: [id])
-  score         Int
-  reasons       Json // the matcher's reasons and points
-  flags         String[] // EXISTING_PAIR (S6), ...
-  createdAt     DateTime         @default(now()) @db.Timestamptz(6)
-  decisions     ReviewDecision[]
+  id                String           @id @default(uuid()) @db.Uuid
+  orgId             String           @db.Uuid
+  org               Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  importBatchId     String           @db.Uuid
+  importBatch       ImportBatch      @relation(fields: [importBatchId], references: [id])
+  rowIndex          Int // the import row's position in the stored batch
+  constituentId     String?          @db.Uuid // the candidate
+  constituent       Constituent?     @relation(fields: [constituentId], references: [id])
+  candidateRowIndex Int? // the candidate is this earlier row, still in review (D-55)
+  score             Int
+  reasons           Json // the matcher's reasons and points
+  flags             String[] // EXISTING_PAIR (S6), PENDING_TARGET (D-55), ...
+  createdAt         DateTime         @default(now()) @db.Timestamptz(6)
+  decisions         ReviewDecision[]
 
   @@index([importBatchId])
 }
