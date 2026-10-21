@@ -1,5 +1,59 @@
 # NEXT
 
+## ▶ Next session: review the Phase 2 overnight PR, decide D-55, then the Phase 2 gate
+
+**2026-10-20/21 unattended overnight run, branch `phase-2-overnight-2026-10-20` (off `phase-2`), draft PR #5 against `phase-2`: https://github.com/shanelabountyai/housefile/pull/5.** Tasks **2.2–2.10 all done**, each test-first against `housefile_test`, 19 commits, pushed. Nothing merged, nothing deployed, `main` untouched.
+
+**CI runs (task 2.10 acceptance):** green = PR #5 https://github.com/shanelabountyai/housefile/actions/runs/39620837179 · red = throwaway PR #6 (`phase2-red-proof`, undo leaves created constituents ACTIVE so `phase2:proof` and the undo tests fail) https://github.com/shanelabountyai/housefile/actions/runs/39620844263. **Green: all three jobs succeeded (ci incl. `phase2:proof`, phase1-gate incl. `write:lint`, modules-removed). Red: `ci` failed on the three fixture undo tests with `expected 'UNDO_FAILED' to be 'UNDONE'`; phase1-gate stayed green.** PR #6 closed, branch deleted (precedent: task 1.12, PR #3). Task 2.10 ticked.
+
+**Built** (all in `src/commit/`, CLIs in `scripts/`, every write path starts from a stored preview):
+- 2.2 `state.ts` (`effectiveStateHash`, D-11 shape shared by the fixture in memory and the database), `db-state.ts` (`loadEffectiveState`, `loadEffectiveConstituent`), `seed.ts` + `db:seed:fixtures` / `:test` (org `housefile`, user `seed@housefile.test`). The dry-run `beforeHash` moved `dcd67106…` → `7d3bd174…` (D-53; our own serializer, no oracle value).
+- 2.3 `preview.ts` `previewBatch` → one `ImportBatch` row; `import:preview`. File A report byte-identical to the Phase 1 dry-run; B alone 166/32/38/14 (D-51).
+- 2.4 `write.ts` + `commit.ts` `commitBatch`; `import:commit`. `STATE_MOVED` / `PLAN_TAMPERED` / `ALREADY_COMMITTED` return 0 rows.
+- 2.5 `review.ts` (`listReview`, `decideReview`, `batchStatus`); `review:list`, `review:decide`; `PairMemory` table; `results.write` gates it (D-60).
+- 2.6 `merge.ts` `mergeConstituents` (D-49); `constituents:merge`; S6 `EXISTING_PAIR` and pair memory in the plan (D-61).
+- 2.7 `unmerge.ts` + `UnmergeEvent` table (append-only, both proof hashes); `constituents:unmerge`.
+- 2.8 `undo.ts` `undoBatch`; `import:undo`. Compensating rows by version number; proof inside the transaction; `UNDO_FAILED` written outside it with both hashes.
+- 2.9 `tests/integration/housefile-tamper.test.ts`; `scripts/write-guard.ts` + `npm run write:lint` (only `src/commit/` writes the Phase 2 tables; red on a planted violation).
+- 2.10 `scripts/phase2-proof.ts` + `npm run phase2:proof` (in the CI `ci` job); `write:lint` in `phase1-gate`; `docs/EVAL.md` Phase 2 section.
+- Schema: three clone migrations (`20261021011809_review_candidate_row`, `20261021013521_pair_memory`, `20261021143843_unmerge_event`), `Org` back-relations marked `// app`, `foundation:drift` clean against v1.3.0.
+
+**Decided (D-53..D-65 in `docs/decisions.md`, each with the alternative not taken).** The ones Shane should read: **D-55** (rows whose auto-merge target is a row still in review: 13 MERGE + 1 REVIEW rows in A, 5 in B; they wait and then *follow* the target row into whatever it became), D-56 (fund synonyms at plan time, default `GEN`), D-57 (zero/negative gifts held, never written), D-59 (open is per row; pair memory never suppresses on its own, it re-queues when a new identifier agrees), D-61 (S6 lives in the plan, not the matcher), D-63 (undo blocks on a later batch, or a later write that is not net neutral).
+
+**Left open — needs Shane**
+1. **D-55:** should a planned auto-merge follow a *human* MERGE transitively (A-0195 scored ≥ 70 against A-0001, never against the CRM record A-0001 was merged into), or be re-queued for a person? Built as "follow"; one flag flip in `followPending` (`src/commit/review.ts`) makes it "re-queue".
+2. D-57: no refund/correction path for held gifts yet (seam: a superseding row with a reason, D-6).
+3. Names from a single full-name column (file B) land parsed and folded (lowercase) on new constituents.
+4. Soft credits are not moved by a merge (`softCreditsMoved: []`, ponytail seam in `merge.ts`) until Phase 3 writes the table.
+5. Pre-existing branch `overnight/2026-10-20-hardening` (draft PR #4, off `main`) re-does Phase 1 normalizers that `phase-2` already has; left untouched. Probably close it.
+6. Observed, not fixed (template-owned): Prisma's pg adapter prints `DeprecationWarning: Calling client.query() when the client is already executing a query` when a `findMany` with `include` runs inside an interactive transaction. Harmless; all frames in `node_modules`.
+
+**Gate, local, 2026-10-21 (verbatim tails)**
+
+```
+$ npm test                 Test Files  49 passed (49)   Tests  434 passed (434)
+$ npm run typecheck        clean
+$ npm run fixtures:check   OK
+$ npm run model:lint       model matching/model.v1.json sha256 40312dfedce1ed59481bb610e4155ff90006f041700974825c48c63b37ee635b / model:lint OK
+$ npm run money:lint       money:lint OK
+$ npm run write:lint       write:lint OK (only src/commit writes the Phase 2 tables)
+$ npm run import:eval      A 259/55/71 · 679 pairs · P 1.0 · R 0.9464 · wrong 0; B 166/33/37 · 394 pairs · P 1.0 · R 0.9548 · wrong 0; drift vs fixtures/decisions_*.csv: 0 rows; labels 30 / 30
+$ npm run foundation:drift foundation:drift: clean against v1.3.0 (modules removed: billing)
+$ npm run phase2:proof:test
+  A: commit 71 constituents, 172 versions, 298 gifts (+11 waiting, 21 skipped), 246 merges, 74 review items over 55 rows (13.8%)
+  B: commit 17 constituents, 133 versions, 178 gifts (+5 waiting, 11 skipped), 174 merges, 49 items over 39 rows (15.6%)
+  undo B: stateHash == beforeHash: 2c035193ee43d9b4c08425e79cebfa6406c69cfb4a75a228f9ae39422a1acbd8
+  undo A: stateHash == beforeHash: 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb
+  unmerge (constituent) survivor 9eab0c8a… == snapshot; loser 5af937d9… == snapshot; unmerge (row 399) survivor 6af1c76a… == snapshot
+  phase2:proof OK
+```
+
+Gotchas learned: `prisma migrate dev` here did **not** regenerate the client (run `npx prisma generate` after a schema change, or the new column is "unknown argument"); `git checkout prisma/migrations/migration_lock.toml` before committing; a `@db.Date` reads back as a UTC-midnight Date (`isoDate` in `db-state.ts`).
+
+**Next:** Shane reviews PR #5 and decides D-55; then the Phase 2 gate (exit criteria in `docs/phase-2-tasks.md` all pass locally) → write `docs/phase-3-tasks.md` and stop for review. Model: Fable/Opus (phase gate).
+
+---
+
 ## ▶ Next session: Phase 2 task 2.2 — effective state and seed
 
 **2026-10-19 task 2.1 DONE (branch `phase-2`).** `prisma/schema/housefile.prisma` (13 tables), `Org` back-relations marked `// app`, migration `20261019212236_housefile_init` with hand-written SQL: `housefile_append_only()` trigger on `ConstituentVersion`, `Gift`, `ImportBatch`, `ImportBatchEvent`, `ReviewDecision`, `MergeEvent`; CHECKs for one writer (version, gift, merge), `amountCents > 0`, supersede reason, review reason (D-22), merge kind shape. Choices recorded as **D-52** (org FK Restrict, etc.). `money:lint` now also fails a `Float`/`Decimal` cents column in `prisma/schema/` (red on a planted `Float`, then green).
