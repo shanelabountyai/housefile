@@ -38,8 +38,9 @@ describe('dry-run preview', () => {
       expect(p.review).toHaveLength(t.reviewed);
       expect(p.gifts).toHaveLength(t.giftsToAdd);
       expect(p.skippedGifts).toHaveLength(t.dupGift + t.dupGiftInFile);
-      // every accepted non-review row either adds a gift or skips one, exactly once
-      expect(t.giftsToAdd + t.dupGift + t.dupGiftInFile).toBe(t.merged + t.new);
+      // every accepted non-review row either adds a gift, skips one, or holds one (zero/negative, D-57), exactly once
+      expect(p.heldGifts).toHaveLength(t.giftsHeld);
+      expect(t.giftsToAdd + t.dupGift + t.dupGiftInFile + t.giftsHeld).toBe(t.merged + t.new);
       expect(t.giftsPendingReview).toBe(t.reviewed);
       expect(p.changes).toHaveLength(t.fieldChanges);
     });

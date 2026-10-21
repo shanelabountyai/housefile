@@ -19,10 +19,12 @@ export function formatPreview(p: Preview): string {
   h('TOTALS');
   const t = p.totals;
   L.push(`rows ${t.rows} = merged ${t.merged} + reviewed ${t.reviewed} + new ${t.new} + rejected ${t.rejected}`);
-  L.push(`gifts to add ${t.giftsToAdd}; pending review ${t.giftsPendingReview}; skipped DUP_GIFT ${t.dupGift}; skipped DUP_GIFT_IN_FILE ${t.dupGiftInFile}`);
+  L.push(`gifts to add ${t.giftsToAdd}; pending review ${t.giftsPendingReview}; skipped DUP_GIFT ${t.dupGift}; skipped DUP_GIFT_IN_FILE ${t.dupGiftInFile}; held (zero or negative, never written) ${t.giftsHeld}`);
   L.push(`gifts that matched date+cents on the target but with a different reference (added, look): ${t.dateCentsMatchedRefDiffered}`);
   L.push(`gifts equal to an earlier planned gift of this batch on date, cents and reference (added per S4, look): ${t.inFileSameGiftNotSkipped}`);
   L.push(`field changes on existing constituents ${t.fieldChanges}; alternates kept ${t.alternates}; name aliases ${t.aliases}`);
+  L.push(`rows whose target is an earlier row still in review (written when that row is decided, D-55): ${t.pendingTarget}`);
+  L.push(`gifts whose fund text is not in import/fund-synonyms.json (default fund used, FUND_UNKNOWN): ${t.fundUnknown}`);
   const cents = p.gifts.reduce((s, g) => s + g.cents, 0);
   L.push(`gift total to add: ${formatCents(cents)} (${cents} cents)`);
 
@@ -39,16 +41,22 @@ export function formatPreview(p: Preview): string {
   for (const a of p.aliases) L.push(`${a.constituentId} alias "${a.alias}" from ${a.rowId}`);
 
   h(`GIFTS TO ADD (${p.gifts.length})`);
-  for (const g of p.gifts) L.push(`${g.rowId} -> ${pad(g.constituentRef, 7)} ${g.giftDate} ${pad(formatCents(g.cents), 12)} fund "${g.fund}"${g.externalRef ? ` ref ${g.externalRef}` : ''}`);
+  for (const g of p.gifts) L.push(`${g.rowId} -> ${pad(g.constituentRef, 7)} ${g.giftDate} ${pad(formatCents(g.cents), 12)} fund "${g.fund}" -> ${g.fundCode}${g.fundKnown ? '' : ' FUND_UNKNOWN'}${g.externalRef ? ` ref ${g.externalRef}` : ''}`);
 
   h(`GIFTS SKIPPED (${p.skippedGifts.length})`);
   for (const s of p.skippedGifts) L.push(`${s.rowId} ${pad(s.reason, 17)} ${s.giftDate} ${formatCents(s.cents)} duplicate of ${s.of}`);
+
+  h(`GIFTS HELD, NOT WRITTEN (zero or negative amount; a refund is a person's call, D-57; ${p.heldGifts.length})`);
+  for (const g of p.heldGifts) L.push(`${g.rowId} -> ${pad(g.constituentRef, 7)} ${g.giftDate} ${pad(formatCents(g.cents), 12)} ${g.reason}`);
 
   h(`REJECTED ROWS (${p.rejected.length})`);
   for (const r of p.rejected) L.push(`${r.rowId} REJECT:${r.reason}`);
 
   h(`REVIEW PAIRS (${p.review.length})`);
   for (const r of p.review) L.push(`${r.rowId} vs ${pad(r.target, 7)} ${pad(r.score, 4)} ${r.reasons.join('+')}${r.flags.length ? ` [${r.flags.join(';')}]` : ''}${r.tieBreak ? `  (${r.tieBreak})` : ''}`);
+
+  h(`ROWS WAITING ON A ROW IN REVIEW (D-55, ${p.pending.length})`);
+  for (const r of p.pending) L.push(`${r.rowId} ${pad(r.decision, 6)} -> ${r.target} (${r.score}); written when ${r.target} is decided`);
 
   h('NOT IMPLEMENTED IN PHASE 1');
   for (const n of p.notImplemented) L.push(n);

@@ -2,6 +2,7 @@
 // batch resolution and the in-memory CRM. Nothing is written. Every number in the report comes from the lists
 // below, so totals reconcile by construction: rows = merged + reviewed + new + rejected.
 import { effectiveStateHash, fixtureState } from '../commit/state';
+import fundSynonyms from '../../import/fund-synonyms.json';
 import type { CrmConstituent, CrmGift } from './crm';
 import type { LoadedFile } from './pipeline';
 import type { RowDecision } from './resolve';
@@ -14,8 +15,12 @@ export type PlannedField = 'email' | 'phone' | 'dob' | 'address';
 export type FieldChange = { constituentId: string; rowId: string; field: PlannedField; old: string; new: string; rule: SurvivorshipRule; asOfOld: string; asOfNew: string; loserKept: boolean };
 export type Alternate = { constituentId: string; rowId: string; field: PlannedField; value: string; asOf: string; why: string };
 export type Alias = { constituentId: string; rowId: string; alias: string; rule: 'S3' };
-export type PlannedGift = { rowId: string; constituentRef: string; giftDate: string; cents: number; fund: string; externalRef: string };
+export type PlannedGift = { rowId: string; constituentRef: string; giftDate: string; cents: number; fund: string; fundCode: string; fundKnown: boolean; externalRef: string };
+/** D-55: a row whose target is an earlier row of this batch that is itself still in review. Commit queues it until that row is decided. */
+export type PendingRow = { rowId: string; target: string; decision: 'MERGE' | 'REVIEW'; score: number };
 export type SkippedGift = { rowId: string; reason: 'DUP_GIFT' | 'DUP_GIFT_IN_FILE'; of: string; giftDate: string; cents: number };
+/** D-57: a gift of zero or negative cents is held, never written (D-6 CHECK amountCents > 0; brief §4: a refund candidate is shown, not auto-applied). */
+export type HeldGift = { rowId: string; constituentRef: string; giftDate: string; cents: number; reason: 'AMOUNT_NEGATIVE' | 'AMOUNT_ZERO' };
 export type Created = { rowId: string; name: string; email: string; phone: string; address: string; dob: string; bestScore: number | null; bestReasons: string[] };
 export type ReviewPair = { rowId: string; target: string; score: number; reasons: string[]; flags: string[]; tieBreak: string };
 export type Rejected = { rowId: string; reason: string };
@@ -27,6 +32,7 @@ export type Preview = {
     rows: number; merged: number; reviewed: number; new: number; rejected: number;
     giftsToAdd: number; giftsPendingReview: number; dupGift: number; dupGiftInFile: number;
     dateCentsMatchedRefDiffered: number; inFileSameGiftNotSkipped: number; fieldChanges: number; alternates: number; aliases: number;
+    pendingTarget: number; fundUnknown: number; giftsHeld: number;
   };
   create: Created[];
   changes: FieldChange[];
@@ -34,10 +40,21 @@ export type Preview = {
   aliases: Alias[];
   gifts: PlannedGift[];
   skippedGifts: SkippedGift[];
+  heldGifts: HeldGift[];
   rejected: Rejected[];
   review: ReviewPair[];
+  pending: PendingRow[];
   notImplemented: string[];
 };
+
+/** The fund code for a file's fund text (brief §4 FUND_UNKNOWN, D-56): a code or one of its synonyms in
+ *  import/fund-synonyms.json, case-insensitive; blank or unknown text falls to the default. Not a validation warning. */
+export function resolveFund(text: string): { code: string; known: boolean } {
+  const t = text.trim().toLowerCase();
+  if (!t) return { code: fundSynonyms.default, known: true };
+  for (const [code, names] of Object.entries(fundSynonyms.codes)) if (code.toLowerCase() === t || names.some((n) => n.toLowerCase() === t)) return { code, known: true };
+  return { code: fundSynonyms.default, known: false };
+}
 
 const displayName = (r: MatchRecord) => [r.name.first, r.name.middle, r.name.last, r.name.suffix.toLowerCase()].filter(Boolean).join(' ');
 const displayAddress = (r: MatchRecord) => [line1Key(r.addr), r.addr.unit, r.addr.city, r.addr.state, r.addr.zip5].filter(Boolean).join(', ');
@@ -80,9 +97,9 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
       map: { ...(file.map as Record<string, string>) }, extras: file.extras, asOf: opts.asOf, rows: file.rows.length,
     },
     crm: { constituents: crm.length, gifts: crmGifts.length, beforeHash: opts.beforeHash ?? effectiveStateHash(fixtureState(crm, crmGifts)) },
-    totals: { rows: file.rows.length, merged: 0, reviewed: 0, new: 0, rejected: 0, giftsToAdd: 0, giftsPendingReview: 0, dupGift: 0, dupGiftInFile: 0, dateCentsMatchedRefDiffered: 0, inFileSameGiftNotSkipped: 0, fieldChanges: 0, alternates: 0, aliases: 0 },
-    create: [], changes: [], alternates: [], aliases: [], gifts: [], skippedGifts: [], rejected: [], review: [],
-    notImplemented: ['FUND_UNKNOWN (import/fund-synonyms.json and the default fund are not in the reference matcher; fund text is carried raw)'],
+    totals: { rows: file.rows.length, merged: 0, reviewed: 0, new: 0, rejected: 0, giftsToAdd: 0, giftsPendingReview: 0, dupGift: 0, dupGiftInFile: 0, dateCentsMatchedRefDiffered: 0, inFileSameGiftNotSkipped: 0, fieldChanges: 0, alternates: 0, aliases: 0, pendingTarget: 0, fundUnknown: 0, giftsHeld: 0 },
+    create: [], changes: [], alternates: [], aliases: [], gifts: [], skippedGifts: [], heldGifts: [], rejected: [], review: [], pending: [],
+    notImplemented: ['FUND_UNKNOWN as a validation warning (the reference matcher has none); the plan resolves each fund from import/fund-synonyms.json instead, default GEN, and counts unknown text above (D-56)'],
   };
 
   const seenRaw = new Map<string, string>(); // raw record text → first row id (S4 byte-identical duplicates)
@@ -107,7 +124,13 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
     // S4: an earlier gift planned in this batch that equals this one on constituent, date, cents and reference
     // is not skipped (only byte-identical rows are); it is counted so a person can look.
     if (out.gifts.some((g) => g.constituentRef === constituentRef && g.giftDate === row.giftDate && g.cents === row.cents && (!hasRef || g.externalRef === row.externalRef))) out.totals.inFileSameGiftNotSkipped++;
-    out.gifts.push({ rowId: row.id, constituentRef, giftDate: row.giftDate, cents: row.cents!, fund: row.fund, externalRef: row.externalRef });
+    if (row.cents! <= 0) {
+      out.heldGifts.push({ rowId: row.id, constituentRef, giftDate: row.giftDate, cents: row.cents!, reason: row.cents! < 0 ? 'AMOUNT_NEGATIVE' : 'AMOUNT_ZERO' });
+      return;
+    }
+    const fund = resolveFund(row.fund);
+    if (!fund.known) out.totals.fundUnknown++;
+    out.gifts.push({ rowId: row.id, constituentRef, giftDate: row.giftDate, cents: row.cents!, fund: row.fund, fundCode: fund.code, fundKnown: fund.known, externalRef: row.externalRef });
   };
 
   const change = (c: CrmConstituent, row: ImportRow, field: PlannedField, importValue: string, importRaw: string) => {
@@ -134,9 +157,12 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
     }
   };
 
+  const decisionOf = new Map(decisions.map((d) => [d.rowId, d.decision]));
   for (const d of decisions) {
     const row = rowsById.get(d.rowId)!;
     const rec = row.record;
+    // D-55: the target is an earlier row of this batch that is itself waiting in review, so there is nothing to write to yet
+    if ((d.decision === 'MERGE' || d.decision === 'REVIEW') && !byId.has(d.target) && decisionOf.get(d.target) === 'REVIEW') out.pending.push({ rowId: d.rowId, target: d.target, decision: d.decision, score: d.score ?? 0 });
     switch (d.decision) {
       case 'REJECT':
         out.totals.rejected++;
@@ -177,6 +203,8 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
   out.totals.fieldChanges = out.changes.length;
   out.totals.alternates = out.alternates.length;
   out.totals.aliases = out.aliases.length;
+  out.totals.pendingTarget = out.pending.length;
+  out.totals.giftsHeld = out.heldGifts.length;
   return out;
 }
 
