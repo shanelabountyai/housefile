@@ -1,5 +1,18 @@
 # NEXT
 
+## ▶ Next session: Shane reviews `docs/phase-3-tasks.md` (P-8..P-15) and PR #5; then task 3.1
+
+**2026-10-22 Phase 2 gate PASSED (local, one sequential run, stopped on first failure, none failed):** `typecheck` clean · `fixtures:check` OK · `model:lint` OK (40312dfe…) · `money:lint` OK · `write:lint` OK · `import:eval` A 259/55/71 P 1.0 R 0.9464, B 166/33/37 P 1.0 R 0.9548, drift 0 rows, labels 30 / 30 · `foundation:drift` clean v1.3.0 · `npm test` 49 files **434 / 434** · `phase2:proof:test` OK (undo B `2c035193…` == beforeHash, undo A `7d3bd174…` == beforeHash, both unmerge snapshots equal). CI green/red runs: below (task 2.10).
+
+**Written, stopped for review:** `docs/phase-3-tasks.md`, tasks 3.1–3.11 and **proposals P-8..P-15 (defaults in force; each becomes D-66+ on confirmation)**. The two that came from reading code, not docs:
+- **P-8** letters go in a clone-owned `Letter` table, not the foundation `Outbox`: `drainOutbox` (daily cron) sends through Resend when `VERCEL_ENV=production` or `EMAIL_SANDBOX_TO` is set, and the template file is drift-checked. Amends D-26.
+- **P-10** Pulseboard has no segment code to port (rollups/funnels/retention only, stored tables). Segments are new; D-33's lineage should not claim a port.
+- **P-9** matters most for effort: the fixtures have no pledges or soft credits (878 × `GIFT`), so 3.1 adds a second small generator + oracle rather than regenerating the frozen Phase 1 set.
+
+PR #5 still has no review. Model for 3.1: Opus/Fable (oracle, fixture hashes).
+
+---
+
 ## ▶ Next session: review the Phase 2 overnight PR, decide D-55, then the Phase 2 gate
 
 **2026-10-20/21 unattended overnight run, branch `phase-2-overnight-2026-10-20` (off `phase-2`), draft PR #5 against `phase-2`: https://github.com/shanelabountyai/housefile/pull/5.** Tasks **2.2–2.10 all done**, each test-first against `housefile_test`, 19 commits, pushed. Nothing merged, nothing deployed, `main` untouched.
