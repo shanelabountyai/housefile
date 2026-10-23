@@ -1,0 +1,3580 @@
+{
+ "asOf": "2026-10-14",
+ "campaigns": {
+  "AF2024": {
+   "appeals": {
+    "Spring Mailer 2024": {
+     "average": 64467,
+     "donors": 100,
+     "gifts": 122,
+     "raised": 7865000,
+     "remainder": 26
+    },
+    "Year-End 2024": {
+     "average": 28671,
+     "donors": 80,
+     "gifts": 111,
+     "raised": 3182500,
+     "remainder": 19
+    }
+   },
+   "average": 47414,
+   "donors": 146,
+   "gifts": 233,
+   "raised": 11047500,
+   "remainder": 38
+  },
+  "AF2025": {
+   "appeals": {
+    "Gala 2025": {
+     "average": 40296,
+     "donors": 65,
+     "gifts": 76,
+     "raised": 3062500,
+     "remainder": 4
+    },
+    "Spring Mailer 2025": {
+     "average": 37702,
+     "donors": 61,
+     "gifts": 74,
+     "raised": 2790000,
+     "remainder": 52
+    },
+    "Year-End 2025": {
+     "average": 41911,
+     "donors": 64,
+     "gifts": 85,
+     "raised": 3562500,
+     "remainder": 65
+    }
+   },
+   "average": 40063,
+   "donors": 139,
+   "gifts": 235,
+   "raised": 9415000,
+   "remainder": 195
+  },
+  "AF2026": {
+   "appeals": {
+    "Gala 2026": {
+     "average": 36505,
+     "donors": 73,
+     "gifts": 88,
+     "raised": 3212500,
+     "remainder": 60
+    },
+    "P2P Run 2026": {
+     "average": 35000,
+     "donors": 48,
+     "gifts": 51,
+     "raised": 1785000,
+     "remainder": 0
+    },
+    "Spring Mailer 2026": {
+     "average": 27879,
+     "donors": 70,
+     "gifts": 79,
+     "raised": 2202500,
+     "remainder": 59
+    }
+   },
+   "average": 33027,
+   "donors": 149,
+   "gifts": 218,
+   "raised": 7200000,
+   "remainder": 114
+  },
+  "CAP2025": {
+   "appeals": {
+    "Capital Phase 1": {
+     "average": 40781,
+     "donors": 139,
+     "gifts": 243,
+     "raised": 9910000,
+     "remainder": 217
+    }
+   },
+   "average": 40781,
+   "donors": 139,
+   "gifts": 243,
+   "raised": 9910000,
+   "remainder": 217
+  }
+ },
+ "funds": {
+  "BLDG": {
+   "average": 56041,
+   "donors": 120,
+   "gifts": 204,
+   "raised": 11432500,
+   "remainder": 136
+  },
+  "GEN": {
+   "average": 34324,
+   "donors": 220,
+   "gifts": 522,
+   "raised": 17917500,
+   "remainder": 372
+  },
+  "SCHOL": {
+   "average": 40504,
+   "donors": 134,
+   "gifts": 203,
+   "raised": 8222500,
+   "remainder": 188
+  }
+ },
+ "households": {
+  "H0001": {
+   "givingCents": 675000,
+   "members": [
+    "C0001",
+    "C0002"
+   ],
+   "name": "Zoë Rivera and Victoria Whitfield"
+  },
+  "H0003": {
+   "givingCents": 0,
+   "members": [
+    "C0003"
+   ],
+   "name": "The Mitchell Household"
+  },
+  "H0004": {
+   "givingCents": 112500,
+   "members": [
+    "C0004"
+   ],
+   "name": "The Ramirez Household"
+  },
+  "H0005": {
+   "givingCents": 25000,
+   "members": [
+    "C0005"
+   ],
+   "name": "The Kowalski Household"
+  },
+  "H0007": {
+   "givingCents": 100000,
+   "members": [
+    "C0006"
+   ],
+   "name": "The Clark Household"
+  },
+  "H0008": {
+   "givingCents": 110000,
+   "members": [
+    "C0007"
+   ],
+   "name": "The Thomas Household"
+  },
+  "H0009": {
+   "givingCents": 0,
+   "members": [
+    "C0008"
+   ],
+   "name": "The White Household"
+  },
+  "H0010": {
+   "givingCents": 15000,
+   "members": [
+    "C0009"
+   ],
+   "name": "The Delacroix Household"
+  },
+  "H0011": {
+   "givingCents": 25000,
+   "members": [
+    "C0010"
+   ],
+   "name": "The Gonzalez Household"
+  },
+  "H0012": {
+   "givingCents": 282500,
+   "members": [
+    "C0011",
+    "C0012"
+   ],
+   "name": "The Hall Household"
+  },
+  "H0013": {
+   "givingCents": 165000,
+   "members": [
+    "C0013",
+    "C0014"
+   ],
+   "name": "The Perez Household"
+  },
+  "H0015": {
+   "givingCents": 102500,
+   "members": [
+    "C0015"
+   ],
+   "name": "The Wilson Household"
+  },
+  "H0016": {
+   "givingCents": 130000,
+   "members": [
+    "C0016"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0017": {
+   "givingCents": 107500,
+   "members": [
+    "C0017"
+   ],
+   "name": "The Sanchez Household"
+  },
+  "H0018": {
+   "givingCents": 10000,
+   "members": [
+    "C0018"
+   ],
+   "name": "The McCarthy Household"
+  },
+  "H0019": {
+   "givingCents": 50000,
+   "members": [
+    "C0019"
+   ],
+   "name": "The Oyelaran Household"
+  },
+  "H0020": {
+   "givingCents": 295000,
+   "members": [
+    "C0020"
+   ],
+   "name": "The Brown Household"
+  },
+  "H0021": {
+   "givingCents": 65000,
+   "members": [
+    "C0021"
+   ],
+   "name": "The Nakamura Household"
+  },
+  "H0023": {
+   "givingCents": 255000,
+   "members": [
+    "C0022",
+    "C0023"
+   ],
+   "name": "The Taylor Household"
+  },
+  "H0024": {
+   "givingCents": 37500,
+   "members": [
+    "C0024",
+    "C0025"
+   ],
+   "name": "The Flores Household"
+  },
+  "H0025": {
+   "givingCents": 380000,
+   "members": [
+    "C0026"
+   ],
+   "name": "The Harris Household"
+  },
+  "H0026": {
+   "givingCents": 252500,
+   "members": [
+    "C0027"
+   ],
+   "name": "The Adams Household"
+  },
+  "H0027": {
+   "givingCents": 265000,
+   "members": [
+    "C0028"
+   ],
+   "name": "The Nakamura Household"
+  },
+  "H0028": {
+   "givingCents": 15000,
+   "members": [
+    "C0029"
+   ],
+   "name": "The Kowalski Household"
+  },
+  "H0029": {
+   "givingCents": 250000,
+   "members": [
+    "C0030"
+   ],
+   "name": "The Garcia Household"
+  },
+  "H0031": {
+   "givingCents": 620000,
+   "members": [
+    "C0031"
+   ],
+   "name": "The Fitzgerald Household"
+  },
+  "H0032": {
+   "givingCents": 80000,
+   "members": [
+    "C0032"
+   ],
+   "name": "The Gonzalez Household"
+  },
+  "H0033": {
+   "givingCents": 80000,
+   "members": [
+    "C0033"
+   ],
+   "name": "The Rivera Household"
+  },
+  "H0035": {
+   "givingCents": 2500,
+   "members": [
+    "C0034"
+   ],
+   "name": "The Jackson Household"
+  },
+  "H0037": {
+   "givingCents": 760000,
+   "members": [
+    "C0035"
+   ],
+   "name": "The Young Household"
+  },
+  "H0038": {
+   "givingCents": 32500,
+   "members": [
+    "C0036"
+   ],
+   "name": "The Roberts Household"
+  },
+  "H0039": {
+   "givingCents": 55000,
+   "members": [
+    "C0037"
+   ],
+   "name": "The Jackson Household"
+  },
+  "H0041": {
+   "givingCents": 270000,
+   "members": [
+    "C0038",
+    "C0039"
+   ],
+   "name": "The Oyelaran Household"
+  },
+  "H0042": {
+   "givingCents": 27500,
+   "members": [
+    "C0040",
+    "C0041"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0043": {
+   "givingCents": 0,
+   "members": [
+    "C0042"
+   ],
+   "name": "The Kowalski Household"
+  },
+  "H0044": {
+   "givingCents": 145000,
+   "members": [
+    "C0043"
+   ],
+   "name": "The Lopez Household"
+  },
+  "H0045": {
+   "givingCents": 25000,
+   "members": [
+    "C0044"
+   ],
+   "name": "The O'Brien Household"
+  },
+  "H0047": {
+   "givingCents": 0,
+   "members": [
+    "C0045"
+   ],
+   "name": "The Haddad Household"
+  },
+  "H0048": {
+   "givingCents": 55000,
+   "members": [
+    "C0046"
+   ],
+   "name": "The Gonzalez Household"
+  },
+  "H0049": {
+   "givingCents": 105000,
+   "members": [
+    "C0047"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0050": {
+   "givingCents": 65000,
+   "members": [
+    "C0048"
+   ],
+   "name": "The Thomas Household"
+  },
+  "H0051": {
+   "givingCents": 32500,
+   "members": [
+    "C0049"
+   ],
+   "name": "The Miller Household"
+  },
+  "H0052": {
+   "givingCents": 110000,
+   "members": [
+    "C0050",
+    "C0051"
+   ],
+   "name": "The Kowalski Household"
+  },
+  "H0053": {
+   "givingCents": 37500,
+   "members": [
+    "C0052"
+   ],
+   "name": "The Nelson Household"
+  },
+  "H0055": {
+   "givingCents": 50000,
+   "members": [
+    "C0053"
+   ],
+   "name": "The Ramirez Household"
+  },
+  "H0056": {
+   "givingCents": 52500,
+   "members": [
+    "C0054"
+   ],
+   "name": "The Lindqvist Household"
+  },
+  "H0059": {
+   "givingCents": 5000,
+   "members": [
+    "C0055"
+   ],
+   "name": "The Jackson Household"
+  },
+  "H0060": {
+   "givingCents": 375000,
+   "members": [
+    "C0056"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0061": {
+   "givingCents": 215000,
+   "members": [
+    "C0057",
+    "C0058"
+   ],
+   "name": "The Okafor Household"
+  },
+  "H0062": {
+   "givingCents": 0,
+   "members": [
+    "C0059"
+   ],
+   "name": "The McCarthy Household"
+  },
+  "H0063": {
+   "givingCents": 102500,
+   "members": [
+    "C0060"
+   ],
+   "name": "The Thomas Household"
+  },
+  "H0066": {
+   "givingCents": 0,
+   "members": [
+    "C0061"
+   ],
+   "name": "The White Household"
+  },
+  "H0067": {
+   "givingCents": 112500,
+   "members": [
+    "C0062"
+   ],
+   "name": "The Anderson Household"
+  },
+  "H0068": {
+   "givingCents": 130000,
+   "members": [
+    "C0063"
+   ],
+   "name": "The Hernandez Household"
+  },
+  "H0069": {
+   "givingCents": 10000,
+   "members": [
+    "C0064"
+   ],
+   "name": "The Sanchez Household"
+  },
+  "H0071": {
+   "givingCents": 27500,
+   "members": [
+    "C0065"
+   ],
+   "name": "The Delacroix Household"
+  },
+  "H0072": {
+   "givingCents": 340000,
+   "members": [
+    "C0066"
+   ],
+   "name": "The Perez Household"
+  },
+  "H0073": {
+   "givingCents": 27500,
+   "members": [
+    "C0067",
+    "C0068"
+   ],
+   "name": "The Anderson Household"
+  },
+  "H0075": {
+   "givingCents": 42500,
+   "members": [
+    "C0069",
+    "C0070"
+   ],
+   "name": "The Brown Household"
+  },
+  "H0076": {
+   "givingCents": 5000,
+   "members": [
+    "C0071"
+   ],
+   "name": "The Harris Household"
+  },
+  "H0077": {
+   "givingCents": 15000,
+   "members": [
+    "C0072",
+    "C0073"
+   ],
+   "name": "The Carter Household"
+  },
+  "H0079": {
+   "givingCents": 67500,
+   "members": [
+    "C0074"
+   ],
+   "name": "The Torres Household"
+  },
+  "H0080": {
+   "givingCents": 57500,
+   "members": [
+    "C0075"
+   ],
+   "name": "The Walker Household"
+  },
+  "H0081": {
+   "givingCents": 260000,
+   "members": [
+    "C0076"
+   ],
+   "name": "The Fitzgerald Household"
+  },
+  "H0082": {
+   "givingCents": 365000,
+   "members": [
+    "C0077"
+   ],
+   "name": "The Lopez Household"
+  },
+  "H0083": {
+   "givingCents": 325000,
+   "members": [
+    "C0078"
+   ],
+   "name": "The Miller Household"
+  },
+  "H0084": {
+   "givingCents": 400000,
+   "members": [
+    "C0079",
+    "C0080"
+   ],
+   "name": "The Fitzgerald Household"
+  },
+  "H0085": {
+   "givingCents": 5000,
+   "members": [
+    "C0081"
+   ],
+   "name": "The Campbell Household"
+  },
+  "H0086": {
+   "givingCents": 77500,
+   "members": [
+    "C0082"
+   ],
+   "name": "The Garcia Household"
+  },
+  "H0087": {
+   "givingCents": 27500,
+   "members": [
+    "C0083",
+    "C0084"
+   ],
+   "name": "The Brennan Household"
+  },
+  "H0088": {
+   "givingCents": 0,
+   "members": [
+    "C0085"
+   ],
+   "name": "The Moore Household"
+  },
+  "H0089": {
+   "givingCents": 15000,
+   "members": [
+    "C0086"
+   ],
+   "name": "The Lewis Household"
+  },
+  "H0090": {
+   "givingCents": 357500,
+   "members": [
+    "C0087"
+   ],
+   "name": "The Harris Household"
+  },
+  "H0091": {
+   "givingCents": 2500,
+   "members": [
+    "C0088"
+   ],
+   "name": "The Gonzalez Household"
+  },
+  "H0092": {
+   "givingCents": 40000,
+   "members": [
+    "C0089"
+   ],
+   "name": "The Lindqvist Household"
+  },
+  "H0093": {
+   "givingCents": 90000,
+   "members": [
+    "C0090"
+   ],
+   "name": "The Hernandez Household"
+  },
+  "H0094": {
+   "givingCents": 362500,
+   "members": [
+    "C0091",
+    "C0092"
+   ],
+   "name": "The Chen Household"
+  },
+  "H0096": {
+   "givingCents": 0,
+   "members": [
+    "C0093"
+   ],
+   "name": "The Oyelaran Household"
+  },
+  "H0097": {
+   "givingCents": 167500,
+   "members": [
+    "C0094",
+    "C0095"
+   ],
+   "name": "The Kim Household"
+  },
+  "H0098": {
+   "givingCents": 42500,
+   "members": [
+    "C0096"
+   ],
+   "name": "The King Household"
+  },
+  "H0099": {
+   "givingCents": 462500,
+   "members": [
+    "C0097"
+   ],
+   "name": "The Delacroix Household"
+  },
+  "H0100": {
+   "givingCents": 0,
+   "members": [
+    "C0098"
+   ],
+   "name": "The Okafor Household"
+  },
+  "H0101": {
+   "givingCents": 307500,
+   "members": [
+    "C0099"
+   ],
+   "name": "The Kim Household"
+  },
+  "H0102": {
+   "givingCents": 0,
+   "members": [
+    "C0100"
+   ],
+   "name": "The Jones Household"
+  },
+  "H0103": {
+   "givingCents": 50000,
+   "members": [
+    "C0101"
+   ],
+   "name": "The Whitfield Household"
+  },
+  "H0104": {
+   "givingCents": 15000,
+   "members": [
+    "C0102"
+   ],
+   "name": "The McCarthy Household"
+  },
+  "H0105": {
+   "givingCents": 97500,
+   "members": [
+    "C0103"
+   ],
+   "name": "The Flores Household"
+  },
+  "H0106": {
+   "givingCents": 40000,
+   "members": [
+    "C0104"
+   ],
+   "name": "The Miller Household"
+  },
+  "H0107": {
+   "givingCents": 100000,
+   "members": [
+    "C0105"
+   ],
+   "name": "The Sanchez Household"
+  },
+  "H0108": {
+   "givingCents": 0,
+   "members": [
+    "C0106"
+   ],
+   "name": "The Jones Household"
+  },
+  "H0109": {
+   "givingCents": 77500,
+   "members": [
+    "C0107"
+   ],
+   "name": "The Castellano Household"
+  },
+  "H0110": {
+   "givingCents": 30000,
+   "members": [
+    "C0108"
+   ],
+   "name": "The Whitfield Household"
+  },
+  "H0111": {
+   "givingCents": 400000,
+   "members": [
+    "C0109",
+    "C0110"
+   ],
+   "name": "Elizabeth Haddad and Paul Brennan"
+  },
+  "H0113": {
+   "givingCents": 32500,
+   "members": [
+    "C0111"
+   ],
+   "name": "The Oyelaran Household"
+  },
+  "H0114": {
+   "givingCents": 0,
+   "members": [
+    "C0112"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0116": {
+   "givingCents": 80000,
+   "members": [
+    "C0113"
+   ],
+   "name": "The Kowalski Household"
+  },
+  "H0119": {
+   "givingCents": 0,
+   "members": [
+    "C0114"
+   ],
+   "name": "The Ramirez Household"
+  },
+  "H0120": {
+   "givingCents": 42500,
+   "members": [
+    "C0115",
+    "C0116"
+   ],
+   "name": "The Kim Household"
+  },
+  "H0121": {
+   "givingCents": 0,
+   "members": [
+    "C0117"
+   ],
+   "name": "The Fitzgerald Household"
+  },
+  "H0123": {
+   "givingCents": 50000,
+   "members": [
+    "C0118"
+   ],
+   "name": "The McCarthy Household"
+  },
+  "H0124": {
+   "givingCents": 272500,
+   "members": [
+    "C0119"
+   ],
+   "name": "The Ramirez Household"
+  },
+  "H0126": {
+   "givingCents": 12500,
+   "members": [
+    "C0120"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0129": {
+   "givingCents": 187500,
+   "members": [
+    "C0121"
+   ],
+   "name": "The Torres Household"
+  },
+  "H0130": {
+   "givingCents": 355000,
+   "members": [
+    "C0122"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0136": {
+   "givingCents": 380000,
+   "members": [
+    "C0123",
+    "C0124"
+   ],
+   "name": "The Sanchez Household"
+  },
+  "H0137": {
+   "givingCents": 742500,
+   "members": [
+    "C0125",
+    "C0126"
+   ],
+   "name": "William Oyelaran and Steven Jackson"
+  },
+  "H0142": {
+   "givingCents": 90000,
+   "members": [
+    "C0127"
+   ],
+   "name": "The Campbell Household"
+  },
+  "H0143": {
+   "givingCents": 425000,
+   "members": [
+    "C0128"
+   ],
+   "name": "The Flores Household"
+  },
+  "H0145": {
+   "givingCents": 392500,
+   "members": [
+    "C0129"
+   ],
+   "name": "The Patel Household"
+  },
+  "H0147": {
+   "givingCents": 17500,
+   "members": [
+    "C0130",
+    "C0131"
+   ],
+   "name": "David Flores and Sophia Thompson"
+  },
+  "H0149": {
+   "givingCents": 15000,
+   "members": [
+    "C0132",
+    "C0133"
+   ],
+   "name": "Larry Haddad and Mikey Nelson"
+  },
+  "H0150": {
+   "givingCents": 60000,
+   "members": [
+    "C0134",
+    "C0135"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0153": {
+   "givingCents": 250000,
+   "members": [
+    "C0136"
+   ],
+   "name": "The Clark Household"
+  },
+  "H0154": {
+   "givingCents": 115000,
+   "members": [
+    "C0137",
+    "C0138"
+   ],
+   "name": "The Scott Household"
+  },
+  "H0155": {
+   "givingCents": 222500,
+   "members": [
+    "C0139"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0157": {
+   "givingCents": 50000,
+   "members": [
+    "C0140",
+    "C0141"
+   ],
+   "name": "Samuel Nakamura and Alexander Allen"
+  },
+  "H0158": {
+   "givingCents": 20000,
+   "members": [
+    "C0142"
+   ],
+   "name": "The Lewis Household"
+  },
+  "H0160": {
+   "givingCents": 510000,
+   "members": [
+    "C0143"
+   ],
+   "name": "The Jackson Household"
+  },
+  "H0161": {
+   "givingCents": 0,
+   "members": [
+    "C0144"
+   ],
+   "name": "The Mitchell Household"
+  },
+  "H0162": {
+   "givingCents": 247500,
+   "members": [
+    "C0145"
+   ],
+   "name": "The Oyelaran Household"
+  },
+  "H0163": {
+   "givingCents": 2500,
+   "members": [
+    "C0146"
+   ],
+   "name": "The Taylor Household"
+  },
+  "H0164": {
+   "givingCents": 85000,
+   "members": [
+    "C0147"
+   ],
+   "name": "The Williams Household"
+  },
+  "H0166": {
+   "givingCents": 160000,
+   "members": [
+    "C0148",
+    "C0149"
+   ],
+   "name": "Aisha Smith and Alexander Carter"
+  },
+  "H0167": {
+   "givingCents": 55000,
+   "members": [
+    "C0150"
+   ],
+   "name": "The Chen Household"
+  },
+  "H0170": {
+   "givingCents": 15000,
+   "members": [
+    "C0151"
+   ],
+   "name": "The Mitchell Household"
+  },
+  "H0171": {
+   "givingCents": 2500,
+   "members": [
+    "C0152"
+   ],
+   "name": "The Nguyen Household"
+  },
+  "H0173": {
+   "givingCents": 0,
+   "members": [
+    "C0153"
+   ],
+   "name": "The Garcia Household"
+  },
+  "H0174": {
+   "givingCents": 427500,
+   "members": [
+    "C0154"
+   ],
+   "name": "The Brown Household"
+  },
+  "H0175": {
+   "givingCents": 0,
+   "members": [
+    "C0155",
+    "C0156"
+   ],
+   "name": "The Hill Household"
+  },
+  "H0177": {
+   "givingCents": 30000,
+   "members": [
+    "C0157"
+   ],
+   "name": "The Moore Household"
+  },
+  "H0178": {
+   "givingCents": 250000,
+   "members": [
+    "C0158",
+    "C0159"
+   ],
+   "name": "The Jones Household"
+  },
+  "H0180": {
+   "givingCents": 102500,
+   "members": [
+    "C0160"
+   ],
+   "name": "The Hall Household"
+  },
+  "H0181": {
+   "givingCents": 392500,
+   "members": [
+    "C0161",
+    "C0162"
+   ],
+   "name": "The Taylor Household"
+  },
+  "H0182": {
+   "givingCents": 15000,
+   "members": [
+    "C0163"
+   ],
+   "name": "The Okafor Household"
+  },
+  "H0184": {
+   "givingCents": 437500,
+   "members": [
+    "C0164",
+    "C0165"
+   ],
+   "name": "The Martin Household"
+  },
+  "H0186": {
+   "givingCents": 35000,
+   "members": [
+    "C0166"
+   ],
+   "name": "The Hill Household"
+  },
+  "H0187": {
+   "givingCents": 160000,
+   "members": [
+    "C0167"
+   ],
+   "name": "The Baker Household"
+  },
+  "H0188": {
+   "givingCents": 25000,
+   "members": [
+    "C0168"
+   ],
+   "name": "The Davis Household"
+  },
+  "H0190": {
+   "givingCents": 310000,
+   "members": [
+    "C0169"
+   ],
+   "name": "The Roberts Household"
+  },
+  "H0191": {
+   "givingCents": 325000,
+   "members": [
+    "C0170"
+   ],
+   "name": "The Wright Household"
+  },
+  "H0192": {
+   "givingCents": 10000,
+   "members": [
+    "C0171"
+   ],
+   "name": "The Rivera Household"
+  },
+  "H0193": {
+   "givingCents": 0,
+   "members": [
+    "C0172"
+   ],
+   "name": "The White Household"
+  },
+  "H0194": {
+   "givingCents": 157500,
+   "members": [
+    "C0173",
+    "C0174"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0195": {
+   "givingCents": 255000,
+   "members": [
+    "C0175"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0196": {
+   "givingCents": 112500,
+   "members": [
+    "C0176",
+    "C0177"
+   ],
+   "name": "Virginia Rivera and Diego Oyelaran"
+  },
+  "H0200": {
+   "givingCents": 10000,
+   "members": [
+    "C0178"
+   ],
+   "name": "The Kim Household"
+  },
+  "H0201": {
+   "givingCents": 15000,
+   "members": [
+    "C0179"
+   ],
+   "name": "The Nelson Household"
+  },
+  "H0202": {
+   "givingCents": 610000,
+   "members": [
+    "C0180"
+   ],
+   "name": "The Oyelaran Household"
+  },
+  "H0203": {
+   "givingCents": 215000,
+   "members": [
+    "C0181",
+    "C0182"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0204": {
+   "givingCents": 0,
+   "members": [
+    "C0183"
+   ],
+   "name": "The Flores Household"
+  },
+  "H0205": {
+   "givingCents": 160000,
+   "members": [
+    "C0184"
+   ],
+   "name": "The Rivera Household"
+  },
+  "H0207": {
+   "givingCents": 52500,
+   "members": [
+    "C0185"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0208": {
+   "givingCents": 25000,
+   "members": [
+    "C0186"
+   ],
+   "name": "The Davis Household"
+  },
+  "H0209": {
+   "givingCents": 35000,
+   "members": [
+    "C0187"
+   ],
+   "name": "The Mitchell Household"
+  },
+  "H0210": {
+   "givingCents": 30000,
+   "members": [
+    "C0188",
+    "C0189"
+   ],
+   "name": "The Perez Household"
+  },
+  "H0211": {
+   "givingCents": 2500,
+   "members": [
+    "C0190"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0212": {
+   "givingCents": 110000,
+   "members": [
+    "C0191"
+   ],
+   "name": "The Miller Household"
+  },
+  "H0213": {
+   "givingCents": 212500,
+   "members": [
+    "C0192"
+   ],
+   "name": "The Ramirez Household"
+  },
+  "H0214": {
+   "givingCents": 45000,
+   "members": [
+    "C0193"
+   ],
+   "name": "The Clark Household"
+  },
+  "H0216": {
+   "givingCents": 20000,
+   "members": [
+    "C0194"
+   ],
+   "name": "The White Household"
+  },
+  "H0217": {
+   "givingCents": 25000,
+   "members": [
+    "C0195"
+   ],
+   "name": "The Torres Household"
+  },
+  "H0218": {
+   "givingCents": 55000,
+   "members": [
+    "C0196"
+   ],
+   "name": "The Hall Household"
+  },
+  "H0220": {
+   "givingCents": 40000,
+   "members": [
+    "C0197"
+   ],
+   "name": "The Campbell Household"
+  },
+  "H0222": {
+   "givingCents": 265000,
+   "members": [
+    "C0198"
+   ],
+   "name": "The Roberts Household"
+  },
+  "H0223": {
+   "givingCents": 305000,
+   "members": [
+    "C0199",
+    "C0200"
+   ],
+   "name": "The Clark Household"
+  },
+  "H0224": {
+   "givingCents": 290000,
+   "members": [
+    "C0201",
+    "C0202"
+   ],
+   "name": "The Allen Household"
+  },
+  "H0225": {
+   "givingCents": 15000,
+   "members": [
+    "C0203"
+   ],
+   "name": "The Ramirez Household"
+  },
+  "H0226": {
+   "givingCents": 717500,
+   "members": [
+    "C0204",
+    "C0205"
+   ],
+   "name": "The Fitzgerald Household"
+  },
+  "H0227": {
+   "givingCents": 10000,
+   "members": [
+    "C0206"
+   ],
+   "name": "The Young Household"
+  },
+  "H0228": {
+   "givingCents": 245000,
+   "members": [
+    "C0207"
+   ],
+   "name": "The Okafor Household"
+  },
+  "H0229": {
+   "givingCents": 27500,
+   "members": [
+    "C0208",
+    "C0209"
+   ],
+   "name": "The Thomas Household"
+  },
+  "H0233": {
+   "givingCents": 240000,
+   "members": [
+    "C0210"
+   ],
+   "name": "The Taylor Household"
+  },
+  "H0235": {
+   "givingCents": 25000,
+   "members": [
+    "C0211"
+   ],
+   "name": "The Young Household"
+  },
+  "H0236": {
+   "givingCents": 155000,
+   "members": [
+    "C0212",
+    "C0213"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0237": {
+   "givingCents": 527500,
+   "members": [
+    "C0214"
+   ],
+   "name": "The Lee Household"
+  },
+  "H0238": {
+   "givingCents": 162500,
+   "members": [
+    "C0215"
+   ],
+   "name": "The Williams Household"
+  },
+  "H0239": {
+   "givingCents": 12500,
+   "members": [
+    "C0216"
+   ],
+   "name": "The Williams Household"
+  },
+  "H0240": {
+   "givingCents": 100000,
+   "members": [
+    "C0217"
+   ],
+   "name": "The Jackson Household"
+  },
+  "H0241": {
+   "givingCents": 15000,
+   "members": [
+    "C0218"
+   ],
+   "name": "The Haddad Household"
+  },
+  "H0242": {
+   "givingCents": 132500,
+   "members": [
+    "C0219"
+   ],
+   "name": "The Williams Household"
+  },
+  "H0244": {
+   "givingCents": 122500,
+   "members": [
+    "C0220"
+   ],
+   "name": "The Robinson Household"
+  },
+  "H0245": {
+   "givingCents": 5000,
+   "members": [
+    "C0221"
+   ],
+   "name": "The Moore Household"
+  },
+  "H0247": {
+   "givingCents": 637500,
+   "members": [
+    "C0222"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0248": {
+   "givingCents": 77500,
+   "members": [
+    "C0223"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0249": {
+   "givingCents": 710000,
+   "members": [
+    "C0224"
+   ],
+   "name": "The Mitchell Household"
+  },
+  "H0251": {
+   "givingCents": 67500,
+   "members": [
+    "C0225"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0252": {
+   "givingCents": 115000,
+   "members": [
+    "C0226"
+   ],
+   "name": "The Green Household"
+  },
+  "H0253": {
+   "givingCents": 292500,
+   "members": [
+    "C0227",
+    "C0228"
+   ],
+   "name": "The Kowalski Household"
+  },
+  "H0255": {
+   "givingCents": 0,
+   "members": [
+    "C0229"
+   ],
+   "name": "The Adams Household"
+  },
+  "H0257": {
+   "givingCents": 2500,
+   "members": [
+    "C0230"
+   ],
+   "name": "The Wilson Household"
+  },
+  "H0258": {
+   "givingCents": 365000,
+   "members": [
+    "C0231",
+    "C0232"
+   ],
+   "name": "The Wright Household"
+  },
+  "H0259": {
+   "givingCents": 30000,
+   "members": [
+    "C0233",
+    "C0234"
+   ],
+   "name": "The Whitfield Household"
+  },
+  "H0260": {
+   "givingCents": 35000,
+   "members": [
+    "C0235"
+   ],
+   "name": "The Young Household"
+  },
+  "H0261": {
+   "givingCents": 192500,
+   "members": [
+    "C0236",
+    "C0237"
+   ],
+   "name": "Björn Smith and Zoë Okafor"
+  },
+  "H0262": {
+   "givingCents": 110000,
+   "members": [
+    "C0238"
+   ],
+   "name": "The Moore Household"
+  },
+  "H0263": {
+   "givingCents": 240000,
+   "members": [
+    "C0239"
+   ],
+   "name": "The Brown Household"
+  },
+  "H0264": {
+   "givingCents": 300000,
+   "members": [
+    "C0240",
+    "C0241"
+   ],
+   "name": "The Lewis Household"
+  },
+  "H0266": {
+   "givingCents": 35000,
+   "members": [
+    "C0242"
+   ],
+   "name": "The Jones Household"
+  },
+  "H0267": {
+   "givingCents": 110000,
+   "members": [
+    "C0243"
+   ],
+   "name": "The Kowalski Household"
+  },
+  "H0268": {
+   "givingCents": 267500,
+   "members": [
+    "C0244"
+   ],
+   "name": "The Nelson Household"
+  },
+  "H0269": {
+   "givingCents": 0,
+   "members": [
+    "C0245"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0272": {
+   "givingCents": 35000,
+   "members": [
+    "C0246"
+   ],
+   "name": "The Delacroix Household"
+  },
+  "H0273": {
+   "givingCents": 300000,
+   "members": [
+    "C0247"
+   ],
+   "name": "The Garcia Household"
+  },
+  "H0274": {
+   "givingCents": 822500,
+   "members": [
+    "C0248"
+   ],
+   "name": "The Davis Household"
+  },
+  "H0276": {
+   "givingCents": 40000,
+   "members": [
+    "C0249",
+    "C0250"
+   ],
+   "name": "The Hernandez Household"
+  },
+  "H0277": {
+   "givingCents": 17500,
+   "members": [
+    "C0251"
+   ],
+   "name": "The Harris Household"
+  },
+  "H0278": {
+   "givingCents": 375000,
+   "members": [
+    "C0252"
+   ],
+   "name": "The Williams Household"
+  },
+  "H0280": {
+   "givingCents": 50000,
+   "members": [
+    "C0253"
+   ],
+   "name": "The Taylor Household"
+  },
+  "H0281": {
+   "givingCents": 295000,
+   "members": [
+    "C0254"
+   ],
+   "name": "The Davis Household"
+  },
+  "H0282": {
+   "givingCents": 20000,
+   "members": [
+    "C0255"
+   ],
+   "name": "The Taylor Household"
+  },
+  "H0283": {
+   "givingCents": 312500,
+   "members": [
+    "C0256"
+   ],
+   "name": "The Mitchell Household"
+  },
+  "H0285": {
+   "givingCents": 900000,
+   "members": [
+    "C0257"
+   ],
+   "name": "The Brown Household"
+  },
+  "H0286": {
+   "givingCents": 340000,
+   "members": [
+    "C0258"
+   ],
+   "name": "The Ramirez Household"
+  },
+  "H0287": {
+   "givingCents": 30000,
+   "members": [
+    "C0259"
+   ],
+   "name": "The Carter Household"
+  },
+  "H0288": {
+   "givingCents": 0,
+   "members": [
+    "C0260"
+   ],
+   "name": "The Thompson Household"
+  },
+  "H0289": {
+   "givingCents": 275000,
+   "members": [
+    "C0261"
+   ],
+   "name": "The King Household"
+  },
+  "H0290": {
+   "givingCents": 0,
+   "members": [
+    "C0262"
+   ],
+   "name": "The Nelson Household"
+  },
+  "H0291": {
+   "givingCents": 50000,
+   "members": [
+    "C0263"
+   ],
+   "name": "The Martinez Household"
+  },
+  "H0292": {
+   "givingCents": 20000,
+   "members": [
+    "C0264",
+    "C0265"
+   ],
+   "name": "The Scott Household"
+  },
+  "H0293": {
+   "givingCents": 15000,
+   "members": [
+    "C0266"
+   ],
+   "name": "The Scott Household"
+  },
+  "H0295": {
+   "givingCents": 25000,
+   "members": [
+    "C0267"
+   ],
+   "name": "The Rodriguez Household"
+  },
+  "H0296": {
+   "givingCents": 92500,
+   "members": [
+    "C0268"
+   ],
+   "name": "The Van der Berg Household"
+  },
+  "H0297": {
+   "givingCents": 57500,
+   "members": [
+    "C0269"
+   ],
+   "name": "The Wilson Household"
+  },
+  "H0298": {
+   "givingCents": 285000,
+   "members": [
+    "C0270"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0301": {
+   "givingCents": 377500,
+   "members": [
+    "C0271",
+    "C0272"
+   ],
+   "name": "The Brennan Household"
+  },
+  "H0302": {
+   "givingCents": 102500,
+   "members": [
+    "C0273",
+    "C0274"
+   ],
+   "name": "The Gonzalez Household"
+  },
+  "H0303": {
+   "givingCents": 195000,
+   "members": [
+    "C0275",
+    "C0276"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0304": {
+   "givingCents": 2627500,
+   "members": [
+    "C0277",
+    "C0278"
+   ],
+   "name": "The Martin Household"
+  },
+  "H0305": {
+   "givingCents": 500000,
+   "members": [
+    "C0279"
+   ],
+   "name": "The Garcia Household"
+  },
+  "H0306": {
+   "givingCents": 395000,
+   "members": [
+    "C0280"
+   ],
+   "name": "The Garcia Household"
+  },
+  "H0307": {
+   "givingCents": 60000,
+   "members": [
+    "C0281"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0308": {
+   "givingCents": 0,
+   "members": [
+    "C0282"
+   ],
+   "name": "The Smith Household"
+  },
+  "H0309": {
+   "givingCents": 50000,
+   "members": [
+    "C0283"
+   ],
+   "name": "The Johnson Household"
+  },
+  "H0310": {
+   "givingCents": 320000,
+   "members": [
+    "C0284"
+   ],
+   "name": "The Johnson Household"
+  },
+  "H0311": {
+   "givingCents": 25000,
+   "members": [
+    "C0285"
+   ],
+   "name": "The Nguyen Household"
+  },
+  "H0312": {
+   "givingCents": 25000,
+   "members": [
+    "C0286"
+   ],
+   "name": "The Nguyen Household"
+  }
+ },
+ "pledges": {
+  "PL001": {
+   "balanceCents": 0,
+   "constituentId": "C0280",
+   "paidCents": 360000,
+   "payments": 4,
+   "totalCents": 360000
+  },
+  "PL002": {
+   "balanceCents": 50000,
+   "constituentId": "C0090",
+   "paidCents": 50000,
+   "payments": 1,
+   "totalCents": 100000
+  },
+  "PL003": {
+   "balanceCents": 60000,
+   "constituentId": "C0077",
+   "paidCents": 240000,
+   "payments": 4,
+   "totalCents": 300000
+  },
+  "PL004": {
+   "balanceCents": 240000,
+   "constituentId": "C0247",
+   "paidCents": 120000,
+   "payments": 1,
+   "totalCents": 360000
+  },
+  "PL005": {
+   "balanceCents": 125000,
+   "constituentId": "C0261",
+   "paidCents": 125000,
+   "payments": 1,
+   "totalCents": 250000
+  },
+  "PL006": {
+   "balanceCents": 0,
+   "constituentId": "C0170",
+   "paidCents": 300000,
+   "payments": 5,
+   "totalCents": 300000
+  },
+  "PL007": {
+   "balanceCents": 80000,
+   "constituentId": "C0184",
+   "paidCents": 160000,
+   "payments": 2,
+   "totalCents": 240000
+  },
+  "PL008": {
+   "balanceCents": 25000,
+   "constituentId": "C0164",
+   "paidCents": 75000,
+   "payments": 3,
+   "totalCents": 100000
+  },
+  "PL009": {
+   "balanceCents": 120000,
+   "constituentId": "C0270",
+   "paidCents": 180000,
+   "payments": 3,
+   "totalCents": 300000
+  },
+  "PL010": {
+   "balanceCents": 60000,
+   "constituentId": "C0182",
+   "paidCents": 180000,
+   "payments": 3,
+   "totalCents": 240000
+  },
+  "PL011": {
+   "balanceCents": 25000,
+   "constituentId": "C0078",
+   "paidCents": 75000,
+   "payments": 3,
+   "totalCents": 100000
+  },
+  "PL012": {
+   "balanceCents": 400000,
+   "constituentId": "C0224",
+   "paidCents": 600000,
+   "payments": 3,
+   "totalCents": 1000000
+  },
+  "PL013": {
+   "balanceCents": 0,
+   "constituentId": "C0159",
+   "paidCents": 120000,
+   "payments": 3,
+   "totalCents": 120000
+  },
+  "PL014": {
+   "balanceCents": 75000,
+   "constituentId": "C0227",
+   "paidCents": 25000,
+   "payments": 1,
+   "totalCents": 100000
+  },
+  "PL015": {
+   "balanceCents": 375000,
+   "constituentId": "C0222",
+   "paidCents": 625000,
+   "payments": 5,
+   "totalCents": 1000000
+  },
+  "PL016": {
+   "balanceCents": 150000,
+   "constituentId": "C0139",
+   "paidCents": 210000,
+   "payments": 7,
+   "totalCents": 360000
+  },
+  "PL017": {
+   "balanceCents": 0,
+   "constituentId": "C0122",
+   "paidCents": 100000,
+   "payments": 2,
+   "totalCents": 100000
+  },
+  "PL018": {
+   "balanceCents": 500000,
+   "constituentId": "C0031",
+   "paidCents": 500000,
+   "payments": 2,
+   "totalCents": 1000000
+  }
+ },
+ "recognition": {
+  "C0001": {
+   "hardCents": 385000,
+   "softCents": 0,
+   "totalCents": 385000
+  },
+  "C0002": {
+   "hardCents": 290000,
+   "softCents": 10000,
+   "totalCents": 300000
+  },
+  "C0004": {
+   "hardCents": 112500,
+   "softCents": 0,
+   "totalCents": 112500
+  },
+  "C0005": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0006": {
+   "hardCents": 100000,
+   "softCents": 0,
+   "totalCents": 100000
+  },
+  "C0007": {
+   "hardCents": 110000,
+   "softCents": 0,
+   "totalCents": 110000
+  },
+  "C0009": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0010": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0011": {
+   "hardCents": 282500,
+   "softCents": 0,
+   "totalCents": 282500
+  },
+  "C0013": {
+   "hardCents": 100000,
+   "softCents": 0,
+   "totalCents": 100000
+  },
+  "C0014": {
+   "hardCents": 65000,
+   "softCents": 0,
+   "totalCents": 65000
+  },
+  "C0015": {
+   "hardCents": 102500,
+   "softCents": 0,
+   "totalCents": 102500
+  },
+  "C0016": {
+   "hardCents": 130000,
+   "softCents": 0,
+   "totalCents": 130000
+  },
+  "C0017": {
+   "hardCents": 107500,
+   "softCents": 0,
+   "totalCents": 107500
+  },
+  "C0018": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0019": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0020": {
+   "hardCents": 295000,
+   "softCents": 0,
+   "totalCents": 295000
+  },
+  "C0021": {
+   "hardCents": 65000,
+   "softCents": 0,
+   "totalCents": 65000
+  },
+  "C0022": {
+   "hardCents": 215000,
+   "softCents": 35000,
+   "totalCents": 250000
+  },
+  "C0023": {
+   "hardCents": 40000,
+   "softCents": 0,
+   "totalCents": 40000
+  },
+  "C0024": {
+   "hardCents": 0,
+   "softCents": 2500,
+   "totalCents": 2500
+  },
+  "C0025": {
+   "hardCents": 37500,
+   "softCents": 0,
+   "totalCents": 37500
+  },
+  "C0026": {
+   "hardCents": 380000,
+   "softCents": 0,
+   "totalCents": 380000
+  },
+  "C0027": {
+   "hardCents": 252500,
+   "softCents": 0,
+   "totalCents": 252500
+  },
+  "C0028": {
+   "hardCents": 265000,
+   "softCents": 0,
+   "totalCents": 265000
+  },
+  "C0029": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0030": {
+   "hardCents": 250000,
+   "softCents": 0,
+   "totalCents": 250000
+  },
+  "C0031": {
+   "hardCents": 620000,
+   "softCents": 0,
+   "totalCents": 620000
+  },
+  "C0032": {
+   "hardCents": 80000,
+   "softCents": 0,
+   "totalCents": 80000
+  },
+  "C0033": {
+   "hardCents": 80000,
+   "softCents": 0,
+   "totalCents": 80000
+  },
+  "C0034": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0035": {
+   "hardCents": 760000,
+   "softCents": 0,
+   "totalCents": 760000
+  },
+  "C0036": {
+   "hardCents": 32500,
+   "softCents": 0,
+   "totalCents": 32500
+  },
+  "C0037": {
+   "hardCents": 55000,
+   "softCents": 0,
+   "totalCents": 55000
+  },
+  "C0038": {
+   "hardCents": 250000,
+   "softCents": 0,
+   "totalCents": 250000
+  },
+  "C0039": {
+   "hardCents": 20000,
+   "softCents": 250000,
+   "totalCents": 270000
+  },
+  "C0041": {
+   "hardCents": 27500,
+   "softCents": 0,
+   "totalCents": 27500
+  },
+  "C0043": {
+   "hardCents": 145000,
+   "softCents": 15000,
+   "totalCents": 160000
+  },
+  "C0044": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0046": {
+   "hardCents": 55000,
+   "softCents": 0,
+   "totalCents": 55000
+  },
+  "C0047": {
+   "hardCents": 105000,
+   "softCents": 0,
+   "totalCents": 105000
+  },
+  "C0048": {
+   "hardCents": 65000,
+   "softCents": 0,
+   "totalCents": 65000
+  },
+  "C0049": {
+   "hardCents": 32500,
+   "softCents": 0,
+   "totalCents": 32500
+  },
+  "C0050": {
+   "hardCents": 55000,
+   "softCents": 0,
+   "totalCents": 55000
+  },
+  "C0051": {
+   "hardCents": 55000,
+   "softCents": 0,
+   "totalCents": 55000
+  },
+  "C0052": {
+   "hardCents": 37500,
+   "softCents": 0,
+   "totalCents": 37500
+  },
+  "C0053": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0054": {
+   "hardCents": 52500,
+   "softCents": 0,
+   "totalCents": 52500
+  },
+  "C0055": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0056": {
+   "hardCents": 375000,
+   "softCents": 0,
+   "totalCents": 375000
+  },
+  "C0057": {
+   "hardCents": 75000,
+   "softCents": 0,
+   "totalCents": 75000
+  },
+  "C0058": {
+   "hardCents": 140000,
+   "softCents": 25000,
+   "totalCents": 165000
+  },
+  "C0060": {
+   "hardCents": 102500,
+   "softCents": 0,
+   "totalCents": 102500
+  },
+  "C0062": {
+   "hardCents": 112500,
+   "softCents": 0,
+   "totalCents": 112500
+  },
+  "C0063": {
+   "hardCents": 130000,
+   "softCents": 0,
+   "totalCents": 130000
+  },
+  "C0064": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0065": {
+   "hardCents": 27500,
+   "softCents": 0,
+   "totalCents": 27500
+  },
+  "C0066": {
+   "hardCents": 340000,
+   "softCents": 0,
+   "totalCents": 340000
+  },
+  "C0067": {
+   "hardCents": 0,
+   "softCents": 2500,
+   "totalCents": 2500
+  },
+  "C0068": {
+   "hardCents": 27500,
+   "softCents": 0,
+   "totalCents": 27500
+  },
+  "C0069": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0070": {
+   "hardCents": 40000,
+   "softCents": 2500,
+   "totalCents": 42500
+  },
+  "C0071": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0072": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0073": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0074": {
+   "hardCents": 67500,
+   "softCents": 0,
+   "totalCents": 67500
+  },
+  "C0075": {
+   "hardCents": 57500,
+   "softCents": 0,
+   "totalCents": 57500
+  },
+  "C0076": {
+   "hardCents": 260000,
+   "softCents": 0,
+   "totalCents": 260000
+  },
+  "C0077": {
+   "hardCents": 365000,
+   "softCents": 0,
+   "totalCents": 365000
+  },
+  "C0078": {
+   "hardCents": 325000,
+   "softCents": 0,
+   "totalCents": 325000
+  },
+  "C0079": {
+   "hardCents": 75000,
+   "softCents": 0,
+   "totalCents": 75000
+  },
+  "C0080": {
+   "hardCents": 325000,
+   "softCents": 0,
+   "totalCents": 325000
+  },
+  "C0081": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0082": {
+   "hardCents": 77500,
+   "softCents": 0,
+   "totalCents": 77500
+  },
+  "C0083": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0084": {
+   "hardCents": 12500,
+   "softCents": 0,
+   "totalCents": 12500
+  },
+  "C0086": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0087": {
+   "hardCents": 357500,
+   "softCents": 0,
+   "totalCents": 357500
+  },
+  "C0088": {
+   "hardCents": 2500,
+   "softCents": 2500,
+   "totalCents": 5000
+  },
+  "C0089": {
+   "hardCents": 40000,
+   "softCents": 0,
+   "totalCents": 40000
+  },
+  "C0090": {
+   "hardCents": 90000,
+   "softCents": 0,
+   "totalCents": 90000
+  },
+  "C0091": {
+   "hardCents": 352500,
+   "softCents": 0,
+   "totalCents": 352500
+  },
+  "C0092": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0094": {
+   "hardCents": 165000,
+   "softCents": 0,
+   "totalCents": 165000
+  },
+  "C0095": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0096": {
+   "hardCents": 42500,
+   "softCents": 0,
+   "totalCents": 42500
+  },
+  "C0097": {
+   "hardCents": 462500,
+   "softCents": 0,
+   "totalCents": 462500
+  },
+  "C0099": {
+   "hardCents": 307500,
+   "softCents": 0,
+   "totalCents": 307500
+  },
+  "C0101": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0102": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0103": {
+   "hardCents": 97500,
+   "softCents": 0,
+   "totalCents": 97500
+  },
+  "C0104": {
+   "hardCents": 40000,
+   "softCents": 0,
+   "totalCents": 40000
+  },
+  "C0105": {
+   "hardCents": 100000,
+   "softCents": 0,
+   "totalCents": 100000
+  },
+  "C0107": {
+   "hardCents": 77500,
+   "softCents": 0,
+   "totalCents": 77500
+  },
+  "C0108": {
+   "hardCents": 30000,
+   "softCents": 0,
+   "totalCents": 30000
+  },
+  "C0109": {
+   "hardCents": 370000,
+   "softCents": 0,
+   "totalCents": 370000
+  },
+  "C0110": {
+   "hardCents": 30000,
+   "softCents": 110000,
+   "totalCents": 140000
+  },
+  "C0111": {
+   "hardCents": 32500,
+   "softCents": 0,
+   "totalCents": 32500
+  },
+  "C0113": {
+   "hardCents": 80000,
+   "softCents": 0,
+   "totalCents": 80000
+  },
+  "C0115": {
+   "hardCents": 37500,
+   "softCents": 0,
+   "totalCents": 37500
+  },
+  "C0116": {
+   "hardCents": 5000,
+   "softCents": 10000,
+   "totalCents": 15000
+  },
+  "C0118": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0119": {
+   "hardCents": 272500,
+   "softCents": 0,
+   "totalCents": 272500
+  },
+  "C0120": {
+   "hardCents": 12500,
+   "softCents": 0,
+   "totalCents": 12500
+  },
+  "C0121": {
+   "hardCents": 187500,
+   "softCents": 0,
+   "totalCents": 187500
+  },
+  "C0122": {
+   "hardCents": 355000,
+   "softCents": 0,
+   "totalCents": 355000
+  },
+  "C0123": {
+   "hardCents": 255000,
+   "softCents": 0,
+   "totalCents": 255000
+  },
+  "C0124": {
+   "hardCents": 125000,
+   "softCents": 0,
+   "totalCents": 125000
+  },
+  "C0125": {
+   "hardCents": 275000,
+   "softCents": 100000,
+   "totalCents": 375000
+  },
+  "C0126": {
+   "hardCents": 467500,
+   "softCents": 0,
+   "totalCents": 467500
+  },
+  "C0127": {
+   "hardCents": 90000,
+   "softCents": 0,
+   "totalCents": 90000
+  },
+  "C0128": {
+   "hardCents": 425000,
+   "softCents": 0,
+   "totalCents": 425000
+  },
+  "C0129": {
+   "hardCents": 392500,
+   "softCents": 0,
+   "totalCents": 392500
+  },
+  "C0130": {
+   "hardCents": 7500,
+   "softCents": 0,
+   "totalCents": 7500
+  },
+  "C0131": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0132": {
+   "hardCents": 12500,
+   "softCents": 0,
+   "totalCents": 12500
+  },
+  "C0133": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0134": {
+   "hardCents": 0,
+   "softCents": 10000,
+   "totalCents": 10000
+  },
+  "C0135": {
+   "hardCents": 60000,
+   "softCents": 0,
+   "totalCents": 60000
+  },
+  "C0136": {
+   "hardCents": 250000,
+   "softCents": 0,
+   "totalCents": 250000
+  },
+  "C0137": {
+   "hardCents": 85000,
+   "softCents": 2500,
+   "totalCents": 87500
+  },
+  "C0138": {
+   "hardCents": 30000,
+   "softCents": 25000,
+   "totalCents": 55000
+  },
+  "C0139": {
+   "hardCents": 222500,
+   "softCents": 0,
+   "totalCents": 222500
+  },
+  "C0140": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0142": {
+   "hardCents": 20000,
+   "softCents": 0,
+   "totalCents": 20000
+  },
+  "C0143": {
+   "hardCents": 510000,
+   "softCents": 0,
+   "totalCents": 510000
+  },
+  "C0145": {
+   "hardCents": 247500,
+   "softCents": 0,
+   "totalCents": 247500
+  },
+  "C0146": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0147": {
+   "hardCents": 85000,
+   "softCents": 0,
+   "totalCents": 85000
+  },
+  "C0148": {
+   "hardCents": 30000,
+   "softCents": 10000,
+   "totalCents": 40000
+  },
+  "C0149": {
+   "hardCents": 130000,
+   "softCents": 0,
+   "totalCents": 130000
+  },
+  "C0150": {
+   "hardCents": 55000,
+   "softCents": 0,
+   "totalCents": 55000
+  },
+  "C0151": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0152": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0154": {
+   "hardCents": 427500,
+   "softCents": 0,
+   "totalCents": 427500
+  },
+  "C0157": {
+   "hardCents": 30000,
+   "softCents": 0,
+   "totalCents": 30000
+  },
+  "C0158": {
+   "hardCents": 45000,
+   "softCents": 0,
+   "totalCents": 45000
+  },
+  "C0159": {
+   "hardCents": 205000,
+   "softCents": 0,
+   "totalCents": 205000
+  },
+  "C0160": {
+   "hardCents": 102500,
+   "softCents": 0,
+   "totalCents": 102500
+  },
+  "C0161": {
+   "hardCents": 367500,
+   "softCents": 10000,
+   "totalCents": 377500
+  },
+  "C0162": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0163": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0164": {
+   "hardCents": 325000,
+   "softCents": 0,
+   "totalCents": 325000
+  },
+  "C0165": {
+   "hardCents": 112500,
+   "softCents": 0,
+   "totalCents": 112500
+  },
+  "C0166": {
+   "hardCents": 35000,
+   "softCents": 0,
+   "totalCents": 35000
+  },
+  "C0167": {
+   "hardCents": 160000,
+   "softCents": 0,
+   "totalCents": 160000
+  },
+  "C0168": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0169": {
+   "hardCents": 310000,
+   "softCents": 0,
+   "totalCents": 310000
+  },
+  "C0170": {
+   "hardCents": 325000,
+   "softCents": 0,
+   "totalCents": 325000
+  },
+  "C0171": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0173": {
+   "hardCents": 27500,
+   "softCents": 35000,
+   "totalCents": 62500
+  },
+  "C0174": {
+   "hardCents": 130000,
+   "softCents": 0,
+   "totalCents": 130000
+  },
+  "C0175": {
+   "hardCents": 255000,
+   "softCents": 0,
+   "totalCents": 255000
+  },
+  "C0176": {
+   "hardCents": 10000,
+   "softCents": 100000,
+   "totalCents": 110000
+  },
+  "C0177": {
+   "hardCents": 102500,
+   "softCents": 0,
+   "totalCents": 102500
+  },
+  "C0178": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0179": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0180": {
+   "hardCents": 610000,
+   "softCents": 0,
+   "totalCents": 610000
+  },
+  "C0181": {
+   "hardCents": 32500,
+   "softCents": 0,
+   "totalCents": 32500
+  },
+  "C0182": {
+   "hardCents": 182500,
+   "softCents": 25000,
+   "totalCents": 207500
+  },
+  "C0184": {
+   "hardCents": 160000,
+   "softCents": 0,
+   "totalCents": 160000
+  },
+  "C0185": {
+   "hardCents": 52500,
+   "softCents": 0,
+   "totalCents": 52500
+  },
+  "C0186": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0187": {
+   "hardCents": 35000,
+   "softCents": 0,
+   "totalCents": 35000
+  },
+  "C0188": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0189": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0190": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0191": {
+   "hardCents": 110000,
+   "softCents": 0,
+   "totalCents": 110000
+  },
+  "C0192": {
+   "hardCents": 212500,
+   "softCents": 0,
+   "totalCents": 212500
+  },
+  "C0193": {
+   "hardCents": 45000,
+   "softCents": 0,
+   "totalCents": 45000
+  },
+  "C0194": {
+   "hardCents": 20000,
+   "softCents": 0,
+   "totalCents": 20000
+  },
+  "C0195": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0196": {
+   "hardCents": 55000,
+   "softCents": 0,
+   "totalCents": 55000
+  },
+  "C0197": {
+   "hardCents": 40000,
+   "softCents": 0,
+   "totalCents": 40000
+  },
+  "C0198": {
+   "hardCents": 265000,
+   "softCents": 0,
+   "totalCents": 265000
+  },
+  "C0199": {
+   "hardCents": 150000,
+   "softCents": 0,
+   "totalCents": 150000
+  },
+  "C0200": {
+   "hardCents": 155000,
+   "softCents": 0,
+   "totalCents": 155000
+  },
+  "C0201": {
+   "hardCents": 285000,
+   "softCents": 0,
+   "totalCents": 285000
+  },
+  "C0202": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0203": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0204": {
+   "hardCents": 437500,
+   "softCents": 0,
+   "totalCents": 437500
+  },
+  "C0205": {
+   "hardCents": 280000,
+   "softCents": 102500,
+   "totalCents": 382500
+  },
+  "C0206": {
+   "hardCents": 10000,
+   "softCents": 0,
+   "totalCents": 10000
+  },
+  "C0207": {
+   "hardCents": 245000,
+   "softCents": 0,
+   "totalCents": 245000
+  },
+  "C0208": {
+   "hardCents": 20000,
+   "softCents": 0,
+   "totalCents": 20000
+  },
+  "C0209": {
+   "hardCents": 7500,
+   "softCents": 0,
+   "totalCents": 7500
+  },
+  "C0210": {
+   "hardCents": 240000,
+   "softCents": 0,
+   "totalCents": 240000
+  },
+  "C0211": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0212": {
+   "hardCents": 75000,
+   "softCents": 25000,
+   "totalCents": 100000
+  },
+  "C0213": {
+   "hardCents": 80000,
+   "softCents": 0,
+   "totalCents": 80000
+  },
+  "C0214": {
+   "hardCents": 527500,
+   "softCents": 252500,
+   "totalCents": 780000
+  },
+  "C0215": {
+   "hardCents": 162500,
+   "softCents": 0,
+   "totalCents": 162500
+  },
+  "C0216": {
+   "hardCents": 12500,
+   "softCents": 0,
+   "totalCents": 12500
+  },
+  "C0217": {
+   "hardCents": 100000,
+   "softCents": 0,
+   "totalCents": 100000
+  },
+  "C0218": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0219": {
+   "hardCents": 132500,
+   "softCents": 0,
+   "totalCents": 132500
+  },
+  "C0220": {
+   "hardCents": 122500,
+   "softCents": 0,
+   "totalCents": 122500
+  },
+  "C0221": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0222": {
+   "hardCents": 637500,
+   "softCents": 0,
+   "totalCents": 637500
+  },
+  "C0223": {
+   "hardCents": 77500,
+   "softCents": 0,
+   "totalCents": 77500
+  },
+  "C0224": {
+   "hardCents": 710000,
+   "softCents": 0,
+   "totalCents": 710000
+  },
+  "C0225": {
+   "hardCents": 67500,
+   "softCents": 0,
+   "totalCents": 67500
+  },
+  "C0226": {
+   "hardCents": 115000,
+   "softCents": 0,
+   "totalCents": 115000
+  },
+  "C0227": {
+   "hardCents": 27500,
+   "softCents": 0,
+   "totalCents": 27500
+  },
+  "C0228": {
+   "hardCents": 265000,
+   "softCents": 0,
+   "totalCents": 265000
+  },
+  "C0230": {
+   "hardCents": 2500,
+   "softCents": 0,
+   "totalCents": 2500
+  },
+  "C0231": {
+   "hardCents": 100000,
+   "softCents": 0,
+   "totalCents": 100000
+  },
+  "C0232": {
+   "hardCents": 265000,
+   "softCents": 0,
+   "totalCents": 265000
+  },
+  "C0233": {
+   "hardCents": 5000,
+   "softCents": 15000,
+   "totalCents": 20000
+  },
+  "C0234": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0235": {
+   "hardCents": 35000,
+   "softCents": 0,
+   "totalCents": 35000
+  },
+  "C0236": {
+   "hardCents": 110000,
+   "softCents": 10000,
+   "totalCents": 120000
+  },
+  "C0237": {
+   "hardCents": 82500,
+   "softCents": 0,
+   "totalCents": 82500
+  },
+  "C0238": {
+   "hardCents": 110000,
+   "softCents": 0,
+   "totalCents": 110000
+  },
+  "C0239": {
+   "hardCents": 240000,
+   "softCents": 0,
+   "totalCents": 240000
+  },
+  "C0240": {
+   "hardCents": 45000,
+   "softCents": 0,
+   "totalCents": 45000
+  },
+  "C0241": {
+   "hardCents": 255000,
+   "softCents": 0,
+   "totalCents": 255000
+  },
+  "C0242": {
+   "hardCents": 35000,
+   "softCents": 0,
+   "totalCents": 35000
+  },
+  "C0243": {
+   "hardCents": 110000,
+   "softCents": 0,
+   "totalCents": 110000
+  },
+  "C0244": {
+   "hardCents": 267500,
+   "softCents": 0,
+   "totalCents": 267500
+  },
+  "C0246": {
+   "hardCents": 35000,
+   "softCents": 0,
+   "totalCents": 35000
+  },
+  "C0247": {
+   "hardCents": 300000,
+   "softCents": 0,
+   "totalCents": 300000
+  },
+  "C0248": {
+   "hardCents": 822500,
+   "softCents": 0,
+   "totalCents": 822500
+  },
+  "C0249": {
+   "hardCents": 10000,
+   "softCents": 5000,
+   "totalCents": 15000
+  },
+  "C0250": {
+   "hardCents": 30000,
+   "softCents": 0,
+   "totalCents": 30000
+  },
+  "C0251": {
+   "hardCents": 17500,
+   "softCents": 0,
+   "totalCents": 17500
+  },
+  "C0252": {
+   "hardCents": 375000,
+   "softCents": 0,
+   "totalCents": 375000
+  },
+  "C0253": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0254": {
+   "hardCents": 295000,
+   "softCents": 0,
+   "totalCents": 295000
+  },
+  "C0255": {
+   "hardCents": 20000,
+   "softCents": 0,
+   "totalCents": 20000
+  },
+  "C0256": {
+   "hardCents": 312500,
+   "softCents": 0,
+   "totalCents": 312500
+  },
+  "C0257": {
+   "hardCents": 900000,
+   "softCents": 0,
+   "totalCents": 900000
+  },
+  "C0258": {
+   "hardCents": 340000,
+   "softCents": 0,
+   "totalCents": 340000
+  },
+  "C0259": {
+   "hardCents": 30000,
+   "softCents": 0,
+   "totalCents": 30000
+  },
+  "C0261": {
+   "hardCents": 275000,
+   "softCents": 0,
+   "totalCents": 275000
+  },
+  "C0263": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0264": {
+   "hardCents": 5000,
+   "softCents": 0,
+   "totalCents": 5000
+  },
+  "C0265": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0266": {
+   "hardCents": 15000,
+   "softCents": 0,
+   "totalCents": 15000
+  },
+  "C0267": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0268": {
+   "hardCents": 92500,
+   "softCents": 0,
+   "totalCents": 92500
+  },
+  "C0269": {
+   "hardCents": 57500,
+   "softCents": 0,
+   "totalCents": 57500
+  },
+  "C0270": {
+   "hardCents": 285000,
+   "softCents": 0,
+   "totalCents": 285000
+  },
+  "C0271": {
+   "hardCents": 10000,
+   "softCents": 392500,
+   "totalCents": 402500
+  },
+  "C0272": {
+   "hardCents": 367500,
+   "softCents": 10000,
+   "totalCents": 377500
+  },
+  "C0273": {
+   "hardCents": 77500,
+   "softCents": 0,
+   "totalCents": 77500
+  },
+  "C0274": {
+   "hardCents": 25000,
+   "softCents": 10000,
+   "totalCents": 35000
+  },
+  "C0275": {
+   "hardCents": 55000,
+   "softCents": 0,
+   "totalCents": 55000
+  },
+  "C0276": {
+   "hardCents": 140000,
+   "softCents": 0,
+   "totalCents": 140000
+  },
+  "C0277": {
+   "hardCents": 2620000,
+   "softCents": 0,
+   "totalCents": 2620000
+  },
+  "C0278": {
+   "hardCents": 7500,
+   "softCents": 0,
+   "totalCents": 7500
+  },
+  "C0279": {
+   "hardCents": 500000,
+   "softCents": 0,
+   "totalCents": 500000
+  },
+  "C0280": {
+   "hardCents": 395000,
+   "softCents": 0,
+   "totalCents": 395000
+  },
+  "C0281": {
+   "hardCents": 60000,
+   "softCents": 0,
+   "totalCents": 60000
+  },
+  "C0283": {
+   "hardCents": 50000,
+   "softCents": 0,
+   "totalCents": 50000
+  },
+  "C0284": {
+   "hardCents": 320000,
+   "softCents": 0,
+   "totalCents": 320000
+  },
+  "C0285": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  },
+  "C0286": {
+   "hardCents": 25000,
+   "softCents": 0,
+   "totalCents": 25000
+  }
+ },
+ "segments": {
+  "colorado-households.json": {
+   "count": 6,
+   "members": [
+    "C0001",
+    "C0002",
+    "C0011",
+    "C0012",
+    "C0038",
+    "C0039"
+   ],
+   "name": "Colorado households"
+  },
+  "lapsed-repeat.json": {
+   "count": 22,
+   "members": [
+    "C0001",
+    "C0011",
+    "C0014",
+    "C0023",
+    "C0028",
+    "C0062",
+    "C0063",
+    "C0080",
+    "C0091",
+    "C0115",
+    "C0145",
+    "C0149",
+    "C0159",
+    "C0167",
+    "C0182",
+    "C0194",
+    "C0201",
+    "C0204",
+    "C0228",
+    "C0242",
+    "C0277",
+    "C0284"
+   ],
+   "name": "Lapsed repeat donors"
+  },
+  "lybunt.json": {
+   "count": 86,
+   "members": [
+    "C0001",
+    "C0005",
+    "C0006",
+    "C0007",
+    "C0009",
+    "C0011",
+    "C0014",
+    "C0015",
+    "C0016",
+    "C0018",
+    "C0023",
+    "C0026",
+    "C0028",
+    "C0029",
+    "C0048",
+    "C0051",
+    "C0053",
+    "C0054",
+    "C0055",
+    "C0056",
+    "C0057",
+    "C0058",
+    "C0062",
+    "C0063",
+    "C0065",
+    "C0069",
+    "C0071",
+    "C0075",
+    "C0080",
+    "C0081",
+    "C0086",
+    "C0088",
+    "C0091",
+    "C0102",
+    "C0108",
+    "C0115",
+    "C0118",
+    "C0119",
+    "C0120",
+    "C0122",
+    "C0123",
+    "C0129",
+    "C0130",
+    "C0132",
+    "C0133",
+    "C0145",
+    "C0148",
+    "C0149",
+    "C0150",
+    "C0151",
+    "C0159",
+    "C0160",
+    "C0167",
+    "C0173",
+    "C0174",
+    "C0176",
+    "C0182",
+    "C0184",
+    "C0188",
+    "C0190",
+    "C0192",
+    "C0193",
+    "C0194",
+    "C0196",
+    "C0197",
+    "C0201",
+    "C0204",
+    "C0208",
+    "C0209",
+    "C0218",
+    "C0228",
+    "C0230",
+    "C0231",
+    "C0234",
+    "C0236",
+    "C0238",
+    "C0241",
+    "C0242",
+    "C0259",
+    "C0265",
+    "C0275",
+    "C0277",
+    "C0281",
+    "C0283",
+    "C0284",
+    "C0285"
+   ],
+   "name": "LYBUNT"
+  },
+  "major-2025.json": {
+   "count": 61,
+   "members": [
+    "C0001",
+    "C0002",
+    "C0004",
+    "C0006",
+    "C0007",
+    "C0011",
+    "C0015",
+    "C0022",
+    "C0026",
+    "C0027",
+    "C0028",
+    "C0031",
+    "C0035",
+    "C0056",
+    "C0058",
+    "C0066",
+    "C0077",
+    "C0078",
+    "C0080",
+    "C0091",
+    "C0094",
+    "C0097",
+    "C0109",
+    "C0119",
+    "C0122",
+    "C0123",
+    "C0126",
+    "C0128",
+    "C0129",
+    "C0143",
+    "C0145",
+    "C0149",
+    "C0154",
+    "C0159",
+    "C0160",
+    "C0161",
+    "C0164",
+    "C0169",
+    "C0170",
+    "C0174",
+    "C0175",
+    "C0182",
+    "C0184",
+    "C0198",
+    "C0204",
+    "C0214",
+    "C0222",
+    "C0224",
+    "C0231",
+    "C0232",
+    "C0236",
+    "C0241",
+    "C0247",
+    "C0248",
+    "C0252",
+    "C0254",
+    "C0257",
+    "C0258",
+    "C0261",
+    "C0272",
+    "C0284"
+   ],
+   "name": "Major donors 2025"
+  },
+  "south-central-2026.json": {
+   "count": 90,
+   "members": [
+    "C0017",
+    "C0021",
+    "C0025",
+    "C0027",
+    "C0031",
+    "C0032",
+    "C0033",
+    "C0035",
+    "C0036",
+    "C0037",
+    "C0041",
+    "C0047",
+    "C0049",
+    "C0060",
+    "C0068",
+    "C0070",
+    "C0072",
+    "C0073",
+    "C0082",
+    "C0089",
+    "C0090",
+    "C0094",
+    "C0096",
+    "C0097",
+    "C0099",
+    "C0103",
+    "C0105",
+    "C0116",
+    "C0121",
+    "C0124",
+    "C0125",
+    "C0126",
+    "C0127",
+    "C0135",
+    "C0137",
+    "C0138",
+    "C0139",
+    "C0142",
+    "C0143",
+    "C0152",
+    "C0158",
+    "C0166",
+    "C0169",
+    "C0170",
+    "C0175",
+    "C0177",
+    "C0178",
+    "C0179",
+    "C0180",
+    "C0181",
+    "C0185",
+    "C0198",
+    "C0199",
+    "C0200",
+    "C0203",
+    "C0205",
+    "C0207",
+    "C0210",
+    "C0212",
+    "C0213",
+    "C0214",
+    "C0215",
+    "C0216",
+    "C0217",
+    "C0220",
+    "C0223",
+    "C0224",
+    "C0225",
+    "C0226",
+    "C0232",
+    "C0237",
+    "C0243",
+    "C0244",
+    "C0246",
+    "C0248",
+    "C0251",
+    "C0252",
+    "C0256",
+    "C0258",
+    "C0261",
+    "C0263",
+    "C0264",
+    "C0269",
+    "C0270",
+    "C0272",
+    "C0273",
+    "C0276",
+    "C0278",
+    "C0279",
+    "C0280"
+   ],
+   "name": "TX and OK donors 2026"
+  },
+  "sybunt.json": {
+   "count": 19,
+   "members": [
+    "C0019",
+    "C0030",
+    "C0038",
+    "C0044",
+    "C0064",
+    "C0076",
+    "C0095",
+    "C0110",
+    "C0136",
+    "C0168",
+    "C0171",
+    "C0202",
+    "C0206",
+    "C0211",
+    "C0221",
+    "C0233",
+    "C0271",
+    "C0274",
+    "C0286"
+   ],
+   "name": "SYBUNT"
+  }
+ },
+ "total": {
+  "average": 40444,
+  "donors": 255,
+  "gifts": 929,
+  "raised": 37572500,
+  "remainder": 24
+ }
+}

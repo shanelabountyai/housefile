@@ -1,0 +1,8 @@
+{
+  "name": "Colorado households",
+  "description": "Members of a household of two or more in Colorado",
+  "filters": [
+    { "field": "state", "op": "eq", "value": "CO" },
+    { "field": "isHousehold", "op": "isTrue" }
+  ]
+}

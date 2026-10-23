@@ -277,4 +277,16 @@ python3 tools/reference_matcher.py --write-decisions      # writes fixtures/deci
 
 Counts: 405 persons, 312 households, 286 CRM constituents, 878 CRM gifts; expected links over both files: EXISTING 420, NEW 107, DUP_IN_FILE 123; traps T1 8 persons, T2 8, T3 31. Generated twice in separate directories at kickoff with identical hashes, and the reference matcher's decisions compared byte for byte across the two runs. `fixtures/MANIFEST.json` holds the same table plus the applied defect counts; `verify_fixtures.py` also regenerates `decisions_*.csv` when they are present. `truth_persons.csv` and the answer keys are the oracle: product code never reads them; only `import:eval` does.
 
+**Phase 3 set (D-67, D-74), task 3.1.** `python3 tools/build_phase3_fixtures.py --seed 20261014` reads the CRM csvs above and writes `fixtures/phase3/`; `python3 tools/phase3_answers.py` derives every Phase 3 number and compares it with `fixtures/phase3/answers.json`. The Phase 1 hashes above do not move. Generated twice in separate directories 2026-10-23 with identical bytes.
+
+| File | Rows | sha256 |
+|---|---|---|
+| phase3/pledges.csv | 18 | `4e35d7b86a7cfbcf42c9bf61d6e9209fad54ad50fecf49bb7fb0385469fb3d2d` |
+| phase3/pledge_payments.csv | 54 | `78ef70f17ef510095427296366c3a941a335ca10aa56e9b9c157292bf1488933` |
+| phase3/soft_credits.csv | 42 | `9865da968ddec6cccb73bec40e65a53b3507bf27fc4907f874630dcfd36d1f32` |
+| phase3/corrections.csv | 9 | `4f1ad4fac1593f94f1dbf315ca6af156befaf75c2227d246dd434423e7d5ebf8` |
+| phase3/answers.json (oracle) | — | `743f804326745f69845c575abb3aa9a37a5f64a43a75a60bbbf8a6cdb8aaf57c` |
+
+Oracle, asOf 2026-10-14: 929 active gifts (878 CRM + 54 payments − 3 voids), raised 37,572,500 cents, 255 donors; campaigns AF2024 11,047,500 · AF2025 9,415,000 · AF2026 7,200,000 · CAP2025 9,910,000; funds BLDG 11,432,500 · GEN 17,917,500 · SCHOL 8,222,500; 236 households (50 of two or more); 18 pledges, 6,330,000 pledged, 4,045,000 paid, balance 2,285,000; soft credits 1,605,000 over the active gifts; segments LYBUNT 86, SYBUNT 19, major-2025 61, colorado-households 6, lapsed-repeat 22, south-central-2026 90.
+
 Answer-key columns: `row_id, true_person_id, household_id, crm_constituent_id, expected_link (EXISTING|NEW|DUP_IN_FILE), dup_of_row_id, gift_dup_of, expected_validation, defects, trap`. A row whose person appeared earlier in the same file carries `dup_of_row_id` even when it is also EXISTING.

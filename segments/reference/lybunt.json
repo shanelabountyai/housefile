@@ -1,0 +1,5 @@
+{
+  "name": "LYBUNT",
+  "description": "Gave last calendar year, not yet this year (D-69)",
+  "filters": [{ "field": "lybunt", "op": "isTrue" }]
+}

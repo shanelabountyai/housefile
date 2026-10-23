@@ -1,0 +1,10 @@
+{
+  "name": "TX and OK donors 2026",
+  "description": "Texas or Oklahoma, at least one gift in 2026, not in household H0001",
+  "filters": [
+    { "field": "state", "op": "in", "value": ["TX", "OK"] },
+    { "field": "giftDate", "op": "between", "value": ["2026-01-01", "2026-12-31"] },
+    { "field": "giftCount", "op": "gte", "value": 1 },
+    { "field": "householdId", "op": "ne", "value": "H0001" }
+  ]
+}

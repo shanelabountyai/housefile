@@ -2,6 +2,7 @@
 
 Regenerates the fixtures with the pinned seed into a temporary directory and
 compares every sha256 with fixtures/MANIFEST.json, then re-runs golden_answers.
+Also regenerates fixtures/phase3/ (D-67) and runs phase3_answers.
 Prints OK or names the first file whose bytes moved. Used by `npm run fixtures:check`.
 """
 from __future__ import annotations
@@ -54,6 +55,27 @@ def main() -> int:
             print(f"MOVED {name}: manifest {h[:12]}… regenerated {str(got)[:12]}…")
         else:
             print(f"ok    {name} {h[:12]}…")
+    # Phase 3 set (D-67): regenerated from the committed CRM csvs, compared with fixtures/phase3/MANIFEST.json
+    p3_manifest = json.load(open(os.path.join(fixtures, "phase3", "MANIFEST.json"), encoding="utf-8"))
+    with tempfile.TemporaryDirectory() as tmp:
+        r = subprocess.run([sys.executable, os.path.join(HERE, "build_phase3_fixtures.py"), "--seed", str(p3_manifest["seed"]),
+                            "--crm", fixtures, "--out", tmp], capture_output=True, text=True)
+        if r.returncode != 0:
+            print(r.stderr)
+            return 1
+        p3_fresh = json.load(open(os.path.join(tmp, "MANIFEST.json"), encoding="utf-8"))
+    for name, h in sorted(p3_manifest["sha256"].items()):
+        got = p3_fresh["sha256"].get(name)
+        if got != h:
+            bad += 1
+            print(f"MOVED phase3/{name}: manifest {h[:12]}… regenerated {str(got)[:12]}…")
+        else:
+            print(f"ok    phase3/{name} {h[:12]}…")
+    r = subprocess.run([sys.executable, os.path.join(HERE, "phase3_answers.py")], capture_output=True, text=True)
+    if r.returncode != 0 or not r.stdout.rstrip().endswith("OK"):
+        bad += 1
+        print("phase3_answers.py did not end with OK")
+        print(r.stdout[-2000:])
     r = subprocess.run([sys.executable, os.path.join(HERE, "golden_answers.py")], capture_output=True, text=True)
     if r.returncode != 0 or not r.stdout.rstrip().endswith("OK"):
         bad += 1
