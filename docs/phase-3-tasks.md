@@ -6,7 +6,7 @@ Order: oracle and data first, then the pure derivations (households, roll-ups, s
 
 **Written at the Phase 2 gate, 2026-10-22.** Gate output (local, one run, stopped on first failure, none failed): `typecheck` clean, `fixtures:check` OK, `model:lint` OK (40312dfe…), `money:lint` OK, `write:lint` OK, `import:eval` A 259/55/71 · P 1.0 · R 0.9464, B 166/33/37 · P 1.0 · R 0.9548, drift 0 rows, labels 30 / 30, `foundation:drift` clean against v1.3.0, `npm test` 49 files / **434 / 434**, `phase2:proof:test` OK (undo B `2c035193…` == beforeHash, undo A `7d3bd174…` == beforeHash, both unmerge snapshots equal). CI green/red runs for task 2.10 are linked in `NEXT.md`.
 
-## Proposals (defaults in force until Shane decides; each becomes a D-entry, D-66 onward)
+## Proposals (decided 2026-10-23 as D-66..D-73, all as written)
 
 | # | Proposal | Why | Alternative |
 |---|---|---|---|

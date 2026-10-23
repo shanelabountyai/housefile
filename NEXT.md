@@ -1,5 +1,15 @@
 # NEXT
 
+## ▶ Next session: task 3.1 — Phase 3 oracle and fixtures (D-67)
+
+**2026-10-23 P-8..P-15 decided by Shane, all as written → D-66..D-73** in `docs/decisions.md` (D-66 amends D-26; D-68 corrects D-33's segment lineage). Don't reopen.
+
+Still open: PR #5 (draft, no review, mergeable) https://github.com/shanelabountyai/housefile/pull/5. Phase 3 builds on this branch until Shane merges it.
+
+**Next:** 3.1 — `tools/build_phase3_fixtures.py` + `tools/phase3_answers.py` (stdlib, seed 20261014), `fixtures/phase3/`, hashes in brief §12, `verify_fixtures.py` covers both; acceptance in `docs/phase-3-tasks.md`. Model: Opus/Fable (oracle, fixture hashes).
+
+---
+
 ## ▶ Next session: Shane reviews `docs/phase-3-tasks.md` (P-8..P-15) and PR #5; then task 3.1
 
 **2026-10-22 Phase 2 gate PASSED (local, one sequential run, stopped on first failure, none failed):** `typecheck` clean · `fixtures:check` OK · `model:lint` OK (40312dfe…) · `money:lint` OK · `write:lint` OK · `import:eval` A 259/55/71 P 1.0 R 0.9464, B 166/33/37 P 1.0 R 0.9548, drift 0 rows, labels 30 / 30 · `foundation:drift` clean v1.3.0 · `npm test` 49 files **434 / 434** · `phase2:proof:test` OK (undo B `2c035193…` == beforeHash, undo A `7d3bd174…` == beforeHash, both unmerge snapshots equal). CI green/red runs: below (task 2.10).
