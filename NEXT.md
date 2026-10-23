@@ -1,5 +1,16 @@
 # NEXT
 
+## ▶ Next session: task 3.2 — Households (D-8)
+
+**2026-10-23 task 3.1 DONE.** `tools/build_phase3_fixtures.py` → `fixtures/phase3/` (18 pledges, 54 payments G00879+, 42 soft credits, 9 corrections; twice in separate dirs, identical bytes), `tools/phase3_answers.py` → `fixtures/phase3/answers.json` (`743f8043…`, the expected values TS tests read), `segments/reference/*.json` (6). `verify_fixtures.py` regenerates the set; `fixtures:check` runs the oracle. Rules the oracle chose are **D-74** (soft credit counts only while its gift is active, segment window semantics, `isHousehold` = 2+, missing value fails). Hashes and headline numbers in brief §12.
+- Gate: `fixtures:check` OK, `model:lint` OK, `import:eval` drift 0 rows, labels 30 / 30, Phase 1 hashes unchanged. Red-checked: a tampered `answers.json` and a tampered `pledges.csv` both fail. No TS changed, so `npm test` not re-run (434/434 at the Phase 2 gate).
+
+**Next:** 3.2 — pure `householdName` / `householdGiving` against `answers.json` `households` (H0001 = "Zoë Rivera and Victoria Whitfield", 675000). Model: Sonnet fits (pure derivation, oracle exists); undo/hash part stays Opus.
+
+PR #5 still open (draft); Phase 3 builds on this branch.
+
+---
+
 ## ▶ Next session: task 3.1 — Phase 3 oracle and fixtures (D-67)
 
 **2026-10-23 P-8..P-15 decided by Shane, all as written → D-66..D-73** in `docs/decisions.md` (D-66 amends D-26; D-68 corrects D-33's segment lineage). Don't reopen.
