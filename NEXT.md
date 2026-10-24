@@ -1,6 +1,16 @@
 # NEXT
 
-## ▶ Next session: task 3.2 — Households (D-8)
+## ▶ Next session: task 3.3 — Campaign and fund roll-ups (D-28, P-12)
+
+**2026-10-24 task 3.2 DONE.** `src/derive/households.ts`: pure `householdMembers`, `householdName`, `householdGiving(state, id, window?)` over `EffectiveState`. `tests/helpers/phase3.ts` builds the Phase 3 fixture as in-memory effective state (CRM + pledge payments, corrections applied, ≤ asOf); 3.3 reuses it with `answers`. Tests: `tests/unit/households.test.ts` (all 236 `H…` names/members/totals equal `answers.json`; H0001 "Zoë Rivera and Victoria Whitfield" 675000), `tests/integration/housefile-households.test.ts` (SAME_HOUSEHOLD: "The Smith Household" 250000 → "Mary Smith and John Whitfield" 254000; undo → name, total and state hash back). Mutation-checked: dropping N1 folding and an off-by-one cent both fail.
+- Note: the fixture has no household whose surnames differ only in case or accents, so the oracle comparison alone does not cover N1 folding. The hand-built `GARCÍA-LOPEZ` case covers it.
+- Gate (local): typecheck, lint, `fixtures:check`, `model:lint` (40312dfe…), `money:lint`, `write:lint` all OK. `import:eval` labels 30 / 30. Full `npm test` **not completed locally**: load average 57 from another project's vitest sweep (`alongside/backend`) timed out `inv-01-04-22` "passes INV-01/02/03/04/22" (180 s). The 2 failures after it were cascade. That file passes alone (14/14, 102 s). CI owns the full sweep; check it on the pushed commit.
+
+**Next:** 3.3 — `rollups(state, asOf)` against `answers.json` `campaigns`/`funds`/`total`; then file-A `(no appeal)` per fund on the DB. Model: Opus (money roll-up; the DB half touches commit).
+
+---
+
+## ▶ Earlier: task 3.2 — Households (D-8)
 
 **2026-10-23 task 3.1 DONE.** `tools/build_phase3_fixtures.py` → `fixtures/phase3/` (18 pledges, 54 payments G00879+, 42 soft credits, 9 corrections; twice in separate dirs, identical bytes), `tools/phase3_answers.py` → `fixtures/phase3/answers.json` (`743f8043…`, the expected values TS tests read), `segments/reference/*.json` (6). `verify_fixtures.py` regenerates the set; `fixtures:check` runs the oracle. Rules the oracle chose are **D-74** (soft credit counts only while its gift is active, segment window semantics, `isHousehold` = 2+, missing value fails). Hashes and headline numbers in brief §12.
 - Gate: `fixtures:check` OK, `model:lint` OK, `import:eval` drift 0 rows, labels 30 / 30, Phase 1 hashes unchanged. Red-checked: a tampered `answers.json` and a tampered `pledges.csv` both fail. No TS changed, so `npm test` not re-run (434/434 at the Phase 2 gate).
