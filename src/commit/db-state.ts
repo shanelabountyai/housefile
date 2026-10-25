@@ -56,3 +56,9 @@ export async function loadEffectiveState(tx: Tx, orgId: string): Promise<Effecti
     softCredits: softCredits.map((s) => ({ giftRef: s.giftRef, constituent: s.constituent.businessId })),
   });
 }
+
+/** Appeal name → campaign code for an org (D-75): roll-ups read a gift's campaign through its appeal. */
+export async function loadAppealCampaigns(tx: Tx, orgId: string): Promise<Record<string, string>> {
+  const appeals = await tx.appeal.findMany({ where: { orgId }, include: { campaign: true } });
+  return Object.fromEntries(appeals.map((a) => [a.name, a.campaign.code]));
+}
