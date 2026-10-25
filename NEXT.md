@@ -1,6 +1,16 @@
 # NEXT
 
-## ▶ Next session: task 3.4 — Segments as data (D-16, D-27, P-10, P-11)
+## ▶ Next session: task 3.5 — gift corrections and voids (D-72)
+
+**2026-10-25 task 3.4 DONE.** `segments/schema.json` (closed vocabulary), pure `validateSegment` / `evaluateSegment(def, state, asOf)` in `src/segments/segment.ts`, `SegmentDefinition` (versions per key) and `SegmentRun` tables (migration `20261025143405_segments`, append-only triggers), `saveSegment` / `runSegment` in `src/commit/segments.ts` (results.write, audited) — **D-76**. Counts = oracle: colorado-households 6, lapsed-repeat 22, lybunt 86, major-2025 61, south-central-2026 90, sybunt 19, member for member, in memory and on the seeded DB. Same version + asOf → same member-list hash. `model:lint` greps `src/segments/` (planted `Date.now` fails); `write:lint` guards both new tables. Mutation-checked: lybunt reading the window, `isHousehold ≥ 1`, missing value passing, gifts after asOf counted — all fail.
+- `member` role cannot run a segment (a run is a write); revisit with the segment page.
+- Gate (local): `npm test` 55 files **450 / 450**, typecheck, lint (3 old warnings), `fixtures:check`, `model:lint` (40312dfe…), `money:lint`, `write:lint` OK, `import:eval` drift 0 rows, labels 30 / 30.
+
+**Next:** 3.5 — read its entry in `docs/phase-3-tasks.md`; its acceptance "roll-ups move by exactly the difference" should reuse `view()` from `tests/integration/housefile-rollups.test.ts`.
+
+---
+
+## ▶ Earlier: task 3.4 — Segments as data (D-16, D-27, P-10, P-11)
 
 **2026-10-25 task 3.3 DONE (dad4539).** `src/derive/rollups.ts`: pure `rollups(state, asOf, campaignOf)` → `{ total, campaigns{…appeals}, funds{…appeals} }`, `(no appeal)` only under funds (D-70). Campaign read through the appeal: `loadAppealCampaigns(tx, orgId)` in `db-state.ts`, `phase3CampaignOf()` in memory (**D-75**, the third argument; `EffectiveGift` unchanged so no hash moved). Average = `(raised − raised mod n) / n`. Tests: `tests/unit/rollups.test.ts` (campaigns/funds/total = `answers.json`, total 37572500 / 929 gifts / 255 donors / avg 40444 r 24; Σ rows tie), `tests/integration/housefile-rollups.test.ts` (seeded Phase 3 org = oracle; file A → `(no appeal)` per fund = plan's written gifts; undo → roll-ups back). Mutation-checked: `Math.round` average and guessing no-appeal gifts into a campaign both fail.
 - The DB test seeds the *corrected* Phase 3 gifts as plain rows (`phase3SeedGifts`); corrections as superseding rows come with 3.5, whose acceptance ("roll-ups move by exactly the difference") should reuse `view()` from this test.
