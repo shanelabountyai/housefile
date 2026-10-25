@@ -1,5 +1,5 @@
 // `npm run model:lint` (CLAUDE.md commands): schema-checks matching/model.v1.json, confirms its content hash
-// matches the one recorded in docs/decisions.md (D-16), and greps src/matching/ for anything that would break
+// matches the one recorded in docs/decisions.md (D-16), and greps src/matching/, src/import/ and src/segments/ for anything that would break
 // purity (clock, randomness, database, network, model client, template core). Exit 1 on any finding.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -25,8 +25,8 @@ function walk(dir: string): string[] {
     return statSync(p).isDirectory() ? walk(p) : p.endsWith('.ts') ? [p] : [];
   });
 }
-// src/import is scanned too (review 2026-10-17), minus node:/process tokens it has no use for either.
-for (const file of [...walk('src/matching'), ...walk('src/import')]) {
+// src/import is scanned too (review 2026-10-17), minus node:/process tokens it has no use for either; src/segments too (task 3.4, D-76).
+for (const file of [...walk('src/matching'), ...walk('src/import'), ...walk('src/segments')]) {
   readFileSync(file, 'utf8')
     .split('\n')
     .forEach((line, i) => {

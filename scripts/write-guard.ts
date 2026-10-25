@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const PHASE2_MODELS = ['constituent', 'constituentVersion', 'household', 'fund', 'campaign', 'appeal', 'gift', 'softCredit', 'importBatch', 'importBatchEvent', 'reviewItem', 'reviewDecision', 'mergeEvent', 'pairMemory', 'unmergeEvent'] as const;
+export const PHASE2_MODELS = ['constituent', 'constituentVersion', 'household', 'fund', 'campaign', 'appeal', 'gift', 'softCredit', 'importBatch', 'importBatchEvent', 'reviewItem', 'reviewDecision', 'mergeEvent', 'pairMemory', 'unmergeEvent', 'segmentDefinition', 'segmentRun'] as const;
 const WRITE_METHODS = ['create', 'createMany', 'createManyAndReturn', 'update', 'updateMany', 'upsert', 'delete', 'deleteMany'];
 const TABLES = PHASE2_MODELS.map((m) => m[0]!.toUpperCase() + m.slice(1));
 const MODEL_WRITE = new RegExp(`\\.(${PHASE2_MODELS.join('|')})\\.(${WRITE_METHODS.join('|')})\\s*\\(`);

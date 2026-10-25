@@ -335,3 +335,37 @@ model UnmergeEvent {
   userId       String     @db.Uuid
   at           DateTime   @default(now()) @db.Timestamptz(6)
 }
+
+// Task 3.4 (D-27, D-68, D-76): a saved segment is a chain of append-only versions under one key; a run is a
+// reproducible snapshot (members, count, asOf, both hashes), never read back as truth.
+model SegmentDefinition {
+  id             String       @id @default(uuid()) @db.Uuid
+  orgId          String       @db.Uuid
+  org            Org          @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  key            String // stable across versions, e.g. "lybunt"
+  version        Int // 1, 2, … per (orgId, key)
+  definition     Json // the validated { name, description, filters } (segments/schema.json)
+  definitionHash String // sha256 of its canonical JSON
+  userId         String       @db.Uuid
+  at             DateTime     @default(now()) @db.Timestamptz(6)
+  runs           SegmentRun[]
+
+  @@unique([orgId, key, version])
+}
+
+model SegmentRun {
+  id             String            @id @default(uuid()) @db.Uuid
+  orgId          String            @db.Uuid
+  org            Org               @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  definitionId   String            @db.Uuid
+  definition     SegmentDefinition @relation(fields: [definitionId], references: [id])
+  asOf           DateTime          @db.Date
+  members        String[] // constituent business ids, ascending
+  count          Int
+  definitionHash String
+  memberListHash String // sha256 of the canonical member list
+  userId         String            @db.Uuid
+  at             DateTime          @default(now()) @db.Timestamptz(6) // run time
+
+  @@index([definitionId, at])
+}

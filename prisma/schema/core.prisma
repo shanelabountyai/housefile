@@ -100,6 +100,8 @@ model Org {
   mergeEvents    MergeEvent[] // app
   pairMemories   PairMemory[] // app
   unmergeEvents  UnmergeEvent[] // app
+  segmentDefinitions SegmentDefinition[] // app
+  segmentRuns    SegmentRun[] // app
 }
 
 model Membership {

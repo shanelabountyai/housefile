@@ -1,0 +1,35 @@
+{
+  "$comment": "Segment vocabulary (D-16, D-27, D-69, D-74d, D-76): a definition is { name, description?, filters: [{ field, op, value? }] }, every filter ANDed, no expressions. Fields and ops are closed; an op is allowed on a field only if listed under its type. giftDate is not a member value: its one `between` filter sets the window for totalInWindow, giftCount and lastGiftDate (default: everything up to asOf). lybunt/sybunt read calendar years of asOf and ignore the window.",
+  "version": 1,
+  "ops": {
+    "eq": "scalar",
+    "ne": "scalar",
+    "in": "list",
+    "gte": "scalar",
+    "lte": "scalar",
+    "between": "pair",
+    "isTrue": "none"
+  },
+  "types": {
+    "string": ["eq", "ne", "in"],
+    "date": ["eq", "ne", "gte", "lte", "between"],
+    "integer": ["eq", "ne", "in", "gte", "lte", "between"],
+    "boolean": ["isTrue"],
+    "window": ["between"]
+  },
+  "fields": {
+    "firstName": "string",
+    "lastName": "string",
+    "city": "string",
+    "state": "string",
+    "zip": "string",
+    "householdId": "string",
+    "giftDate": "window",
+    "totalInWindow": "integer",
+    "giftCount": "integer",
+    "lastGiftDate": "date",
+    "lybunt": "boolean",
+    "sybunt": "boolean",
+    "isHousehold": "boolean"
+  }
+}
