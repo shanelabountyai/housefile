@@ -153,7 +153,7 @@ N6 read a two-digit year below 70 as 20xx, so a DOB of `4/3/51` became 2051. Bir
 auto-merge (70 and 115). The labels were taken before the fix, when all 30 pairs were REVIEW; `import:eval` now prints
 each pair's current decision (REVIEW 28, MERGE 2) and the agreement is unchanged at 30 / 30.
 
-## Phase 2 — commit, review, merge, undo, proven by hash (`npm run phase2:proof`, 2026-10-21)
+## Phase 2 — commit, review, merge, undo, proven by hash (`npm run phase2:proof`, 2026-10-21; review rows re-measured 2026-10-26 under D-77)
 
 Measured by `scripts/phase2-proof.ts` on a fresh org seeded from the frozen fixtures (local `housefile_test`; the same step runs in CI's `ci` job). These are snapshots of this code's own hashes (D-53): the proof is that the hash *after* an undo or unmerge equals the hash recorded *before*, not that any hash matches an oracle.
 
@@ -161,9 +161,11 @@ Measured by `scripts/phase2-proof.ts` on a fresh org seeded from the frozen fixt
 $ npm run phase2:proof:test
 seed: 286 constituents, 878 gifts; stateHash 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb
 A: preview: rows 400 = merged 259 + reviewed 55 + new 71 + rejected 15; review load 55/400 = 13.8%; pending-target 14; beforeHash 7d3bd174…; planHash bf0e2926…
-A: commit: constituents 71, versions 172, gifts 298 (+11 waiting, 21 skipped), merges 246, review items 74 over 55 rows; stateHash 2c035193…
+A: commit: constituents 71, versions 172, gifts 298 (+11 waiting, 21 skipped), merges 246, review items 74 over 68 rows; stateHash 2c035193…
+A: rows for a person 68 = reviewed 55 + target-in-review 13 (D-77); review load 68/400 = 17.0%
 B: preview: rows 250 = merged 180 + reviewed 39 + new 17 + rejected 14; review load 39/250 = 15.6%; pending-target 6; beforeHash 2c035193…; planHash f272ebb4…
-B: commit: constituents 17, versions 133, gifts 178 (+5 waiting, 11 skipped), merges 174, review items 49 over 39 rows; stateHash b6352902…
+B: commit: constituents 17, versions 133, gifts 178 (+5 waiting, 11 skipped), merges 174, review items 49 over 45 rows; stateHash b6352902…
+B: rows for a person 45 = reviewed 39 + target-in-review 6 (D-77); review load 45/250 = 18.0%
 undo B: retired 17, versions restored 89, gifts voided 178, merges reversed 174
 undo B: stateHash == beforeHash: 2c035193ee43d9b4c08425e79cebfa6406c69cfb4a75a228f9ae39422a1acbd8 == 2c035193ee43d9b4c08425e79cebfa6406c69cfb4a75a228f9ae39422a1acbd8
 undo A: retired 71, versions restored 76, gifts voided 298, merges reversed 246
@@ -174,11 +176,11 @@ unmerge (row 399) survivor hash == snapshot: 6af1c76a… == 6af1c76a…
 phase2:proof OK
 ```
 
-**Review load.** File A against the seeded org: 55 of 400 rows (13.8%) wait for a person, as 74 items (one per tied candidate, D-35); 14 more rows wait on one of those 55 (D-55) and follow it automatically once it is decided, so they add no decisions. File B after A on the database: 39 of 250 rows (15.6%), 49 items, 6 waiting. B-after-A has no oracle (D-51): 180/39/17 here against 166/33/37 in the in-memory reference, because A also wrote 71 new constituents and left 55 rows open; the proof for B is the undo hash, not the counts.
+**Review load (D-77, owner decision 2026-10-26).** File A against the seeded org: **68 of 400 rows (17.0%)** wait for a person, as 74 items (one per tied candidate, D-35): the plan's 55 REVIEW rows plus 13 rows the matcher would auto-merge (score ≥ 70) into an earlier row that is itself in review. Those 13 are `TARGET_IN_REVIEW` review rows; they are never followed into what the target becomes (before D-77: 55 rows, 13.8%, the 13 followed without a decision). File B after A on the database: **45 of 250 rows (18.0%)**, 49 items, 39 REVIEW + 6 `TARGET_IN_REVIEW` (before: 39, 15.6%). Merges written at commit are unchanged (A 246, B 174) and checked against the answer keys by a scratch script outside the repo: 0 wrong in each; all 19 re-queued rows are the same true person as their target row, so on this fixture D-77 adds 19 decisions and changes no outcome. B-after-A has no oracle (D-51): 180/39/17 here against 166/33/37 in the in-memory reference, because A also wrote 71 new constituents and left 55 rows open; the proof for B is the undo hash, not the counts.
 
 **Undo and unmerge, one line each:** `npm run import:undo -- --batch <id>` prints `stateHash <h> == beforeHash <h>` or `UNDO_FAILED expected <h> actual <h>`; `npm run constituents:unmerge -- --event <id>` prints both records' hashes next to their snapshots. The tamper tests (`tests/integration/housefile-tamper.test.ts`) show the failing side: a changed gift or version → `STATE_MOVED`, a changed stored plan → `PLAN_TAMPERED`, a change after commit → `UNDO_FAILED` with both hashes and nothing else written.
 
-**What this does not show.** The counts for B-after-A and the pending-target follow rule (D-55) have no reference value; whether a planned auto-merge should follow a *human* MERGE transitively is open for Shane (D-55). Soft credits are not moved by a merge (Phase 3 writes the table). All data is synthetic.
+**What this does not show.** The counts for B-after-A and the TARGET_IN_REVIEW rule (D-55, D-77) have no reference value; the proof derives the rows-for-a-person count from the plan (REVIEW + pending MERGE rows) and fails on any difference, it does not compare it to an oracle. Soft credits are not moved by a merge (Phase 3 writes the table). All data is synthetic.
 
 ## Which tests are oracle agreement and which are snapshots
 

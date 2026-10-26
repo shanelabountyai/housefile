@@ -1,5 +1,13 @@
 # NEXT
 
+## 2026-10-26 owner follow-up on PR #5 (D-77, D-78) — done
+
+- **D-55 → re-queue for a person (D-77).** A planned auto-merge (score ≥ 70) into an earlier row that is itself in review no longer follows it. Commit writes it as its own review row, flag `TARGET_IN_REVIEW` (replaces `PLANNED_MERGE`); `decideReview` refuses it `CANDIDATE_PENDING` until the target row is decided, then it is an ordinary item against what that row became and a person decides it. `followPending`, `followed` and the `review.follow` audit event are gone. Plan, `planHash`, matcher and `decisions_*.csv` unchanged; only the report wording for those rows changed.
+- **Measured** (`phase2:proof:test`, which now derives and checks rows-for-a-person = REVIEW + pending MERGE rows): A **55 → 68** rows (13.8% → 17.0%), B after A **39 → 45** (15.6% → 18.0%); review items unchanged (74, 49); merges at commit unchanged (246, 174), **0 wrong** against the answer keys in each (scratch script, outside the repo); all 19 re-queued rows are truly the target row's person, so this costs 19 decisions and changes no outcome on the fixture. Commit/undo hashes unchanged. `import:eval` drift 0 rows.
+- **D-34..D-40 → resolved, owner decision 2026-10-26, as built (D-78).** D-34 stays sequential. Stale "provisional" wording removed from `src/import/resolve.ts`, `tests/unit/import/eval.test.ts`, `import/synonyms.json`.
+- Gate and CI: see PR #5 body ("Owner follow-up 2026-10-26").
+- Sandbox notes: `npm ci` needs `PRISMA_SCHEMA_ENGINE_BINARY=/bin/true`; migrations applied with `psql -f`; `foundation:drift` needs the `v1.3.0` tag fetched from `shanelabountyai/saas-foundation`; `foundation:check-modules` fails locally on the base branch too (needs `rsync`), CI runs it.
+
 ## ▶ Next session: task 3.5 — gift corrections and voids (D-72)
 
 **2026-10-25 task 3.4 DONE.** `segments/schema.json` (closed vocabulary), pure `validateSegment` / `evaluateSegment(def, state, asOf)` in `src/segments/segment.ts`, `SegmentDefinition` (versions per key) and `SegmentRun` tables (migration `20261025143405_segments`, append-only triggers), `saveSegment` / `runSegment` in `src/commit/segments.ts` (results.write, audited) — **D-76**. Counts = oracle: colorado-households 6, lapsed-repeat 22, lybunt 86, major-2025 61, south-central-2026 90, sybunt 19, member for member, in memory and on the seeded DB. Same version + asOf → same member-list hash. `model:lint` greps `src/segments/` (planted `Date.now` fails); `write:lint` guards both new tables. Mutation-checked: lybunt reading the window, `isHousehold ≥ 1`, missing value passing, gifts after asOf counted — all fail.
@@ -85,7 +93,7 @@ PR #5 still has no review. Model for 3.1: Opus/Fable (oracle, fixture hashes).
 **Decided (D-53..D-65 in `docs/decisions.md`, each with the alternative not taken).** The ones Shane should read: **D-55** (rows whose auto-merge target is a row still in review: 13 MERGE + 1 REVIEW rows in A, 5 in B; they wait and then *follow* the target row into whatever it became), D-56 (fund synonyms at plan time, default `GEN`), D-57 (zero/negative gifts held, never written), D-59 (open is per row; pair memory never suppresses on its own, it re-queues when a new identifier agrees), D-61 (S6 lives in the plan, not the matcher), D-63 (undo blocks on a later batch, or a later write that is not net neutral).
 
 **Left open — needs Shane**
-1. ~~**D-55**~~ **DECIDED 2026-10-21: follow, as built** (recorded in D-55). Don't reopen.
+1. ~~**D-55**~~ ~~DECIDED 2026-10-21: follow, as built~~ → **re-decided by Shane 2026-10-26: re-queue for a person (D-77).**
 2. D-57: no refund/correction path for held gifts yet (seam: a superseding row with a reason, D-6).
 3. Names from a single full-name column (file B) land parsed and folded (lowercase) on new constituents.
 4. Soft credits are not moved by a merge (`softCreditsMoved: []`, ponytail seam in `merge.ts`) until Phase 3 writes the table.
