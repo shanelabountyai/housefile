@@ -1,7 +1,7 @@
 // `npm run phase2:proof` (task 2.10, D-65): the Phase 2 proofs end to end on a fresh org, printing every hash.
 // seed → preview A → commit A → preview B → commit B → undo B → undo A (each undo's stateHash must equal the batch's
 // beforeHash) → a constituent merge and its unmerge → a row merge and its unmerge (each record's hash must equal its
-// snapshot). Exits 1 on the first mismatch, naming both hashes. Runs in CI against the job's Postgres.
+// snapshot). D-77: the rows waiting for a person are derived from the plan and checked. Exits 1 on the first mismatch, naming both hashes. Runs in CI against the job's Postgres.
 import { readFileSync } from 'node:fs';
 import { db } from '@/core/db';
 import { commitBatch } from '@/commit/commit';
@@ -43,6 +43,13 @@ async function main() {
     if (c.status !== 'COMMITTED') fail(`${tag.toUpperCase()} commit ${c.status} expected ${c.expected} actual ${c.actual}`);
     const w = c.written;
     console.log(`${tag.toUpperCase()}: commit: constituents ${w.constituents}, versions ${w.versions}, gifts ${w.gifts} (+${w.giftsPending} waiting, ${w.giftsSkipped} skipped), merges ${w.mergeEvents}, review items ${w.reviewItems} over ${w.reviewRows} rows; stateHash ${await hash()}`);
+    // D-77: a planned auto-merge whose target row is in review is a review row of its own, never followed. Derived,
+    // not hard-coded: the rows waiting for a person = the plan's REVIEW rows + its pending MERGE rows.
+    const targetInReview = p.plan.pending.filter((x) => x.decision === 'MERGE').length;
+    console.log(`${tag.toUpperCase()}: rows for a person ${w.reviewRows} = reviewed ${t.reviewed} + target-in-review ${targetInReview} (D-77); review load ${w.reviewRows}/${t.rows} = ${((100 * w.reviewRows) / t.rows).toFixed(1)}%`);
+    if (w.reviewRows !== t.reviewed + targetInReview || w.targetInReviewRows !== targetInReview) fail(`${tag.toUpperCase()} rows for a person ${w.reviewRows} (target-in-review ${w.targetInReviewRows}) != ${t.reviewed} + ${targetInReview}`);
+    const unscored = await db.mergeEvent.count({ where: { importBatchId: p.batchId, rowIndex: { in: p.file.rows.filter((r) => p.plan.pending.some((x) => x.rowId === r.id)).map((r) => r.index) } } });
+    if (unscored !== 0) fail(`${tag.toUpperCase()} ${unscored} pending-target row(s) merged at commit`);
     batches.push({ tag: tag.toUpperCase(), batchId: p.batchId, beforeHash: p.beforeHash });
   }
   for (const b of [...batches].reverse()) {

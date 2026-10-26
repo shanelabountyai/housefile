@@ -1,8 +1,8 @@
-// Task 2.4 (D-12, D-14, D-35, D-46, D-55, D-58, D-59): commit a stored preview. The only input is the batch id.
+// Task 2.4 (D-12, D-14, D-35, D-46, D-55, D-58, D-59, D-77): commit a stored preview. The only input is the batch id.
 // The stored plan is re-hashed (PLAN_TAMPERED), the state is re-hashed against beforeHash (STATE_MOVED), then one
 // transaction writes exactly the plan: NEW rows → constituent + version 1; MERGE rows → MergeEvent + survivorship
 // version + gift; REVIEW rows → ReviewItems for every tied candidate; rows whose target is still in review →
-// ReviewItems with candidateRowIndex (D-55); pair-memory re-queues → ReviewItems (D-59). Every row is tagged with
+// ReviewItems with candidateRowIndex, a planned auto-merge among them a review row of its own (D-55, D-77); pair-memory re-queues → ReviewItems (D-59). Every row is tagged with
 // the batch, directly or through its MergeEvent.
 import type { PrismaClient } from '@/generated/prisma/client';
 import { sha256Hex } from '../lib/canonical';
@@ -11,10 +11,10 @@ import { effectiveStateHash } from './state';
 import { loadBatchCtx, writeNewConstituent, writeRowMerge, type BatchCtx } from './write';
 
 export type CommitStatus = 'COMMITTED' | 'ALREADY_COMMITTED' | 'STATE_MOVED' | 'PLAN_TAMPERED';
-export type Written = { constituents: number; versions: number; gifts: number; giftsPending: number; giftsSkipped: number; mergeEvents: number; reviewItems: number; reviewRows: number; pendingTargetRows: number; pendingTargetItems: number; memoryQueued: number };
+export type Written = { constituents: number; versions: number; gifts: number; giftsPending: number; giftsSkipped: number; mergeEvents: number; reviewItems: number; reviewRows: number; targetInReviewRows: number; pendingTargetRows: number; pendingTargetItems: number; memoryQueued: number };
 export type CommitResult = { status: CommitStatus; batchId: string; written: Written; expected?: string; actual?: string };
 
-const ZERO: Written = { constituents: 0, versions: 0, gifts: 0, giftsPending: 0, giftsSkipped: 0, mergeEvents: 0, reviewItems: 0, reviewRows: 0, pendingTargetRows: 0, pendingTargetItems: 0, memoryQueued: 0 };
+const ZERO: Written = { constituents: 0, versions: 0, gifts: 0, giftsPending: 0, giftsSkipped: 0, mergeEvents: 0, reviewItems: 0, reviewRows: 0, targetInReviewRows: 0, pendingTargetRows: 0, pendingTargetItems: 0, memoryQueued: 0 };
 
 export async function commitBatch(db: PrismaClient, input: { batchId: string; userId: string }): Promise<CommitResult> {
   const { batchId, userId } = input;
@@ -61,10 +61,14 @@ async function applyPlan(tx: Tx, ctx: BatchCtx): Promise<Written> {
     if (d.decision === 'REJECT') continue;
 
     if (d.decision === 'MERGE' && p) {
-      // D-55: the target row is itself in review; queue this row against it and write it when that row is decided
+      // D-55 / D-77: the target row is itself in review, so this auto-merge has no constituent behind it. It does not
+      // follow the target: it becomes its own review row (TARGET_IN_REVIEW), decidable by a person once the target
+      // row is decided and resolves to a constituent. No merge is written without a score or a person behind it.
       const targetRow = rowsById.get(d.target)!;
-      await tx.reviewItem.create({ data: { orgId, importBatchId: batchId, rowIndex: row.index, candidateRowIndex: targetRow.index, score: d.score ?? 0, reasons: d.reasons, flags: ['PENDING_TARGET', 'PLANNED_MERGE', ...d.flags] } });
+      await tx.reviewItem.create({ data: { orgId, importBatchId: batchId, rowIndex: row.index, candidateRowIndex: targetRow.index, score: d.score ?? 0, reasons: d.reasons, flags: ['PENDING_TARGET', 'TARGET_IN_REVIEW', ...d.flags] } });
       w.reviewItems++;
+      w.reviewRows++;
+      w.targetInReviewRows++;
       w.pendingTargetItems++;
       w.pendingTargetRows++;
       if (giftOf.has(d.rowId)) w.giftsPending++;

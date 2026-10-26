@@ -23,7 +23,7 @@ export function formatPreview(p: Preview): string {
   L.push(`gifts that matched date+cents on the target but with a different reference (added, look): ${t.dateCentsMatchedRefDiffered}`);
   L.push(`gifts equal to an earlier planned gift of this batch on date, cents and reference (added per S4, look): ${t.inFileSameGiftNotSkipped}`);
   L.push(`field changes on existing constituents ${t.fieldChanges}; alternates kept ${t.alternates}; name aliases ${t.aliases}`);
-  L.push(`rows whose target is an earlier row still in review (written when that row is decided, D-55): ${t.pendingTarget}`);
+  L.push(`rows whose target is an earlier row still in review (queued for a person once that row is decided, D-55/D-77): ${t.pendingTarget}`);
   L.push(`gifts whose fund text is not in import/fund-synonyms.json (default fund used, FUND_UNKNOWN): ${t.fundUnknown}`);
   L.push(`rows re-queued by pair memory (a KEEP_SEPARATE pair where a new identifier now agrees, D-59): ${t.memoryQueued}`);
   const cents = p.gifts.reduce((s, g) => s + g.cents, 0);
@@ -56,8 +56,8 @@ export function formatPreview(p: Preview): string {
   h(`REVIEW PAIRS (${p.review.length})`);
   for (const r of p.review) L.push(`${r.rowId} vs ${pad(r.target, 7)} ${pad(r.score, 4)} ${r.reasons.join('+')}${r.flags.length ? ` [${r.flags.join(';')}]` : ''}${r.tieBreak ? `  (${r.tieBreak})` : ''}`);
 
-  h(`ROWS WAITING ON A ROW IN REVIEW (D-55, ${p.pending.length})`);
-  for (const r of p.pending) L.push(`${r.rowId} ${pad(r.decision, 6)} -> ${r.target} (${r.score}); written when ${r.target} is decided`);
+  h(`ROWS WAITING ON A ROW IN REVIEW (D-55, D-77, ${p.pending.length})`);
+  for (const r of p.pending) L.push(`${r.rowId} ${pad(r.decision, 6)} -> ${r.target} (${r.score}); ${r.decision === 'MERGE' ? 'TARGET_IN_REVIEW: not auto-merged; ' : ''}a person decides it once ${r.target} is decided`);
 
   h(`RE-QUEUED BY PAIR MEMORY (D-59, ${p.memoryQueue.length})`);
   for (const m of p.memoryQueue) L.push(`${m.rowId} merges into ${m.mergedInto}; vs ${m.target} newly agrees ${m.newlyAgreed.join('+')} (remembered: ${m.agreedBefore.join('+') || 'none'}); queued for review`);

@@ -1,5 +1,5 @@
-// Task 2.5 (D-22, D-14, D-55, D-59): the four review actions on the database, audited, permission-checked,
-// with KEEP_SEPARATE remembered as pair memory and rows waiting on a reviewed row following it.
+// Task 2.5 (D-22, D-14, D-55, D-59, D-77): the four review actions on the database, audited, permission-checked,
+// with KEEP_SEPARATE remembered as pair memory; rows waiting on a reviewed row do not follow it, a person decides them.
 import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/core/db';
@@ -66,12 +66,11 @@ describe('review actions (task 2.5)', () => {
     expect(merge).toMatchObject({ kind: 'ROW_INTO_CONSTITUENT', survivorId: item.constituentId, rowIndex: row.rowIndex });
     expect(await db.gift.count({ where: { constituentId: item.constituentId!, reviewDecisionId: decision.id } })).toBe(1);
     const after = await db.gift.count({ where: { constituentId: item.constituentId! } });
-    expect(after).toBeGreaterThanOrEqual(giftsBefore + 1); // rows waiting on this one followed it (D-55); a follower's gift may be a DUP_GIFT
-    expect(after).toBeLessThanOrEqual(giftsBefore + 1 + r.followed!);
+    expect(after).toBe(giftsBefore + 1); // D-77: nothing follows the decided row; only its own gift is written
     expect(await db.auditEvent.findFirst({ where: { action: 'review.decide', targetId: item.id } })).toMatchObject({ actorUserId: owner.id, orgId });
     const open = await listReview(db, { orgId, batchId });
     expect(open.some((x) => x.rowIndex === row.rowIndex)).toBe(false);
-    expect(open.length).toBe(rows.length - 1 - r.followed!); // followers' rows close with the row they followed (D-55)
+    expect(open.length).toBe(rows.length - 1); // D-77: exactly the decided row closes
     // a sibling item of a decided row cannot be decided again
     if (row.items.length > 1) expect((await decideReview(db, { itemId: row.items[1]!.id, action: 'DEFER', userId: owner.id })).code).toBe('ROW_DECIDED');
     expect((await decideReview(db, { itemId: item.id, action: 'DEFER', userId: owner.id })).code).toBe('ROW_DECIDED');
@@ -130,23 +129,48 @@ describe('review actions (task 2.5)', () => {
     expect(await batchStatus(db, batchId)).toBe('COMMITTED');
   });
 
-  it('D-55: rows waiting on a reviewed row follow it; a review against a pending row waits for it', SLOW, async () => {
+  it('D-77: a planned auto-merge whose target row is in review never follows it; a person decides it', SLOW, async () => {
     const { orgId, batchId, rows, owner } = await committedA();
-    // A-0001 (row index 0) is in review and has planned auto-merges waiting on it (A-0195, A-0278, ...)
+    // A-0001 (row index 0) is in review and planned auto-merges (score >= 70) target it (A-0195, A-0278, ...)
     const target = rows.find((r) => r.rowIndex === 0)!;
-    const followers = await db.reviewItem.findMany({ where: { importBatchId: batchId, candidateRowIndex: 0, flags: { has: 'PLANNED_MERGE' } } });
-    expect(followers.length).toBeGreaterThan(0);
-    const waiting = rows.find((r) => r.items.some((i) => i.candidateRowIndex === 0 && !i.flags.includes('PLANNED_MERGE')));
+    const queued = await db.reviewItem.findMany({ where: { importBatchId: batchId, candidateRowIndex: 0, flags: { has: 'TARGET_IN_REVIEW' } }, orderBy: { rowIndex: 'asc' } });
+    expect(queued.length).toBeGreaterThan(0);
+    for (const q of queued) expect(q.score).toBeGreaterThanOrEqual(70);
+    // each is its own open row in the queue, and cannot be decided while its target row is undecided
+    for (const q of queued) expect(rows.some((x) => x.rowIndex === q.rowIndex)).toBe(true);
+    expect((await decideReview(db, { itemId: queued[0]!.id, action: 'MERGE', reason: 'x', userId: owner.id })).code).toBe('CANDIDATE_PENDING');
+    const waiting = rows.find((r) => r.items.some((i) => i.candidateRowIndex === 0 && !i.flags.includes('TARGET_IN_REVIEW')));
+
+    const mergesBefore = await db.mergeEvent.count();
     const r = await decideReview(db, { itemId: target.items[0]!.id, action: 'KEEP_SEPARATE', reason: 'different person', userId: owner.id });
     expect(r.status).toBe('DECIDED');
-    expect(r.followed).toBe(followers.length);
-    expect(await db.mergeEvent.count({ where: { survivorId: r.constituentId!, rowIndex: { in: followers.map((f) => f.rowIndex) } } })).toBe(followers.length);
+    // nothing followed: no merge event, no decision and no gift for any of the queued rows
+    expect(await db.mergeEvent.count()).toBe(mergesBefore);
+    expect(await db.mergeEvent.count({ where: { importBatchId: batchId, rowIndex: { in: queued.map((q) => q.rowIndex) } } })).toBe(0);
+    expect(await db.reviewDecision.count({ where: { reviewItemId: { in: queued.map((q) => q.id) } } })).toBe(0);
+    expect(await db.auditEvent.count({ where: { action: 'review.follow' } })).toBe(0);
+
+    // they stay open, now resolved to what the target became, for a person to decide
     const open = await listReview(db, { orgId, batchId });
-    expect(open.some((x) => followers.some((f) => f.rowIndex === x.rowIndex))).toBe(false);
+    expect(open.length).toBe(rows.length - 1);
+    for (const q of queued) {
+      const row = open.find((x) => x.rowIndex === q.rowIndex)!;
+      const item = row.items.find((i) => i.id === q.id)!;
+      expect(item.constituentId).toBe(r.constituentId);
+      expect(item.flags).toContain('TARGET_IN_REVIEW');
+    }
     if (waiting) {
       const w = open.find((x) => x.rowIndex === waiting.rowIndex)!;
       expect(w.items.find((i) => i.candidateRowIndex === 0)!.constituentId).toBe(r.constituentId); // resolved through the decision
     }
+    // a person merges one: the merge carries that person's decision and reason, never the target row's
+    const m = await decideReview(db, { itemId: queued[0]!.id, action: 'MERGE', reason: 'checked: same person as the new record', userId: owner.id });
+    expect(m.status).toBe('DECIDED');
+    expect(m.constituentId).toBe(r.constituentId);
+    const me = await db.mergeEvent.findFirstOrThrow({ where: { reviewDecisionId: m.decisionId! } });
+    expect(me).toMatchObject({ kind: 'ROW_INTO_CONSTITUENT', survivorId: r.constituentId, rowIndex: queued[0]!.rowIndex });
+    expect((await listReview(db, { orgId, batchId })).length).toBe(rows.length - 2);
+
     // a review item whose candidate row is still undecided cannot be decided yet
     const pendingItem = await db.reviewItem.findFirst({ where: { importBatchId: batchId, candidateRowIndex: { not: null, notIn: [0] }, flags: { has: 'PENDING_TARGET' } }, orderBy: { rowIndex: 'asc' } });
     if (pendingItem) expect((await decideReview(db, { itemId: pendingItem.id, action: 'MERGE', reason: 'x', userId: owner.id })).code).toBe('CANDIDATE_PENDING');

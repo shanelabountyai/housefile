@@ -24,7 +24,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`DECIDED ${action} decision ${r.decisionId}${r.constituentId ? ` constituent ${r.constituentId}` : ''}${r.followed ? ` (${r.followed} waiting row(s) followed, D-55)` : ''}`);
+  console.log(`DECIDED ${action} decision ${r.decisionId}${r.constituentId ? ` constituent ${r.constituentId}` : ''}`);
 }
 
 main()

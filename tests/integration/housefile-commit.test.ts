@@ -48,7 +48,15 @@ describe('commitBatch (task 2.4)', () => {
     expect(w.pendingTargetRows).toBe(t.pendingTarget);
     expect(w.constituents).toBe(t.new);
     expect(w.mergeEvents + plan.pending.filter((p) => p.decision === 'MERGE').length).toBe(t.merged);
-    expect(w.reviewRows).toBe(t.reviewed);
+    // D-77: a planned auto-merge whose target row is in review is a review row of its own (TARGET_IN_REVIEW), so the
+    // rows waiting for a person are the plan's REVIEW rows plus the pending MERGE rows: 55 + 13 = 68 in file A
+    const targetInReview = plan.pending.filter((p) => p.decision === 'MERGE').length;
+    expect(targetInReview).toBe(13);
+    expect(w.targetInReviewRows).toBe(targetInReview);
+    expect(w.reviewRows).toBe(t.reviewed + targetInReview);
+    expect(w.reviewRows).toBe(68);
+    expect(await db.reviewItem.count({ where: { importBatchId: batchId, flags: { has: 'TARGET_IN_REVIEW' } } })).toBe(targetInReview);
+    expect(await db.reviewItem.count({ where: { importBatchId: batchId, flags: { has: 'PLANNED_MERGE' } } })).toBe(0);
     expect(w.gifts + w.giftsPending).toBe(t.giftsToAdd);
     expect(w.giftsSkipped).toBe(t.dupGift + t.dupGiftInFile);
     expect(w.reviewItems).toBeGreaterThanOrEqual(t.reviewed + t.pendingTarget);

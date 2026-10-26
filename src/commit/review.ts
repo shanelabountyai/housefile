@@ -1,4 +1,4 @@
-// Task 2.5 (D-22, D-14, D-55, D-59): the review queue on the database. Open is derived at the ROW level: a row of a
+// Task 2.5 (D-22, D-14, D-55, D-59, D-77): the review queue on the database. Open is derived at the ROW level: a row of a
 // batch is open while none of its items carries a decision other than DEFER (a row has one item per tied candidate,
 // D-35, and one decision settles the row). A batch is COMPLETE when no row is open. Permission: results.write.
 import type { PrismaClient, ReviewAction, ReviewItem } from '@/generated/prisma/client';
@@ -9,11 +9,10 @@ import { giftForRow, loadBatchCtx, nextId, writeNewConstituent, writeRowMerge, c
 import { latestVersion } from './db-state';
 import { mergeConstituentsTx } from './merge';
 import { displayAddress, displayName } from '../import/preview';
-import type { ImportRow } from '../import/validate';
 import type { StoredRows } from './preview';
 
 export type RefusalCode = 'NOT_FOUND' | 'FORBIDDEN' | 'REASON_REQUIRED' | 'ROW_DECIDED' | 'CANDIDATE_PENDING';
-export type ReviewOutcome = { status: 'DECIDED'; code?: undefined; decisionId: string; constituentId: string | null; followed: number } | { status: 'REFUSED'; code: RefusalCode; decisionId?: undefined; constituentId?: undefined; followed?: undefined };
+export type ReviewOutcome = { status: 'DECIDED'; code?: undefined; decisionId: string; constituentId: string | null } | { status: 'REFUSED'; code: RefusalCode; decisionId?: undefined; constituentId?: undefined };
 export type ReviewItemView = { id: string; constituentId: string | null; candidateRowIndex: number | null; candidate: string; score: number; reasons: string[]; flags: string[] };
 export type ReviewRowView = { batchId: string; rowIndex: number; rowId: string; row: { name: string; email: string; phone: string; address: string; giftDate: string; cents: number | null }; items: ReviewItemView[] };
 export type BatchStatus = 'PREVIEWED' | 'COMMITTED' | 'COMPLETE' | 'UNDONE' | 'UNDO_FAILED';
@@ -85,7 +84,7 @@ export async function decideReview(db: PrismaClient, input: DecideInput): Promis
 
       const decision = await tx.reviewDecision.create({ data: { orgId: item.orgId, reviewItemId: item.id, action: input.action, reason: reason || null, userId: input.userId } });
       await audit({ orgId: item.orgId, userId: input.userId }, 'review.decide', { targetType: 'ReviewItem', targetId: item.id, data: { action: input.action, batchId: item.importBatchId, rowIndex: item.rowIndex, candidate } }, tx);
-      if (input.action === 'DEFER') return { status: 'DECIDED' as const, decisionId: decision.id, constituentId: null, followed: 0 };
+      if (input.action === 'DEFER') return { status: 'DECIDED' as const, decisionId: decision.id, constituentId: null };
 
       const ctx = await loadBatchCtx(tx, item.importBatch);
       const row = ctx.rows[item.rowIndex]!;
@@ -109,8 +108,9 @@ export async function decideReview(db: PrismaClient, input: DecideInput): Promis
         became = await writeNewConstituent(tx, ctx, row, writer, gift, householdId);
         if (input.action === 'KEEP_SEPARATE') await rememberPair(tx, ctx.orgId, became, candidate!, item.reasons as string[], decision.id);
       }
-      const followed = await followPending(tx, ctx, item.rowIndex, became, input);
-      return { status: 'DECIDED' as const, decisionId: decision.id, constituentId: became, followed };
+      // D-77: rows whose planned auto-merge targeted this row (TARGET_IN_REVIEW) do not follow it; their items now
+      // resolve to `became` through rowOutcome and wait in the queue for a person like any other review row.
+      return { status: 'DECIDED' as const, decisionId: decision.id, constituentId: became };
     },
     { timeout: 120_000, isolationLevel: 'Serializable' },
   );
@@ -131,22 +131,4 @@ async function rememberPair(tx: Tx, orgId: string, x: string, t: string, agreed:
   const prev = await tx.pairMemory.findUnique({ where: { orgId_aId_bId: { orgId, aId, bId } } });
   const merged = [...new Set([...(prev?.agreed ?? []), ...agreed])];
   await tx.pairMemory.upsert({ where: { orgId_aId_bId: { orgId, aId, bId } }, create: { orgId, aId, bId, agreed: merged, reviewDecisionId }, update: { agreed: merged, reviewDecisionId } });
-}
-
-/** D-55: rows whose planned auto-merge waited on this row now merge into what it became, each under its own
- *  decision (MERGE, reason naming the row followed) by the same user. Returns how many followed. */
-async function followPending(tx: Tx, ctx: BatchCtx, rowIndex: number, became: string, input: DecideInput): Promise<number> {
-  const followers = await tx.reviewItem.findMany({ where: { importBatchId: ctx.batchId, candidateRowIndex: rowIndex, flags: { has: 'PLANNED_MERGE' } }, orderBy: { rowIndex: 'asc' } });
-  let n = 0;
-  for (const f of followers) {
-    if (await rowDecided(tx, ctx.batchId, f.rowIndex)) continue;
-    const row: ImportRow = ctx.rows[f.rowIndex]!;
-    const decision = await tx.reviewDecision.create({ data: { orgId: ctx.orgId, reviewItemId: f.id, action: 'MERGE', reason: `D-55: follows row ${ctx.rows[rowIndex]!.id} decided ${input.action}`, userId: input.userId } });
-    await audit({ orgId: ctx.orgId, userId: input.userId }, 'review.follow', { targetType: 'ReviewItem', targetId: f.id, data: { follows: rowIndex, batchId: ctx.batchId, rowIndex: f.rowIndex, candidate: became } }, tx);
-    const { gift } = await giftForRow(tx, ctx, row, became);
-    await writeRowMerge(tx, ctx, row, became, { reviewDecisionId: decision.id }, `planned auto-merge ${f.score}, followed row ${ctx.rows[rowIndex]!.id} (D-55)`, gift);
-    n++;
-    n += await followPending(tx, ctx, f.rowIndex, became, input); // a follower may itself have followers
-  }
-  return n;
 }
