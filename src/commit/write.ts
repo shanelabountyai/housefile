@@ -166,10 +166,10 @@ export async function restoreVersion(tx: Tx, constituentId: string, target: Effe
 export const activeGift = (tx: Tx, orgId: string, giftRef: string) => tx.gift.findFirstOrThrow({ where: { orgId, giftRef, supersededBy: null } });
 
 /** A superseding row for a gift (D-6, D-48): same giftRef, the patch applied, a reason, one writer. */
-export async function supersedeGift(tx: Tx, g: Gift, patch: { constituentId?: string; status?: 'ACTIVE' | 'VOIDED' }, reason: string, writer: Writer | { mergeEventId: string }): Promise<Gift> {
+export async function supersedeGift(tx: Tx, g: Gift, patch: { constituentId?: string; status?: 'ACTIVE' | 'VOIDED'; amountCents?: number; giftDate?: Date; fundId?: string }, reason: string, writer: Writer | { mergeEventId: string }): Promise<Gift> {
   return tx.gift.create({
     data: {
-      orgId: g.orgId, giftRef: g.giftRef, constituentId: patch.constituentId ?? g.constituentId, giftDate: g.giftDate, amountCents: g.amountCents, fundId: g.fundId, appealId: g.appealId, giftType: g.giftType, externalRef: g.externalRef,
+      orgId: g.orgId, giftRef: g.giftRef, constituentId: patch.constituentId ?? g.constituentId, giftDate: patch.giftDate ?? g.giftDate, amountCents: patch.amountCents ?? g.amountCents, fundId: patch.fundId ?? g.fundId, appealId: g.appealId, giftType: g.giftType, externalRef: g.externalRef,
       supersedesGiftId: g.id, status: patch.status ?? g.status, reason, ...writer,
     },
   });

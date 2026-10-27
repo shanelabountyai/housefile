@@ -1,5 +1,13 @@
 # NEXT
 
+## ▶ Next session: task 3.6 — read its entry in `docs/phase-3-tasks.md`
+
+**2026-10-27 task 3.5 DONE (D-79).** `correctGift` / `voidGift` in `src/commit/gifts.ts`: one superseding row via the shared `supersedeGift` (patch widened to amount, date, fund), writer = actor, reason required, `results.write`, audited in the same serializable transaction. `tests/integration/housefile-gift-correction.test.ts`: original row unchanged, chain length 2, roll-ups move by exactly +1234 (amount), fund move shifts the whole amount with the total unchanged, void drops raised by the amount and gifts by 1; member, blank reason, zero/negative/fractional amount, bad date, unknown fund, no-op change, unknown ref and an already-voided gift all refused with no gift or audit row; UPDATE/DELETE still refused on every chain row. Mutation-checked (role check, `> 0`, voided guard, no-op guard, void status): all 5 fail.
+- Seams: appeal not correctable; zero/negative still held (D-57).
+- Gate (local): `npm test` 56 files **451 / 451**, typecheck, lint (3 old warnings), `fixtures:check`, `model:lint`, `money:lint`, `write:lint` OK, `import:eval` drift 0 rows.
+
+---
+
 ## 2026-10-26 owner follow-up on PR #5 (D-77, D-78) — done
 
 - **D-55 → re-queue for a person (D-77).** A planned auto-merge (score ≥ 70) into an earlier row that is itself in review no longer follows it. Commit writes it as its own review row, flag `TARGET_IN_REVIEW` (replaces `PLANNED_MERGE`); `decideReview` refuses it `CANDIDATE_PENDING` until the target row is decided, then it is an ordinary item against what that row became and a person decides it. `followPending`, `followed` and the `review.follow` audit event are gone. Plan, `planHash`, matcher and `decisions_*.csv` unchanged; only the report wording for those rows changed.
@@ -7,14 +15,6 @@
 - **D-34..D-40 → resolved, owner decision 2026-10-26, as built (D-78).** D-34 stays sequential. Stale "provisional" wording removed from `src/import/resolve.ts`, `tests/unit/import/eval.test.ts`, `import/synonyms.json`.
 - Gate and CI: see PR #5 body ("Owner follow-up 2026-10-26").
 - Sandbox notes: `npm ci` needs `PRISMA_SCHEMA_ENGINE_BINARY=/bin/true`; migrations applied with `psql -f`; `foundation:drift` needs the `v1.3.0` tag fetched from `shanelabountyai/saas-foundation`; `foundation:check-modules` fails locally on the base branch too (needs `rsync`), CI runs it.
-
-## ▶ Next session: task 3.5 — gift corrections and voids (D-72)
-
-**2026-10-25 task 3.4 DONE.** `segments/schema.json` (closed vocabulary), pure `validateSegment` / `evaluateSegment(def, state, asOf)` in `src/segments/segment.ts`, `SegmentDefinition` (versions per key) and `SegmentRun` tables (migration `20261025143405_segments`, append-only triggers), `saveSegment` / `runSegment` in `src/commit/segments.ts` (results.write, audited) — **D-76**. Counts = oracle: colorado-households 6, lapsed-repeat 22, lybunt 86, major-2025 61, south-central-2026 90, sybunt 19, member for member, in memory and on the seeded DB. Same version + asOf → same member-list hash. `model:lint` greps `src/segments/` (planted `Date.now` fails); `write:lint` guards both new tables. Mutation-checked: lybunt reading the window, `isHousehold ≥ 1`, missing value passing, gifts after asOf counted — all fail.
-- `member` role cannot run a segment (a run is a write); revisit with the segment page.
-- Gate (local): `npm test` 55 files **450 / 450**, typecheck, lint (3 old warnings), `fixtures:check`, `model:lint` (40312dfe…), `money:lint`, `write:lint` OK, `import:eval` drift 0 rows, labels 30 / 30.
-
-**Next:** 3.5 — read its entry in `docs/phase-3-tasks.md`; its acceptance "roll-ups move by exactly the difference" should reuse `view()` from `tests/integration/housefile-rollups.test.ts`.
 
 ---
 
