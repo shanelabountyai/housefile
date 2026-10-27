@@ -103,6 +103,7 @@ model Org {
   unmergeEvents  UnmergeEvent[] // app
   segmentDefinitions SegmentDefinition[] // app
   segmentRuns    SegmentRun[] // app
+  letters        Letter[] // app
 }
 
 model Membership {

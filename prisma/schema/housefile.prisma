@@ -52,6 +52,7 @@ model Constituent {
   gifts          Gift[]
   pledges        Pledge[]
   softCredits    SoftCredit[]
+  letters        Letter[]
   reviewItems    ReviewItem[]
   mergesSurvived MergeEvent[]         @relation("MergeSurvivor")
   mergesLost     MergeEvent[]         @relation("MergeLoser")
@@ -66,6 +67,7 @@ model Household {
   businessId String // H0001
   createdAt  DateTime             @default(now()) @db.Timestamptz(6)
   versions   ConstituentVersion[]
+  letters    Letter[]
 
   @@unique([orgId, businessId])
 }
@@ -424,4 +426,35 @@ model SegmentRun {
   at             DateTime          @default(now()) @db.Timestamptz(6) // run time
 
   @@index([definitionId, at])
+}
+
+enum LetterStatus {
+  QUEUED // the only status a letter is written with; LETTER_STALE is derived (D-82)
+}
+
+/// Task 3.8 (D-26, D-66 / P-8, D-82): a sample acknowledgement letter, queued and never sent. Clone-owned, never the
+/// foundation Outbox. Append-only: the gift rows it was rendered from are fixed, so a newer row for any covered giftRef
+/// (a correction, void, move) makes it LETTER_STALE at read time. Addressed to one constituent, or to a household when
+/// combined (exactly one, CHECK in SQL). Written by a person only.
+model Letter {
+  id            String       @id @default(uuid()) @db.Uuid
+  orgId         String       @db.Uuid
+  org           Org          @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  letterRef     String // L0001
+  constituentId String?      @db.Uuid
+  constituent   Constituent? @relation(fields: [constituentId], references: [id])
+  householdId   String?      @db.Uuid
+  household     Household?   @relation(fields: [householdId], references: [id])
+  giftRefs      String[] // covered, ascending
+  giftIds       String[]     @db.Uuid // the Gift row each giftRef was rendered from, same order
+  totalCents    Int // Σ the covered rows' cents, > 0 (CHECK in SQL)
+  asOf          DateTime     @db.Date // the letter's date; no clock in the render
+  subject       String
+  body          String
+  status        LetterStatus @default(QUEUED)
+  userId        String       @db.Uuid
+  createdAt     DateTime     @default(now()) @db.Timestamptz(6)
+
+  @@unique([orgId, letterRef])
+  @@index([orgId, createdAt])
 }
