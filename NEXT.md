@@ -1,5 +1,15 @@
 # NEXT
 
+## ▶ Next session: task 3.10 — Constituent, gift, campaign, segment and letter pages; read its entry in `docs/phase-3-tasks.md`
+
+**2026-10-27 task 3.9 DONE (D-83).** `/o/[org]/imports` (upload with as-of date, batch list), `/imports/[batch]` (map, correct-the-map form, totals, full report, `preview.csv`, commit, written counts, undo state and proof line), `/o/[org]/review` (filters by batch and flag, `?decided=` notice) and `/review/[batch]/[row]` (import row beside each candidate, reasons, flags, the four actions with a reason). Actions in `imports/actions.ts` and `review/actions.ts` call `previewBatch` / `commitBatch` / `undoBatch` / `decideReview` only. Undo "blocked or available" is the real `undoBatch` rolled back at the proof step.
+- `e2e/imports-review.spec.ts` (fresh org per run, rows stay in the test DB): import A through the UI, batch page counts = `phase2:proof` A line (**71 constituents, 172 versions, 298 gifts, 246 merges, 74 items over 68 rows**, rows 68 not 55 since D-77), one MERGE (refused without a reason first), KEEP_SEPARATE, SAME_HOUSEHOLD, DEFER, undo with state hash == before hash `7d3bd174…`, a `member` sees the queue and the pair but no buttons and no upload form. Passes (about 10-25 s quiet; waits are 120 s because the preview/commit are slow under load, load average hit 67 from another project's vitest).
+- Harness: `tests/fixtures/app.ts` now seeds a batch and a review item per org (fixed ids); cross-org ids are `notFound()`; the upload `File` passes through `z.looseObject`.
+- Seams: map not saved per source, no queue pagination, a committed batch page runs an undo dry-run per load.
+- Gate (local): `npm test` 62 files **472 / 472**, typecheck, lint (old warnings), `fixtures:check`, `model:lint`, `money:lint`, `write:lint` OK, `import:eval` drift 0 rows, labels 30 / 30, `foundation:drift` clean v1.3.0, e2e spec 1 / 1. The rest of the e2e suite was not re-run.
+
+---
+
 ## ▶ Next session: task 3.9 — Import and review pages; read its entry in `docs/phase-3-tasks.md`
 
 **2026-10-27 task 3.8 DONE (D-82).** `Letter` table (migration `20261027220000_letters`): clone-owned, append-only trigger, one recipient (constituent, or household when combined; CHECK), `giftRefs` + the `giftIds` rendered from (CHECK same length), `totalCents` > 0, `asOf`, rendered subject/body, status `QUEUED` only. Pure `planLetters` / `renderLetter` / `isStale` in `src/letters/letters.ts`; `queueLetters` (results.write, serializable, one `letters.queue` audit row) and `loadLetters` (derives `LETTER_STALE`: a covered giftRef's current row ≠ rendered row) in `src/commit/letters.ts`. `Letter` added to `write:lint`'s guarded models. Letters are not in the state hash; Phase 2 proofs unchanged.
