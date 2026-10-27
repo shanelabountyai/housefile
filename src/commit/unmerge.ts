@@ -7,11 +7,15 @@ import { audit } from '@/core/audit';
 import { sha256Hex } from '../lib/canonical';
 import type { ImportRow } from '../import/validate';
 import { loadEffectiveConstituent, type ConstituentSnapshot, type Tx } from './db-state';
-import { activeGift, activePledge, loadBatchCtx, restoreVersion, supersedeGift, supersedePledge, writeNewConstituent } from './write';
+import { activeGift, activePledge, headSoftCredit, loadBatchCtx, restoreVersion, supersedeGift, supersedePledge, supersedeSoftCredit, writeNewConstituent } from './write';
 
-/** pledgeRefs enter only when present, so snapshots without pledges hash as they did before task 3.6. */
-export const snapshotHash = (s: Pick<ConstituentSnapshot, 'constituent' | 'giftRefs' | 'pledgeRefs'>) =>
-  sha256Hex({ constituent: s.constituent, giftRefs: [...s.giftRefs].sort(), ...(s.pledgeRefs?.length && { pledgeRefs: [...s.pledgeRefs].sort() }) });
+/** pledgeRefs and softCreditRefs enter only when present, so snapshots without them hash as they did before tasks 3.6/3.7. */
+export const snapshotHash = (s: Pick<ConstituentSnapshot, 'constituent' | 'giftRefs' | 'pledgeRefs' | 'softCreditRefs'>) =>
+  sha256Hex({
+    constituent: s.constituent, giftRefs: [...s.giftRefs].sort(),
+    ...(s.pledgeRefs?.length && { pledgeRefs: [...s.pledgeRefs].sort() }),
+    ...(s.softCreditRefs?.length && { softCreditRefs: [...s.softCreditRefs].sort() }),
+  });
 
 export type UnmergeRefusal = 'NOT_FOUND' | 'ALREADY_UNMERGED' | 'UNMERGE_BLOCKED' | 'PROOF_FAILED';
 export type UnmergeResult =
@@ -68,6 +72,8 @@ export async function unmergeTx(tx: Tx, input: UnmergeInput, opts: { splitRow: b
   if (loserId) for (const ref of m.giftRefsMoved) await supersedeGift(tx, await activeGift(tx, m.orgId, ref), { constituentId: loserId }, `UNMERGED ${m.id}`, writer);
   // a constituent loser's pledges, as its snapshot listed them (task 3.6); a row loser has none
   if (loserId && m.kind === 'CONSTITUENT_INTO_CONSTITUENT') for (const ref of (m.loserSnapshot as unknown as ConstituentSnapshot).pledgeRefs ?? []) await supersedePledge(tx, await activePledge(tx, m.orgId, ref), loserId, `UNMERGED ${m.id}`, writer);
+  // the soft credits naming a constituent loser, as the merge recorded them (task 3.7, D-81)
+  if (loserId && m.kind === 'CONSTITUENT_INTO_CONSTITUENT') for (const ref of m.softCreditsMoved) await supersedeSoftCredit(tx, await headSoftCredit(tx, m.orgId, ref), { constituentId: loserId }, `UNMERGED ${m.id}`, writer);
 
   const survivor = await loadEffectiveConstituent(tx, m.survivorId);
   const survivorHash = snapshotHash(survivor);

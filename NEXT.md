@@ -1,5 +1,14 @@
 # NEXT
 
+## ▶ Next session: task 3.8 — Acknowledgement letters; read its entry in `docs/phase-3-tasks.md`
+
+**2026-10-27 task 3.7 DONE (D-81).** `SoftCredit` is now an append-only chain like `Pledge` (migration `20261027180000_soft_credits`: `softCreditRef`, `role`, own `amountCents`, `status` ACTIVE/REMOVED, supersedes, reason, one writer, triggers). `addSoftCredit` / `removeSoftCredit` in `src/commit/soft-credits.ts` (audited, refusals listed in D-81); `loadSoftCredits` in `src/import/crm.ts`; `seedFixtures(..., softCredits)`; pure `recognition(state, asOf)` in `src/derive/recognition.ts`. **Phase 3 seed hash `c2159b32…83fe3f`** (was `b405b676…`; memory == DB); Phase 1 `7d3bd174…` unchanged. Merge moves the soft credits naming the loser (`softCreditsMoved`, Phase 2 seam closed; snapshot `softCreditRefs` in `snapshotHash` when non-empty); unmerge moves exactly those back; batch undo restores them (`reverted.softCreditsRestored`). New rule: a soft credit naming its gift's hard donor counts nothing (D-81).
+- Tests: `tests/unit/recognition.test.ts` (recognition = `answers.json`, raised totals unchanged by soft credits, void/after-asOf/self-credit excluded), `tests/integration/housefile-soft-credits.test.ts` (seed hash, DB recognition = oracle, add/remove + refusals + audit, void drops soft, merge/unmerge of C0271's 8 soft credits with both snapshot hashes equal and state hash back, batch undo, UPDATE/DELETE refused). Mutation-checked 8 (merge move, unmerge move-back, undo restore, snapshot hash, recognition active and self filters, loader REMOVED filter, hard-donor guard): all killed.
+- Seams: no soft-credit amount cap vs the gift, no role vocabulary, imports never write soft credits.
+- Gate (local): `npm test` 60 files **464 / 464**, typecheck (+phase1), lint (old warnings only), `fixtures:check`, `model:lint`, `money:lint`, `write:lint` OK, `import:eval` drift 0 rows, labels 30 / 30, `phase2:proof:test` OK (9eab0c8a…/5af937d9…/6af1c76a… unchanged). Migration applied to test and local dev DBs.
+
+---
+
 ## ▶ Next session: task 3.7 — Soft credits; read its entry in `docs/phase-3-tasks.md`
 
 **2026-10-27 task 3.6 DONE (D-80).** `Pledge` table (append-only chain like `Gift`, migration `20261027120000_pledges`), `Gift.pledgeRef`; `loadPledges` in `src/import/crm.ts`; `seedFixtures(..., pledges)`; pure `pledgeBalances(state, asOf)` in `src/derive/pledges.ts`. Pledges and `pledgeRef` enter the state hash only when present: `7d3bd174…` unchanged; **Phase 3 seed hash `b405b676…fe853`** (memory == DB). Merge moves the loser's pledges (snapshot `pledgeRefs`, in `snapshotHash` when non-empty); unmerge moves them back; batch undo restores a pledge moved by a pair-memory review MERGE (`reverted.pledgesRestored`).

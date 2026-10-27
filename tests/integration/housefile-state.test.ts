@@ -16,8 +16,8 @@ beforeEach(resetAuthTables);
 const USER = '00000000-0000-4000-8000-000000000001';
 const crm = loadConstituents(new Uint8Array(readFileSync('fixtures/crm_constituents.csv')));
 const gifts = loadGifts(new Uint8Array(readFileSync('fixtures/crm_gifts.csv')));
-const FULL = { constituents: 286, households: 236, funds: 3, campaigns: 4, appeals: 9, versions: 286, gifts: 878, pledges: 0 };
-const NONE = { constituents: 0, households: 0, funds: 0, campaigns: 0, appeals: 0, versions: 0, gifts: 0, pledges: 0 };
+const FULL = { constituents: 286, households: 236, funds: 3, campaigns: 4, appeals: 9, versions: 286, gifts: 878, pledges: 0, softCredits: 0 };
+const NONE = { constituents: 0, households: 0, funds: 0, campaigns: 0, appeals: 0, versions: 0, gifts: 0, pledges: 0, softCredits: 0 };
 
 describe('effective state and seed (task 2.2, D-11)', () => {
   it('the seeded org hashes equal to the fixture loaded in memory', async () => {

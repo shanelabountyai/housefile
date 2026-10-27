@@ -1,9 +1,9 @@
-// The Phase 3 fixture as effective state in memory: CRM constituents and gifts plus fixtures/phase3/ pledge payments,
+// The Phase 3 fixture as effective state in memory: CRM constituents and gifts plus fixtures/phase3/ pledges, payments, soft credits,
 // corrections applied (CORRECT replaces one field, VOID drops the gift; D-74b). Tests compare against answers.json,
 // which only tools/phase3_answers.py writes (D-74f); product code never reads either.
 import { readFileSync } from 'node:fs';
 import { fixtureState, type EffectiveState } from '@/commit/state';
-import { loadConstituents, loadGifts, loadPledges, type CrmGift, type CrmPledge } from '@/import/crm';
+import { loadConstituents, loadGifts, loadPledges, loadSoftCredits, type CrmGift, type CrmPledge, type CrmSoftCredit } from '@/import/crm';
 import { parseCsv } from '@/import/csv';
 
 const bytes = (p: string) => new Uint8Array(readFileSync(p));
@@ -12,7 +12,7 @@ export const answers = JSON.parse(readFileSync('fixtures/phase3/answers.json', '
 
 export function phase3State(): EffectiveState {
   const gifts = [...loadGifts(bytes('fixtures/crm_gifts.csv')), ...loadGifts(bytes('fixtures/phase3/pledge_payments.csv'))];
-  const s = fixtureState(loadConstituents(bytes('fixtures/crm_constituents.csv')), gifts, phase3Pledges());
+  const s = fixtureState(loadConstituents(bytes('fixtures/crm_constituents.csv')), gifts, phase3Pledges(), phase3SoftCredits());
   const byRef = new Map(s.gifts.map((g) => [g.giftRef, g]));
   for (const { cells: c } of parseCsv(bytes('fixtures/phase3/corrections.csv')).rows) {
     const g = byRef.get(c.gift_id!)!;
@@ -26,6 +26,8 @@ export function phase3State(): EffectiveState {
 }
 
 export const phase3Pledges = (): CrmPledge[] => loadPledges(bytes('fixtures/phase3/pledges.csv'));
+/** All 42, including any on a voided gift: the row stays active and drops out of recognition with its gift (D-74b/c). */
+export const phase3SoftCredits = (): CrmSoftCredit[] => loadSoftCredits(bytes('fixtures/phase3/soft_credits.csv'));
 
 /** Appeal name → campaign code from the fixture's campaign column (D-75). */
 export const phase3CampaignOf = (): Record<string, string> =>

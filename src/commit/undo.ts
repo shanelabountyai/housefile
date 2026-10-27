@@ -10,10 +10,10 @@ import { sha256Hex } from '../lib/canonical';
 import { effectiveOf, loadEffectiveConstituent, loadEffectiveState, type Tx } from './db-state';
 import { effectiveStateHash } from './state';
 import { snapshotHash } from './unmerge';
-import { activePledge, restoreVersion, supersedeGift, supersedePledge } from './write';
+import { activePledge, headSoftCredit, restoreVersion, supersedeGift, supersedePledge, supersedeSoftCredit } from './write';
 
 export type UndoRefusal = 'NOT_FOUND' | 'NOT_COMMITTED' | 'ALREADY_UNDONE' | 'UNDO_BLOCKED_BY_LATER_BATCH' | 'UNDO_BLOCKED_BY_LATER_WRITE';
-export type Reverted = { constituentsRetired: number; versionsRestored: number; giftsVoided: number; giftsRestored: number; pledgesRestored: number; mergesReversed: number; pairMemoriesRemoved: number };
+export type Reverted = { constituentsRetired: number; versionsRestored: number; giftsVoided: number; giftsRestored: number; pledgesRestored: number; softCreditsRestored: number; mergesReversed: number; pairMemoriesRemoved: number };
 export type UndoResult =
   | { status: 'UNDONE'; code?: undefined; afterHash: string; reverted: Reverted; expected?: undefined; actual?: undefined; detail?: undefined }
   | { status: 'UNDO_FAILED'; code?: undefined; expected: string; actual: string; reverted?: undefined; afterHash?: undefined; detail?: undefined }
@@ -58,7 +58,7 @@ async function undoTx(tx: Tx, input: UndoInput): Promise<UndoResult> {
   const merges = await tx.mergeEvent.findMany({ where: { OR: [{ importBatchId: batch.id }, { reviewDecisionId: { in: decisionIds } }] }, include: { unmerge: true } });
   const mergeIds = merges.map((m) => m.id);
   const byBatch = { OR: [{ importBatchId: batch.id }, { reviewDecisionId: { in: decisionIds } }, { mergeEventId: { in: mergeIds } }] };
-  const reverted: Reverted = { constituentsRetired: 0, versionsRestored: 0, giftsVoided: 0, giftsRestored: 0, pledgesRestored: 0, mergesReversed: 0, pairMemoriesRemoved: 0 };
+  const reverted: Reverted = { constituentsRetired: 0, versionsRestored: 0, giftsVoided: 0, giftsRestored: 0, pledgesRestored: 0, softCreditsRestored: 0, mergesReversed: 0, pairMemoriesRemoved: 0 };
 
   // constituents: back to the version before the batch's first write, or retired when the batch created them
   const versions = await tx.constituentVersion.findMany({ where: byBatch, orderBy: [{ constituentId: 'asc' }, { version: 'asc' }] });
@@ -120,7 +120,23 @@ async function undoTx(tx: Tx, input: UndoInput): Promise<UndoResult> {
     reverted.pledgesRestored++;
   }
 
-  // merges: reversed above by the version, gift and pledge restores; the ledger says so, so they stop blocking (D-62)
+  // soft credits: likewise moved only by a constituent merge the batch caused (task 3.7); never created by a batch.
+  // A removal after the batch is a later write and blocks, like a moved pledge.
+  const scRows = await tx.softCredit.findMany({ where: { mergeEventId: { in: mergeIds } } });
+  const scRowIds = new Set(scRows.map((s) => s.id));
+  for (const ref of [...new Set(scRows.map((s) => s.softCreditRef))].sort()) {
+    const head = await headSoftCredit(tx, orgId, ref);
+    const prev = async (id: string | null) => (id ? tx.softCredit.findUniqueOrThrow({ where: { id } }) : null);
+    let last: typeof head | null = head;
+    while (last && !scRowIds.has(last.id)) last = await prev(last.supersedesSoftCreditId);
+    if (!last || last.constituentId !== head.constituentId || last.status !== head.status) return { status: 'REFUSED', code: 'UNDO_BLOCKED_BY_LATER_WRITE', detail: `soft credit ${ref} row ${head.id}` };
+    let base: typeof head | null = last;
+    while (base && scRowIds.has(base.id)) base = await prev(base.supersedesSoftCreditId);
+    await supersedeSoftCredit(tx, head, { constituentId: base!.constituentId }, 'BATCH_UNDONE', writer);
+    reverted.softCreditsRestored++;
+  }
+
+  // merges: reversed above by the version, gift, pledge and soft credit restores; the ledger says so, so they stop blocking (D-62)
   for (const m of merges) {
     if (m.unmerge) continue;
     const survivorHash = snapshotHash(await loadEffectiveConstituent(tx, m.survivorId));

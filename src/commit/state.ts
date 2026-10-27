@@ -3,9 +3,10 @@
 // beforeHash and the database's hash agree, and a commit followed by its undo hashes equal (D-13).
 // Excluded on purpose: row ids, createdAt, batch and event ids, audit rows, RETIRED constituents, superseded gifts.
 // Pledges (D-71, task 3.6) and a gift's pledgeRef enter the hash only when present, so a state without pledges
-// (the Phase 1 fixture, seeded hash 7d3bd174…) hashes exactly as before.
+// (the Phase 1 fixture, seeded hash 7d3bd174…) hashes exactly as before. Soft credits were always in the hash as an
+// empty list; task 3.7 gives each its ref, role and cents (D-81), which an empty list does not see.
 import { sha256Hex } from '../lib/canonical';
-import { crmRecord, type CrmConstituent, type CrmGift, type CrmPledge } from '../import/crm';
+import { crmRecord, type CrmConstituent, type CrmGift, type CrmPledge, type CrmSoftCredit } from '../import/crm';
 
 export type FieldMeta = Record<string, { asOf: string; source: string }>; // email | phone | dob | address (S2)
 export type AliasEntry = { first: string; middle: string; last: string; suffix: string; source: string; asOf: string }; // S3
@@ -54,7 +55,8 @@ export type EffectivePledge = {
   appeal: string;
 };
 
-export type EffectiveSoftCredit = { giftRef: string; constituent: string };
+/** One active soft credit (D-9, D-74c, task 3.7): recognition for a constituent who did not give the gift. Its own cents. */
+export type EffectiveSoftCredit = { softCreditRef: string; giftRef: string; constituent: string; role: string; amountCents: number };
 
 export type EffectiveState = { constituents: EffectiveConstituent[]; gifts: EffectiveGift[]; softCredits: EffectiveSoftCredit[]; pledges?: EffectivePledge[] };
 
@@ -65,7 +67,7 @@ export function sortState(s: EffectiveState): EffectiveState {
   return {
     constituents: [...s.constituents].sort((a, b) => cmp(a.id, b.id)),
     gifts: [...s.gifts].sort((a, b) => cmp(a.giftRef, b.giftRef)),
-    softCredits: [...s.softCredits].sort((a, b) => cmp(a.giftRef, b.giftRef) || cmp(a.constituent, b.constituent)),
+    softCredits: [...s.softCredits].sort((a, b) => cmp(a.softCreditRef, b.softCreditRef)),
     ...(s.pledges?.length && { pledges: [...s.pledges].sort((a, b) => cmp(a.pledgeRef, b.pledgeRef)) }),
   };
 }
@@ -76,8 +78,8 @@ export const effectiveStateHash = (s: EffectiveState): string => sha256Hex(sortS
 export const CRM_SOURCE = 'crm';
 export const META_FIELDS = ['email', 'phone', 'dob', 'address'] as const;
 
-/** The CRM fixture as effective state: version 1 of every constituent, every gift and pledge active, no soft credits. */
-export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[], pledges: CrmPledge[] = []): EffectiveState {
+/** The CRM fixture as effective state: version 1 of every constituent, every gift, pledge and soft credit active. */
+export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[], pledges: CrmPledge[] = [], softCredits: CrmSoftCredit[] = []): EffectiveState {
   const f = (c: CrmConstituent, k: string) => c.fields[k] ?? '';
   return sortState({
     constituents: constituents.map((c) => {
@@ -94,7 +96,7 @@ export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[], p
       };
     }),
     gifts: gifts.map((g) => ({ giftRef: g.gift_id, constituent: g.constituent_id, giftDate: g.gift_date, amountCents: g.amount_cents, fund: g.fund, appeal: g.appeal, giftType: g.gift_type, externalRef: g.external_ref, ...(g.pledge_id && { pledgeRef: g.pledge_id }) })),
-    softCredits: [],
+    softCredits: softCredits.map((x) => ({ softCreditRef: x.soft_credit_id, giftRef: x.gift_id, constituent: x.constituent_id, role: x.role, amountCents: x.amount_cents })),
     pledges: pledges.map((p) => ({ pledgeRef: p.pledge_id, constituent: p.constituent_id, pledgeDate: p.pledge_date, totalCents: p.total_cents, schedule: p.schedule, fund: p.fund, appeal: p.appeal })),
   });
 }

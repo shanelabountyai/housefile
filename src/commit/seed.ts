@@ -1,20 +1,20 @@
 // db:seed:fixtures (task 2.2): crm_constituents.csv and crm_gifts.csv into one org as version 1 and active gifts,
-// written by a user (D-52b). Phase 3 (task 3.6) adds pledges and the payments' pledgeRef from fixtures/phase3/. Idempotent: an org that already holds a constituent gets 0 rows. Never in production.
+// written by a user (D-52b). Phase 3 adds pledges and the payments' pledgeRef (task 3.6) and soft credits (task 3.7) from fixtures/phase3/. Idempotent: an org that already holds a constituent gets 0 rows. Never in production.
 import type { PrismaClient } from '@/generated/prisma/client';
-import type { CrmConstituent, CrmGift, CrmPledge } from '../import/crm';
+import type { CrmConstituent, CrmGift, CrmPledge, CrmSoftCredit } from '../import/crm';
 import { CRM_SOURCE, META_FIELDS } from './state';
 
-export type SeedCounts = { constituents: number; households: number; funds: number; campaigns: number; appeals: number; versions: number; gifts: number; pledges: number };
+export type SeedCounts = { constituents: number; households: number; funds: number; campaigns: number; appeals: number; versions: number; gifts: number; pledges: number; softCredits: number };
 
 const date = (iso: string): Date | null => (iso ? new Date(iso) : null);
 const uniq = (xs: string[]) => [...new Set(xs)].sort();
 
-export async function seedFixtures(db: PrismaClient, input: { orgId: string; userId: string; constituents: CrmConstituent[]; gifts: CrmGift[]; pledges?: CrmPledge[] }): Promise<SeedCounts> {
+export async function seedFixtures(db: PrismaClient, input: { orgId: string; userId: string; constituents: CrmConstituent[]; gifts: CrmGift[]; pledges?: CrmPledge[]; softCredits?: CrmSoftCredit[] }): Promise<SeedCounts> {
   if (process.env.NODE_ENV === 'production') throw new Error('seedFixtures: refused in production (synthetic fixture data only)');
   const { orgId, userId } = input;
   return db.$transaction(
     async (tx) => {
-      if (await tx.constituent.count({ where: { orgId } })) return { constituents: 0, households: 0, funds: 0, campaigns: 0, appeals: 0, versions: 0, gifts: 0, pledges: 0 };
+      if (await tx.constituent.count({ where: { orgId } })) return { constituents: 0, households: 0, funds: 0, campaigns: 0, appeals: 0, versions: 0, gifts: 0, pledges: 0, softCredits: 0 };
       const f = (c: CrmConstituent, k: string) => c.fields[k] ?? '';
 
       const households = uniq(input.constituents.map((c) => f(c, 'household_id')).filter(Boolean));
@@ -70,7 +70,11 @@ export async function seedFixtures(db: PrismaClient, input: { orgId: string; use
           fundId: fundId.get(p.fund)!, appealId: p.appeal ? appealId.get(p.appeal)! : null, userId,
         })),
       });
-      return { constituents: input.constituents.length, households: households.length, funds: funds.length, campaigns: campaigns.length, appeals: appeals.size, versions: input.constituents.length, gifts: input.gifts.length, pledges: pledges.length };
+      const softCredits = input.softCredits ?? [];
+      await tx.softCredit.createMany({
+        data: softCredits.map((s) => ({ orgId, softCreditRef: s.soft_credit_id, giftRef: s.gift_id, constituentId: conId.get(s.constituent_id)!, role: s.role, amountCents: s.amount_cents, userId })),
+      });
+      return { constituents: input.constituents.length, households: households.length, funds: funds.length, campaigns: campaigns.length, appeals: appeals.size, versions: input.constituents.length, gifts: input.gifts.length, pledges: pledges.length, softCredits: softCredits.length };
     },
     { timeout: 60_000 },
   );

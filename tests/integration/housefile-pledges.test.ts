@@ -17,19 +17,20 @@ import { loadConstituents } from '@/import/crm';
 import { resetAuthTables } from '../helpers/auth';
 import { ROBERT, smallOrg } from '../helpers/housefile';
 import { addMember, makeOrg } from '../helpers/org';
-import { answers, phase3Pledges, phase3SeedGifts, phase3State } from '../helpers/phase3';
+import { answers, phase3Pledges, phase3SeedGifts, phase3SoftCredits, phase3State } from '../helpers/phase3';
 
 beforeEach(resetAuthTables);
 const SLOW = { timeout: 180_000 };
 const bytes = (p: string) => new Uint8Array(readFileSync(p));
-/** The Phase 3 seed's effective-state hash (D-80): constituents, corrected gifts with payments, 18 pledges. */
-const PHASE3_SEED_HASH = 'b405b676dda29596912ea274e101f211019ee197158a6ebdeb3169b71c2fe853';
+/** The Phase 3 seed's effective-state hash: constituents, corrected gifts with payments, 18 pledges (D-80: b405b676…),
+ *  and 42 soft credits since task 3.7 (D-81). */
+const PHASE3_SEED_HASH = 'c2159b329571cbd3788cc851731985da8e710bd2d8208dc83fd9b5b57183fe3f';
 
 describe('pledges (task 3.6)', () => {
   it('seed hashes as the fixture, balances equal the oracle, a void raises one, merge and unmerge move pledge and payments', SLOW, async () => {
     const o = await makeOrg();
     const owner = await addMember(o.id, 'owner', 'owner@example.test');
-    const seeded = await seedFixtures(db, { orgId: o.id, userId: owner.id, constituents: loadConstituents(bytes('fixtures/crm_constituents.csv')), gifts: phase3SeedGifts(), pledges: phase3Pledges() });
+    const seeded = await seedFixtures(db, { orgId: o.id, userId: owner.id, constituents: loadConstituents(bytes('fixtures/crm_constituents.csv')), gifts: phase3SeedGifts(), pledges: phase3Pledges(), softCredits: phase3SoftCredits() });
     expect(seeded.pledges).toBe(18);
     const state = async () => loadEffectiveState(db, o.id);
 

@@ -17,6 +17,11 @@ enum GiftStatus {
   VOIDED
 }
 
+enum SoftCreditStatus {
+  ACTIVE
+  REMOVED
+}
+
 enum ImportBatchEventKind {
   COMMITTED
   UNDONE
@@ -108,9 +113,9 @@ model ConstituentVersion {
 }
 
 model Fund {
-  id    String @id @default(uuid()) @db.Uuid
-  orgId String @db.Uuid
-  org   Org    @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  id      String   @id @default(uuid()) @db.Uuid
+  orgId   String   @db.Uuid
+  org     Org      @relation(fields: [orgId], references: [id], onDelete: Restrict)
   code    String // BLDG
   gifts   Gift[]
   pledges Pledge[]
@@ -209,17 +214,32 @@ model Pledge {
   @@index([constituentId])
 }
 
-/// Table only; Phase 3 writes it. Never counted in raised totals.
+/// Append-only (D-9, D-74c, D-81, task 3.7), chained like Pledge: a move or a removal is a new row superseding the old
+/// one, same softCreditRef. Active = no row supersedes it and status ACTIVE. Counts toward recognition (never raised
+/// totals) while its gift is active. Writer: exactly one of mergeEventId / userId (CHECK in SQL). Imports never write them.
 model SoftCredit {
-  id            String      @id @default(uuid()) @db.Uuid
-  orgId         String      @db.Uuid
-  org           Org         @relation(fields: [orgId], references: [id], onDelete: Restrict)
-  giftRef       String
-  constituentId String      @db.Uuid
-  constituent   Constituent @relation(fields: [constituentId], references: [id])
-  createdAt     DateTime    @default(now()) @db.Timestamptz(6)
+  id                     String           @id @default(uuid()) @db.Uuid
+  orgId                  String           @db.Uuid
+  org                    Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  softCreditRef          String // SC001; stable across supersession, the hash key
+  giftRef                String
+  constituentId          String           @db.Uuid
+  constituent            Constituent      @relation(fields: [constituentId], references: [id])
+  role                   String // SPOUSE | PEER_TO_PEER | …
+  amountCents            Int // its own amount (D-74c), integer cents, > 0 (CHECK in SQL)
+  status                 SoftCreditStatus @default(ACTIVE)
+  supersedesSoftCreditId String?          @unique @db.Uuid
+  supersedes             SoftCredit?      @relation("SoftCreditSupersedes", fields: [supersedesSoftCreditId], references: [id])
+  supersededBy           SoftCredit?      @relation("SoftCreditSupersedes")
+  reason                 String? // required on a superseding row (CHECK in SQL)
+  mergeEventId           String?          @db.Uuid
+  mergeEvent             MergeEvent?      @relation(fields: [mergeEventId], references: [id])
+  userId                 String?          @db.Uuid
+  createdAt              DateTime         @default(now()) @db.Timestamptz(6)
 
   @@index([orgId, giftRef])
+  @@index([orgId, softCreditRef])
+  @@index([constituentId])
 }
 
 /// Append-only header written at preview (D-10, D-47). Status is derived from ImportBatchEvent rows.
@@ -349,6 +369,7 @@ model MergeEvent {
   versions         ConstituentVersion[]
   gifts            Gift[]
   pledges          Pledge[]
+  softCredits      SoftCredit[]
   unmerge          UnmergeEvent?
 
   @@index([orgId, at])

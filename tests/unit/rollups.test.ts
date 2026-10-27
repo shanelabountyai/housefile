@@ -34,7 +34,7 @@ describe('rollups (task 3.3)', () => {
   });
 
   it('(no appeal) rolls up under its fund and in no campaign; soft credits never count', () => {
-    const s = of([gift('G1', 'C1', 10000, 'GEN', 'Gala 2025'), gift('G2', 'C2', 333, 'GEN', ''), gift('G3', 'C2', 334, 'BLDG', '')], [{ giftRef: 'G1', constituent: 'C9' }]);
+    const s = of([gift('G1', 'C1', 10000, 'GEN', 'Gala 2025'), gift('G2', 'C2', 333, 'GEN', ''), gift('G3', 'C2', 334, 'BLDG', '')], [{ softCreditRef: 'SC1', giftRef: 'G1', constituent: 'C9', role: 'SPOUSE', amountCents: 10000 }]);
     const x = rollups(s, '2026-10-14', { 'Gala 2025': 'AF2025' });
     expect(Object.keys(x.campaigns)).toEqual(['AF2025']);
     expect(x.campaigns.AF2025).toMatchObject({ raised: 10000, donors: 1 });

@@ -1,7 +1,7 @@
 // The write primitives shared by commit (task 2.4) and the review actions (task 2.5): a batch context built from
 // the stored ImportBatch (D-10), ids, and the three writes a row can cause: a new constituent, a row merge, a gift.
 // Every write names its writer (the batch or the review decision), so undo can find it (D-14).
-import type { ConstituentVersion, Gift, Pledge } from '@/generated/prisma/client';
+import type { ConstituentVersion, Gift, Pledge, SoftCredit } from '@/generated/prisma/client';
 import { parseCsv, type ParsedCsv } from '../import/csv';
 import type { ColumnMap, Field } from '../import/map';
 import { displayName, plannedFrom, rawCellsOf, resolveFund, rowSurvivorship, type PlannedGift, type Preview, type Survivorship } from '../import/preview';
@@ -23,8 +23,8 @@ export type GiftInput = { giftDate: string; cents: number; fundCode: string; ext
 const pad = (n: number, w: number) => String(n).padStart(w, '0');
 
 /** Next free number for ids of the form <prefix><digits> in this org. Ids are never reused: rows are never deleted. */
-export async function nextSeq(tx: Tx, table: 'Constituent' | 'Gift' | 'Household', col: 'businessId' | 'giftRef', prefix: string, orgId: string): Promise<number> {
-  const [r] = await tx.$queryRawUnsafe<{ m: number | null }[]>(`SELECT max(substring("${col}" from 2)::int) AS m FROM "${table}" WHERE "orgId" = $1::uuid AND "${col}" ~ $2`, orgId, `^${prefix}[0-9]+$`);
+export async function nextSeq(tx: Tx, table: 'Constituent' | 'Gift' | 'Household' | 'SoftCredit', col: 'businessId' | 'giftRef' | 'softCreditRef', prefix: string, orgId: string): Promise<number> {
+  const [r] = await tx.$queryRawUnsafe<{ m: number | null }[]>(`SELECT max(substring("${col}" from ${prefix.length + 1})::int) AS m FROM "${table}" WHERE "orgId" = $1::uuid AND "${col}" ~ $2`, orgId, `^${prefix}[0-9]+$`);
   return (r?.m ?? 0) + 1;
 }
 
@@ -186,3 +186,16 @@ export async function supersedePledge(tx: Tx, p: Pledge, constituentId: string, 
 }
 
 export const activePledge = (tx: Tx, orgId: string, pledgeRef: string) => tx.pledge.findFirstOrThrow({ where: { orgId, pledgeRef, supersededBy: null } });
+
+/** A soft credit moved (merge, unmerge, undo) or removed: one superseding row, same softCreditRef (D-81). */
+export async function supersedeSoftCredit(tx: Tx, s: SoftCredit, patch: { constituentId?: string; status?: 'ACTIVE' | 'REMOVED' }, reason: string, writer: { userId: string } | { mergeEventId: string }): Promise<SoftCredit> {
+  return tx.softCredit.create({
+    data: {
+      orgId: s.orgId, softCreditRef: s.softCreditRef, giftRef: s.giftRef, constituentId: patch.constituentId ?? s.constituentId, role: s.role, amountCents: s.amountCents, status: patch.status ?? s.status,
+      supersedesSoftCreditId: s.id, reason, ...writer,
+    },
+  });
+}
+
+/** The head row of a soft credit's chain (no row supersedes it), by ref. */
+export const headSoftCredit = (tx: Tx, orgId: string, softCreditRef: string) => tx.softCredit.findFirstOrThrow({ where: { orgId, softCreditRef, supersededBy: null } });
