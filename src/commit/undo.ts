@@ -10,10 +10,10 @@ import { sha256Hex } from '../lib/canonical';
 import { effectiveOf, loadEffectiveConstituent, loadEffectiveState, type Tx } from './db-state';
 import { effectiveStateHash } from './state';
 import { snapshotHash } from './unmerge';
-import { restoreVersion, supersedeGift } from './write';
+import { activePledge, restoreVersion, supersedeGift, supersedePledge } from './write';
 
 export type UndoRefusal = 'NOT_FOUND' | 'NOT_COMMITTED' | 'ALREADY_UNDONE' | 'UNDO_BLOCKED_BY_LATER_BATCH' | 'UNDO_BLOCKED_BY_LATER_WRITE';
-export type Reverted = { constituentsRetired: number; versionsRestored: number; giftsVoided: number; giftsRestored: number; mergesReversed: number; pairMemoriesRemoved: number };
+export type Reverted = { constituentsRetired: number; versionsRestored: number; giftsVoided: number; giftsRestored: number; pledgesRestored: number; mergesReversed: number; pairMemoriesRemoved: number };
 export type UndoResult =
   | { status: 'UNDONE'; code?: undefined; afterHash: string; reverted: Reverted; expected?: undefined; actual?: undefined; detail?: undefined }
   | { status: 'UNDO_FAILED'; code?: undefined; expected: string; actual: string; reverted?: undefined; afterHash?: undefined; detail?: undefined }
@@ -58,7 +58,7 @@ async function undoTx(tx: Tx, input: UndoInput): Promise<UndoResult> {
   const merges = await tx.mergeEvent.findMany({ where: { OR: [{ importBatchId: batch.id }, { reviewDecisionId: { in: decisionIds } }] }, include: { unmerge: true } });
   const mergeIds = merges.map((m) => m.id);
   const byBatch = { OR: [{ importBatchId: batch.id }, { reviewDecisionId: { in: decisionIds } }, { mergeEventId: { in: mergeIds } }] };
-  const reverted: Reverted = { constituentsRetired: 0, versionsRestored: 0, giftsVoided: 0, giftsRestored: 0, mergesReversed: 0, pairMemoriesRemoved: 0 };
+  const reverted: Reverted = { constituentsRetired: 0, versionsRestored: 0, giftsVoided: 0, giftsRestored: 0, pledgesRestored: 0, mergesReversed: 0, pairMemoriesRemoved: 0 };
 
   // constituents: back to the version before the batch's first write, or retired when the batch created them
   const versions = await tx.constituentVersion.findMany({ where: byBatch, orderBy: [{ constituentId: 'asc' }, { version: 'asc' }] });
@@ -104,7 +104,23 @@ async function undoTx(tx: Tx, input: UndoInput): Promise<UndoResult> {
     }
   }
 
-  // merges: reversed above by the version and gift restores; the ledger says so, so they stop blocking (D-62)
+  // pledges: a batch moves one only through a constituent merge it caused (task 3.6); it goes back to its constituent
+  // before the batch. A batch never creates a pledge, so there is always a row before the batch's part of the chain.
+  const pledgeRows = await tx.pledge.findMany({ where: { mergeEventId: { in: mergeIds } } });
+  const pledgeRowIds = new Set(pledgeRows.map((p) => p.id));
+  for (const ref of [...new Set(pledgeRows.map((p) => p.pledgeRef))].sort()) {
+    const head = await activePledge(tx, orgId, ref);
+    const prev = async (id: string | null) => (id ? tx.pledge.findUniqueOrThrow({ where: { id } }) : null);
+    let last: typeof head | null = head;
+    while (last && !pledgeRowIds.has(last.id)) last = await prev(last.supersedesPledgeId);
+    if (!last || last.constituentId !== head.constituentId) return { status: 'REFUSED', code: 'UNDO_BLOCKED_BY_LATER_WRITE', detail: `pledge ${ref} row ${head.id}` };
+    let base: typeof head | null = last;
+    while (base && pledgeRowIds.has(base.id)) base = await prev(base.supersedesPledgeId);
+    await supersedePledge(tx, head, base!.constituentId, 'BATCH_UNDONE', writer);
+    reverted.pledgesRestored++;
+  }
+
+  // merges: reversed above by the version, gift and pledge restores; the ledger says so, so they stop blocking (D-62)
   for (const m of merges) {
     if (m.unmerge) continue;
     const survivorHash = snapshotHash(await loadEffectiveConstituent(tx, m.survivorId));

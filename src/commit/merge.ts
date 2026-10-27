@@ -1,11 +1,12 @@
 // Task 2.6 (brief §8, D-23, D-24, D-46, D-48, D-49): one constituent merged into another. The record with the
 // earlier createdAt survives S3 (names, suffix, DOB); S1/S2 apply field by field with the loser's values kept as
 // alternates; the loser's name becomes an alias; the loser is RETIRED by a new version; its active gifts move by
-// superseding rows with the same giftRef. The MergeEvent holds both effective states and the choice per field.
+// superseding rows with the same giftRef, and its pledges likewise (task 3.6; the payments are among the gifts).
+// The MergeEvent holds both effective states and the choice per field; the loser snapshot's pledgeRefs say which moved.
 import type { Gift, PrismaClient } from '@/generated/prisma/client';
 import { latestVersion, loadEffectiveConstituent, type ConstituentSnapshot, type Tx } from './db-state';
 import type { EffectiveConstituent } from './state';
-import { carry, supersedeGift } from './write';
+import { carry, supersedeGift, supersedePledge } from './write';
 
 export type MergeWriter = { userId: string } | { reviewDecisionId: string };
 export type MergeInput = { aId: string; bId: string; reason: string } & MergeWriter;
@@ -93,5 +94,6 @@ export async function mergeConstituentsTx(tx: Tx, input: MergeInput): Promise<Me
   await tx.constituentVersion.create({ data: { ...data, version: sv.version + 1, mergeEventId: merge.id } });
   await tx.constituentVersion.create({ data: { ...carry(lv), status: 'RETIRED', version: lv.version + 1, mergeEventId: merge.id } });
   for (const g of loserGifts) await supersedeGift(tx, g, { constituentId: survivor.id }, `MERGED_INTO ${survivor.businessId}`, { mergeEventId: merge.id });
+  for (const p of await tx.pledge.findMany({ where: { constituentId: loser.id, supersededBy: null }, orderBy: { pledgeRef: 'asc' } })) await supersedePledge(tx, p, survivor.id, `MERGED_INTO ${survivor.businessId}`, { mergeEventId: merge.id });
   return { status: 'MERGED', mergeEventId: merge.id, survivorId: survivor.id, loserId: loser.id };
 }

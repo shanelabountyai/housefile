@@ -21,6 +21,18 @@ export type CrmGift = {
   appeal: string;
   gift_type: string;
   external_ref: string;
+  pledge_id?: string; // set on a pledge payment (fixtures/phase3/pledge_payments.csv)
+};
+
+export type CrmPledge = {
+  pledge_id: string;
+  constituent_id: string;
+  pledge_date: string;
+  total_cents: number;
+  fund: string;
+  campaign: string;
+  appeal: string;
+  schedule: { due: string; cents: number }[];
 };
 
 export function crmRecord(c: Record<string, string>): MatchRecord {
@@ -55,6 +67,27 @@ export function loadGifts(bytes: Uint8Array): CrmGift[] {
       appeal: c.appeal ?? '',
       gift_type: c.gift_type ?? '',
       external_ref: c.external_ref ?? '',
+      ...(c.pledge_id && { pledge_id: c.pledge_id }),
     };
+  });
+}
+
+const cents = (raw: string, what: string) => {
+  const n = /^\d+$/.test(raw) ? Number(raw) : NaN;
+  if (!Number.isSafeInteger(n) || n <= 0) throw new Error(`pledges: ${what} "${raw}" is not a positive integer`);
+  return n;
+};
+
+/** pledges.csv: installments as `due:cents|due:cents`, which must sum to the total (D-9). */
+export function loadPledges(bytes: Uint8Array): CrmPledge[] {
+  return parseCsv(bytes).rows.map(({ cells: c }) => {
+    const id = c.pledge_id ?? '';
+    const schedule = (c.installments ?? '').split('|').map((part) => {
+      const [due = '', amt = ''] = part.split(':');
+      return { due, cents: cents(amt, `${id} installment`) };
+    });
+    const total = cents(c.total_cents ?? '', `${id} total_cents`);
+    if (schedule.reduce((s, x) => s + x.cents, 0) !== total) throw new Error(`pledges: ${id} schedule does not sum to ${total}`);
+    return { pledge_id: id, constituent_id: c.constituent_id ?? '', pledge_date: c.pledge_date ?? '', total_cents: total, fund: c.fund ?? '', campaign: c.campaign ?? '', appeal: c.appeal ?? '', schedule };
   });
 }

@@ -45,6 +45,7 @@ model Constituent {
   createdAt      DateTime             @default(now()) @db.Timestamptz(6)
   versions       ConstituentVersion[]
   gifts          Gift[]
+  pledges        Pledge[]
   softCredits    SoftCredit[]
   reviewItems    ReviewItem[]
   mergesSurvived MergeEvent[]         @relation("MergeSurvivor")
@@ -110,8 +111,9 @@ model Fund {
   id    String @id @default(uuid()) @db.Uuid
   orgId String @db.Uuid
   org   Org    @relation(fields: [orgId], references: [id], onDelete: Restrict)
-  code  String // BLDG
-  gifts Gift[]
+  code    String // BLDG
+  gifts   Gift[]
+  pledges Pledge[]
 
   @@unique([orgId, code])
 }
@@ -135,6 +137,7 @@ model Appeal {
   campaign   Campaign @relation(fields: [campaignId], references: [id])
   name       String // "Year-End 2024"
   gifts      Gift[]
+  pledges    Pledge[]
 
   @@unique([orgId, name])
 }
@@ -156,6 +159,7 @@ model Gift {
   appeal           Appeal?         @relation(fields: [appealId], references: [id])
   giftType         String          @default("GIFT")
   externalRef      String          @default("")
+  pledgeRef        String          @default("") // set on a pledge payment (D-9, D-71)
   supersedesGiftId String?         @unique @db.Uuid // unique: one successor per row, so history is a chain
   supersedes       Gift?           @relation("GiftSupersedes", fields: [supersedesGiftId], references: [id])
   supersededBy     Gift?           @relation("GiftSupersedes")
@@ -173,6 +177,36 @@ model Gift {
   @@index([orgId, giftRef])
   @@index([constituentId])
   @@index([importBatchId])
+}
+
+/// Append-only (D-9, D-71, task 3.6), chained like Gift: a move is a new row superseding the old one, same pledgeRef.
+/// Active = no row supersedes it. Paid, balance and status are derived from the gifts carrying the pledgeRef.
+/// Writer: exactly one of mergeEventId / userId (CHECK in SQL). Imports never write pledges.
+model Pledge {
+  id                 String      @id @default(uuid()) @db.Uuid
+  orgId              String      @db.Uuid
+  org                Org         @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  pledgeRef          String // PL001; stable across supersession, the hash key
+  constituentId      String      @db.Uuid
+  constituent        Constituent @relation(fields: [constituentId], references: [id])
+  pledgeDate         DateTime    @db.Date
+  totalCents         Int // integer cents, > 0 (CHECK in SQL)
+  schedule           Json // [{ due, cents }], sums to totalCents
+  fundId             String      @db.Uuid
+  fund               Fund        @relation(fields: [fundId], references: [id])
+  appealId           String?     @db.Uuid
+  appeal             Appeal?     @relation(fields: [appealId], references: [id])
+  supersedesPledgeId String?     @unique @db.Uuid
+  supersedes         Pledge?     @relation("PledgeSupersedes", fields: [supersedesPledgeId], references: [id])
+  supersededBy       Pledge?     @relation("PledgeSupersedes")
+  reason             String? // required on a superseding row (CHECK in SQL)
+  mergeEventId       String?     @db.Uuid
+  mergeEvent         MergeEvent? @relation(fields: [mergeEventId], references: [id])
+  userId             String?     @db.Uuid
+  createdAt          DateTime    @default(now()) @db.Timestamptz(6)
+
+  @@index([orgId, pledgeRef])
+  @@index([constituentId])
 }
 
 /// Table only; Phase 3 writes it. Never counted in raised totals.
@@ -314,6 +348,7 @@ model MergeEvent {
   at               DateTime             @default(now()) @db.Timestamptz(6)
   versions         ConstituentVersion[]
   gifts            Gift[]
+  pledges          Pledge[]
   unmerge          UnmergeEvent?
 
   @@index([orgId, at])

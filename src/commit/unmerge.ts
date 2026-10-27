@@ -7,9 +7,11 @@ import { audit } from '@/core/audit';
 import { sha256Hex } from '../lib/canonical';
 import type { ImportRow } from '../import/validate';
 import { loadEffectiveConstituent, type ConstituentSnapshot, type Tx } from './db-state';
-import { activeGift, loadBatchCtx, restoreVersion, supersedeGift, writeNewConstituent } from './write';
+import { activeGift, activePledge, loadBatchCtx, restoreVersion, supersedeGift, supersedePledge, writeNewConstituent } from './write';
 
-export const snapshotHash = (s: { constituent: ConstituentSnapshot['constituent']; giftRefs: string[] }) => sha256Hex({ constituent: s.constituent, giftRefs: [...s.giftRefs].sort() });
+/** pledgeRefs enter only when present, so snapshots without pledges hash as they did before task 3.6. */
+export const snapshotHash = (s: Pick<ConstituentSnapshot, 'constituent' | 'giftRefs' | 'pledgeRefs'>) =>
+  sha256Hex({ constituent: s.constituent, giftRefs: [...s.giftRefs].sort(), ...(s.pledgeRefs?.length && { pledgeRefs: [...s.pledgeRefs].sort() }) });
 
 export type UnmergeRefusal = 'NOT_FOUND' | 'ALREADY_UNMERGED' | 'UNMERGE_BLOCKED' | 'PROOF_FAILED';
 export type UnmergeResult =
@@ -64,6 +66,8 @@ export async function unmergeTx(tx: Tx, input: UnmergeInput, opts: { splitRow: b
     loserId = await writeNewConstituent(tx, ctx, row, writer, null);
   } else loserId = '';
   if (loserId) for (const ref of m.giftRefsMoved) await supersedeGift(tx, await activeGift(tx, m.orgId, ref), { constituentId: loserId }, `UNMERGED ${m.id}`, writer);
+  // a constituent loser's pledges, as its snapshot listed them (task 3.6); a row loser has none
+  if (loserId && m.kind === 'CONSTITUENT_INTO_CONSTITUENT') for (const ref of (m.loserSnapshot as unknown as ConstituentSnapshot).pledgeRefs ?? []) await supersedePledge(tx, await activePledge(tx, m.orgId, ref), loserId, `UNMERGED ${m.id}`, writer);
 
   const survivor = await loadEffectiveConstituent(tx, m.survivorId);
   const survivorHash = snapshotHash(survivor);

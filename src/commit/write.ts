@@ -1,7 +1,7 @@
 // The write primitives shared by commit (task 2.4) and the review actions (task 2.5): a batch context built from
 // the stored ImportBatch (D-10), ids, and the three writes a row can cause: a new constituent, a row merge, a gift.
 // Every write names its writer (the batch or the review decision), so undo can find it (D-14).
-import type { ConstituentVersion, Gift } from '@/generated/prisma/client';
+import type { ConstituentVersion, Gift, Pledge } from '@/generated/prisma/client';
 import { parseCsv, type ParsedCsv } from '../import/csv';
 import type { ColumnMap, Field } from '../import/map';
 import { displayName, plannedFrom, rawCellsOf, resolveFund, rowSurvivorship, type PlannedGift, type Preview, type Survivorship } from '../import/preview';
@@ -169,8 +169,20 @@ export const activeGift = (tx: Tx, orgId: string, giftRef: string) => tx.gift.fi
 export async function supersedeGift(tx: Tx, g: Gift, patch: { constituentId?: string; status?: 'ACTIVE' | 'VOIDED'; amountCents?: number; giftDate?: Date; fundId?: string }, reason: string, writer: Writer | { mergeEventId: string }): Promise<Gift> {
   return tx.gift.create({
     data: {
-      orgId: g.orgId, giftRef: g.giftRef, constituentId: patch.constituentId ?? g.constituentId, giftDate: patch.giftDate ?? g.giftDate, amountCents: patch.amountCents ?? g.amountCents, fundId: patch.fundId ?? g.fundId, appealId: g.appealId, giftType: g.giftType, externalRef: g.externalRef,
+      orgId: g.orgId, giftRef: g.giftRef, constituentId: patch.constituentId ?? g.constituentId, giftDate: patch.giftDate ?? g.giftDate, amountCents: patch.amountCents ?? g.amountCents, fundId: patch.fundId ?? g.fundId, appealId: g.appealId, giftType: g.giftType, externalRef: g.externalRef, pledgeRef: g.pledgeRef,
       supersedesGiftId: g.id, status: patch.status ?? g.status, reason, ...writer,
     },
   });
 }
+
+/** A pledge moved to another constituent (merge, unmerge, undo): one superseding row, same pledgeRef (D-71). */
+export async function supersedePledge(tx: Tx, p: Pledge, constituentId: string, reason: string, writer: { userId: string } | { mergeEventId: string }): Promise<Pledge> {
+  return tx.pledge.create({
+    data: {
+      orgId: p.orgId, pledgeRef: p.pledgeRef, constituentId, pledgeDate: p.pledgeDate, totalCents: p.totalCents, schedule: p.schedule ?? [], fundId: p.fundId, appealId: p.appealId,
+      supersedesPledgeId: p.id, reason, ...writer,
+    },
+  });
+}
+
+export const activePledge = (tx: Tx, orgId: string, pledgeRef: string) => tx.pledge.findFirstOrThrow({ where: { orgId, pledgeRef, supersededBy: null } });

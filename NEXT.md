@@ -1,5 +1,14 @@
 # NEXT
 
+## ▶ Next session: task 3.7 — Soft credits; read its entry in `docs/phase-3-tasks.md`
+
+**2026-10-27 task 3.6 DONE (D-80).** `Pledge` table (append-only chain like `Gift`, migration `20261027120000_pledges`), `Gift.pledgeRef`; `loadPledges` in `src/import/crm.ts`; `seedFixtures(..., pledges)`; pure `pledgeBalances(state, asOf)` in `src/derive/pledges.ts`. Pledges and `pledgeRef` enter the state hash only when present: `7d3bd174…` unchanged; **Phase 3 seed hash `b405b676…fe853`** (memory == DB). Merge moves the loser's pledges (snapshot `pledgeRefs`, in `snapshotHash` when non-empty); unmerge moves them back; batch undo restores a pledge moved by a pair-memory review MERGE (`reverted.pledgesRestored`).
+- Tests: `tests/unit/pledges.test.ts` (18 balances = `answers.json`, void +cents, after-asOf payment not counted, empty pledges hash unchanged), `tests/integration/housefile-pledges.test.ts` (seed hash, DB balances = oracle, void PL001 payment, merge/unmerge PL002 with both snapshot hashes equal and state hash back, batch undo, UPDATE/DELETE refused). Mutation-checked 6 (merge move, unmerge move-back, pledgeRef carry, asOf filter, snapshot hash, undo restore): all killed.
+- Seams: no scheduler/reminders, no pledge correction or write-off, imports never write pledges.
+- Gate (local): `npm test` 58 files **458 / 458**, typecheck, lint (3 old warnings), `fixtures:check`, `model:lint` (40312dfe…), `money:lint`, `write:lint` OK, `import:eval` drift 0 rows, labels 30 / 30, `phase2:proof:test` OK (unmerge snapshot hashes 9eab0c8a…/5af937d9…/6af1c76a… unchanged).
+
+---
+
 ## ▶ Next session: task 3.6 — read its entry in `docs/phase-3-tasks.md`
 
 **2026-10-27 task 3.5 DONE (D-79).** `correctGift` / `voidGift` in `src/commit/gifts.ts`: one superseding row via the shared `supersedeGift` (patch widened to amount, date, fund), writer = actor, reason required, `results.write`, audited in the same serializable transaction. `tests/integration/housefile-gift-correction.test.ts`: original row unchanged, chain length 2, roll-ups move by exactly +1234 (amount), fund move shifts the whole amount with the total unchanged, void drops raised by the amount and gifts by 1; member, blank reason, zero/negative/fractional amount, bad date, unknown fund, no-op change, unknown ref and an already-voided gift all refused with no gift or audit row; UPDATE/DELETE still refused on every chain row. Mutation-checked (role check, `> 0`, voided guard, no-op guard, void status): all 5 fail.

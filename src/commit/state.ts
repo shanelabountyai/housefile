@@ -2,8 +2,10 @@
 // loaded in memory (Phase 1 dry-run) and for the database (loadEffectiveState in ./db-state), so the dry-run's
 // beforeHash and the database's hash agree, and a commit followed by its undo hashes equal (D-13).
 // Excluded on purpose: row ids, createdAt, batch and event ids, audit rows, RETIRED constituents, superseded gifts.
+// Pledges (D-71, task 3.6) and a gift's pledgeRef enter the hash only when present, so a state without pledges
+// (the Phase 1 fixture, seeded hash 7d3bd174…) hashes exactly as before.
 import { sha256Hex } from '../lib/canonical';
-import { crmRecord, type CrmConstituent, type CrmGift } from '../import/crm';
+import { crmRecord, type CrmConstituent, type CrmGift, type CrmPledge } from '../import/crm';
 
 export type FieldMeta = Record<string, { asOf: string; source: string }>; // email | phone | dob | address (S2)
 export type AliasEntry = { first: string; middle: string; last: string; suffix: string; source: string; asOf: string }; // S3
@@ -38,11 +40,23 @@ export type EffectiveGift = {
   appeal: string;
   giftType: string;
   externalRef: string;
+  pledgeRef?: string; // set on a pledge payment only (D-71)
+};
+
+/** One active pledge (D-9): a promise with its schedule. Paid and balance are derived (src/derive/pledges). */
+export type EffectivePledge = {
+  pledgeRef: string; // PL001, stable across supersession
+  constituent: string;
+  pledgeDate: string;
+  totalCents: number;
+  schedule: { due: string; cents: number }[];
+  fund: string;
+  appeal: string;
 };
 
 export type EffectiveSoftCredit = { giftRef: string; constituent: string };
 
-export type EffectiveState = { constituents: EffectiveConstituent[]; gifts: EffectiveGift[]; softCredits: EffectiveSoftCredit[] };
+export type EffectiveState = { constituents: EffectiveConstituent[]; gifts: EffectiveGift[]; softCredits: EffectiveSoftCredit[]; pledges?: EffectivePledge[] };
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -52,6 +66,7 @@ export function sortState(s: EffectiveState): EffectiveState {
     constituents: [...s.constituents].sort((a, b) => cmp(a.id, b.id)),
     gifts: [...s.gifts].sort((a, b) => cmp(a.giftRef, b.giftRef)),
     softCredits: [...s.softCredits].sort((a, b) => cmp(a.giftRef, b.giftRef) || cmp(a.constituent, b.constituent)),
+    ...(s.pledges?.length && { pledges: [...s.pledges].sort((a, b) => cmp(a.pledgeRef, b.pledgeRef)) }),
   };
 }
 
@@ -61,8 +76,8 @@ export const effectiveStateHash = (s: EffectiveState): string => sha256Hex(sortS
 export const CRM_SOURCE = 'crm';
 export const META_FIELDS = ['email', 'phone', 'dob', 'address'] as const;
 
-/** The CRM fixture as effective state: version 1 of every constituent, every gift active, no soft credits. */
-export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[]): EffectiveState {
+/** The CRM fixture as effective state: version 1 of every constituent, every gift and pledge active, no soft credits. */
+export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[], pledges: CrmPledge[] = []): EffectiveState {
   const f = (c: CrmConstituent, k: string) => c.fields[k] ?? '';
   return sortState({
     constituents: constituents.map((c) => {
@@ -78,8 +93,9 @@ export function fixtureState(constituents: CrmConstituent[], gifts: CrmGift[]): 
         household: f(c, 'household_id'),
       };
     }),
-    gifts: gifts.map((g) => ({ giftRef: g.gift_id, constituent: g.constituent_id, giftDate: g.gift_date, amountCents: g.amount_cents, fund: g.fund, appeal: g.appeal, giftType: g.gift_type, externalRef: g.external_ref })),
+    gifts: gifts.map((g) => ({ giftRef: g.gift_id, constituent: g.constituent_id, giftDate: g.gift_date, amountCents: g.amount_cents, fund: g.fund, appeal: g.appeal, giftType: g.gift_type, externalRef: g.external_ref, ...(g.pledge_id && { pledgeRef: g.pledge_id }) })),
     softCredits: [],
+    pledges: pledges.map((p) => ({ pledgeRef: p.pledge_id, constituent: p.constituent_id, pledgeDate: p.pledge_date, totalCents: p.total_cents, schedule: p.schedule, fund: p.fund, appeal: p.appeal })),
   });
 }
 

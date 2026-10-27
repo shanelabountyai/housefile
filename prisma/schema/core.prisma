@@ -92,6 +92,7 @@ model Org {
   campaigns      Campaign[] // app
   appeals        Appeal[] // app
   gifts          Gift[] // app
+  pledges        Pledge[] // app
   softCredits    SoftCredit[] // app
   importBatches  ImportBatch[] // app
   importBatchEvents ImportBatchEvent[] // app
