@@ -1,5 +1,11 @@
 # NEXT
 
+## ▶ Next session: task 4.3 — Pair set and truth (`tools/assist_truth.py` + TS `reviewItems()`); read its entry in `docs/phase-4-tasks.md`
+
+**2026-10-28 task 4.2 DONE (D-89).** `experiments/assist/spend.ts`: `costMicroUsd` (integer, rounds up, throws above Haiku's 100K tier), `assertWithinCap` over `eval/assist/spend.jsonl` (caps 10000000 / 2000000 micro-USD, refusal logged and counts nothing, exactly-at-cap allowed), `paidCall(call, send)`: check, then send, then one log line. **4.5 must route every call through `paidCall`.** `money:lint` walks `experiments/` with `micro` as a money word (red-checked with a planted `* 0.5`). Tests `tests/unit/assist/spend.test.ts` 8/8 (11/11 with prices), 5 mutations killed. Gate: `model:lint`, `fixtures:check`, `import:eval` exit 0, `money:lint`, `write:lint`, `tsc`, eslint OK. Full vitest not re-run (no `src/` change).
+
+---
+
 ## ▶ Next session: task 4.2 — Spend and budget (port footnote `src/lib/spend/budget.ts`); read its entry in `docs/phase-4-tasks.md`
 
 **2026-10-28 task 4.1 DONE (D-88).** `config/prices.json` (checked 2026-10-28 against Anthropic's pricing page): `claude-haiku-5-5` 100000 / 500000 and `claude-sonnet-5-5` 2000000 / 10000000 micro-USD per MTok (Haiku tier ends at 100K-token prompts). `experiments/assist/prices.ts`: `priceFor` (unknown id throws naming the file), `assertPricesFresh` (> 60 days refuses; 4.5 must call it before the first call). `tests/unit/assist/prices.test.ts` 3/3, INV-14 green. `ANTHROPIC_API_KEY=` is an empty line in `.env.local` — **owner pastes the key before 4.7**; `.env.example` carries the name as a comment because INV-14 ties live names to template-owned `src/core/env.ts`. Gate: `model:lint` OK, `fixtures:check` OK, `import:eval` exit 0, `money:lint` OK, `tsc` clean. 4.2 note: extend `money:lint` to `experiments/`; the price fields are named `…MicroUsdPerMTok`, not `cents`/`amount`, so widen its MONEY pattern to `micro` too.
