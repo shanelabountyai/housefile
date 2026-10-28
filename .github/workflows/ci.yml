@@ -46,7 +46,11 @@ jobs:
       # Phase 2 proof (task 2.10): seed → preview → commit → undo for both files, a merge and its unmerge; every hash printed.
       - run: npm run phase2:proof
         if: ${{ !cancelled() }}
-      # Production build, served — the way it ships. login.spec.ts drives a real page.
+      # Phase 3 proof (task 3.11): seed with Phase 3 data → roll-ups and segments == answers.json → commit A → letters →
+      # correct a gift A wrote → exactly its letter stale → undo A → stateHash == beforeHash; every number and hash printed.
+      - run: npm run phase3:proof
+        if: ${{ !cancelled() }}
+      # Production build, served — the way it ships. Every spec in e2e/, the Phase 3 pages (imports-review, crm-pages) included.
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
 
