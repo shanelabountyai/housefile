@@ -1,6 +1,8 @@
 # NEXT
 
-## ▶ Next session: Phase 3 gate reached. Owner decision: Phase 4 (O-1, optional LLM review-assist) or project closure (DEMO done; exec brief, LinkedIn posts, cost review left)
+## ▶ Next session: Phase 4 — owner reviews `docs/phase-4-tasks.md` and decides P4-1..P4-6, then task 4.1
+
+**2026-10-28 Phase 3 gate: owner chose Phase 4 before closure (D-86).** `docs/phase-4-tasks.md` written: 8 tasks, 6 proposals awaiting the owner. Donors: footnote `src/lib/llm/anthropic.ts`, `src/lib/spend/prices.ts`, `src/lib/spend/budget.ts`. Closure (exec brief, posts, cost review) follows the Phase 4 gate.
 
 **2026-10-27 task 3.11 DONE (D-85). Phase 3 complete (3.1–3.11).**
 - `npm run phase3:proof` (`scripts/phase3-proof.ts`, CI step after `phase2:proof`): seed with Phase 3 data, stateHash `c2159b32…` == fixture in memory → roll-ups (total **$375,725.00 / 929 / 255, avg 40444 r 24**), campaigns, funds and 6 segments (lybunt **86**) == `answers.json` → commit A → raised **+9,962,500** == A's written gifts, campaigns unchanged → **1227** letters, Σ == raised, 0 outbox → correct G00933 +1234 → exactly **L0930** stale → undo A → stateHash == beforeHash `c2159b32…`, roll-ups == oracle again. About 7 s locally. Transcript in `docs/EVAL.md` → Phase 3.
