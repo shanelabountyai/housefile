@@ -20,7 +20,7 @@ read at call time), `src/lib/spend/prices.ts` (prices pinned in `config/prices.j
 throws, integer micro-USD), `src/lib/spend/budget.ts` (refuses *before* a call whose estimate would cross the cap, logs,
 throws `BUDGET_EXCEEDED`). No dependency added.
 
-## Proposals (owner decides before 4.1)
+## Proposals (decided 2026-10-28 as D-87, all as written)
 
 | # | Proposal | Why | Alternative |
 |---|---|---|---|
