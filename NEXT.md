@@ -1,6 +1,8 @@
 # NEXT
 
-## ▶ Next session: task 4.1 — Prices and key; read its entry in `docs/phase-4-tasks.md` (proposals decided, D-87)
+## ▶ Next session: task 4.2 — Spend and budget (port footnote `src/lib/spend/budget.ts`); read its entry in `docs/phase-4-tasks.md`
+
+**2026-10-28 task 4.1 DONE (D-88).** `config/prices.json` (checked 2026-10-28 against Anthropic's pricing page): `claude-haiku-5-5` 100000 / 500000 and `claude-sonnet-5-5` 2000000 / 10000000 micro-USD per MTok (Haiku tier ends at 100K-token prompts). `experiments/assist/prices.ts`: `priceFor` (unknown id throws naming the file), `assertPricesFresh` (> 60 days refuses; 4.5 must call it before the first call). `tests/unit/assist/prices.test.ts` 3/3, INV-14 green. `ANTHROPIC_API_KEY=` is an empty line in `.env.local` — **owner pastes the key before 4.7**; `.env.example` carries the name as a comment because INV-14 ties live names to template-owned `src/core/env.ts`. Gate: `model:lint` OK, `fixtures:check` OK, `import:eval` exit 0, `money:lint` OK, `tsc` clean. 4.2 note: extend `money:lint` to `experiments/`; the price fields are named `…MicroUsdPerMTok`, not `cents`/`amount`, so widen its MONEY pattern to `micro` too.
 
 **2026-10-28 Phase 3 gate: owner chose Phase 4 before closure (D-86).** `docs/phase-4-tasks.md` written: 8 tasks, 6 proposals, all accepted as written (D-87). Donors: footnote `src/lib/llm/anthropic.ts`, `src/lib/spend/prices.ts`, `src/lib/spend/budget.ts`. Closure (exec brief, posts, cost review) follows the Phase 4 gate.
 
