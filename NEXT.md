@@ -1,5 +1,11 @@
 # NEXT
 
+## ▶ Next session: task 4.4 — Prompt (pure) `buildPrompt(row, candidate)`; read its entry in `docs/phase-4-tasks.md`
+
+**2026-10-28 task 4.3 DONE (D-90).** Item = (REVIEW row, candidate tied at its best score): **A 61, B 37 = 98 items** (55 + 33 rows plus 10 tie items). `tools/assist_truth.py` writes `eval/assist/truth.csv` (`file,row_id,candidate,truth,shane_label`); `--check` now runs in `fixtures:check`. Truth: **87 MERGE / 11 SAME_HOUSEHOLD / 0 KEEP_SEPARATE** — an always-MERGE assist scores 89% and makes 11 wrong merges, so P4-4's 0-wrong-merge bar is what binds. **Shane's labels on items: 28, not 30** (A-0064, A-0185 auto-merge since D-43). `experiments/assist/items.ts` `reviewItems()` returns both `MatchRecord`s as scored, ready for 4.4's prompt. `reference_matcher.run_file` got an optional `review_items` collector; its stdout is byte-identical. Tests `tests/unit/assist/items.test.ts` 3/3 (14/14 in `tests/unit/assist/`), tie mutation killed, tampered truth.csv caught. Gate: `model:lint`, `fixtures:check` (incl. assist truth OK), `import:eval` exit 0, `money:lint`, `tsc`, eslint OK. Full vitest not re-run (no `src/` change).
+
+---
+
 ## ▶ Next session: task 4.3 — Pair set and truth (`tools/assist_truth.py` + TS `reviewItems()`); read its entry in `docs/phase-4-tasks.md`
 
 **2026-10-28 task 4.2 DONE (D-89).** `experiments/assist/spend.ts`: `costMicroUsd` (integer, rounds up, throws above Haiku's 100K tier), `assertWithinCap` over `eval/assist/spend.jsonl` (caps 10000000 / 2000000 micro-USD, refusal logged and counts nothing, exactly-at-cap allowed), `paidCall(call, send)`: check, then send, then one log line. **4.5 must route every call through `paidCall`.** `money:lint` walks `experiments/` with `micro` as a money word (red-checked with a planted `* 0.5`). Tests `tests/unit/assist/spend.test.ts` 8/8 (11/11 with prices), 5 mutations killed. Gate: `model:lint`, `fixtures:check`, `import:eval` exit 0, `money:lint`, `write:lint`, `tsc`, eslint OK. Full vitest not re-run (no `src/` change).
