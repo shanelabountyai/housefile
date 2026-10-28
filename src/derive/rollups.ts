@@ -15,7 +15,7 @@ export function stat(gifts: EffectiveGift[]): Stat {
   const raised = gifts.reduce((s, g) => s + g.amountCents, 0);
   const n = gifts.length;
   const remainder = n ? raised % n : 0;
-  return { raised, gifts: n, donors: new Set(gifts.map((g) => g.constituent)).size, average: n ? (raised - remainder) / n : 0, remainder }; // exact: raised − remainder divides by n
+  return { raised, gifts: n, donors: new Set(gifts.map((g) => g.constituent)).size, average: n ? raised / n : 0, remainder }; // exact: raised − remainder divides by n
 }
 
 const group = (gifts: EffectiveGift[], key: (g: EffectiveGift) => string): Record<string, EffectiveGift[]> => {
