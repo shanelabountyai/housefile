@@ -1,5 +1,19 @@
 # NEXT
 
+## ▶ Next session: Phase 3 gate reached. Owner decision: Phase 4 (O-1, optional LLM review-assist) or project closure (DEMO done; exec brief, LinkedIn posts, cost review left)
+
+**2026-10-27 task 3.11 DONE (D-85). Phase 3 complete (3.1–3.11).**
+- `npm run phase3:proof` (`scripts/phase3-proof.ts`, CI step after `phase2:proof`): seed with Phase 3 data, stateHash `c2159b32…` == fixture in memory → roll-ups (total **$375,725.00 / 929 / 255, avg 40444 r 24**), campaigns, funds and 6 segments (lybunt **86**) == `answers.json` → commit A → raised **+9,962,500** == A's written gifts, campaigns unchanged → **1227** letters, Σ == raised, 0 outbox → correct G00933 +1234 → exactly **L0930** stale → undo A → stateHash == beforeHash `c2159b32…`, roll-ups == oracle again. About 7 s locally. Transcript in `docs/EVAL.md` → Phase 3.
+- **Green run:** https://github.com/shanelabountyai/housefile/actions/runs/40615505347 (`38c6e80`): ci (vitest 62 files **472 / 472**, `phase2:proof`, `phase3:proof OK`, e2e **15 passed** on the production build), phase1-gate, modules-removed all green.
+- **Red run:** https://github.com/shanelabountyai/housefile/actions/runs/40615308383 (draft PR #7, closed, branch deleted): `average: n ? raised / n : 0` → `phase3:proof FAILED: roll-ups: total == answers.json` (40444.0258… != 40444), plus 4 roll-up tests red. `money:lint` passes that change; the oracle comparison is what catches it (recorded in D-85).
+- **CI `modules-removed` was red since task 3.8** (the deleted notifications module broke `db.outbox` in the letters test). Fixed: `REQUIRED_MODULES = ['notifications']` per D-5; billing still deleted.
+- `npm run demo:setup [-- slug]` + `docs/DEMO.md`, walked end to end on `npm run dev` (every page, upload/commit A, 68 open rows, 1227 letters, undo hash ==, 298 stale, CLI merge then page unmerge with both hashes ==). Local dev DB now holds orgs `demo` (used) and `demo-check` (used); a fresh demo takes `npm run demo:setup -- demo2`.
+- `fixtures:check` already covered Phase 3 (task 3.1); the e2e step already ran the Phase 3 specs; both unchanged.
+- Uncommitted on purpose: a `CLAUDE.md` block that `next dev` writes (nextjs-agent-rules). Commit it or leave it; it comes back after every `next dev`.
+- Gate (local): typecheck, lint (6 old warnings), `write:lint`, `money:lint`, `model:lint`, `fixtures:check`, `import:eval` OK, `foundation:check-modules` OK, `phase3:proof:test` OK. Full vitest and e2e run in CI (above), not locally.
+
+---
+
 ## ▶ Next session: task 3.11 — Gate wiring; read its entry in `docs/phase-3-tasks.md`
 
 **2026-10-27 task 3.10 DONE (D-84).** Pages under `src/app/o/[org]/`: `constituents` (+ `[id]`: fields with source/as-of, aliases, household, gift chains with superseded rows struck through and their reason, pledge balances, soft credits and recognition, merge history, unmerge button with blocked state and both hashes after), `gifts` (as-of, date range, fund, campaign filters; totals are `rollups` over the filtered gifts; by-date totals; `gifts.csv`), `campaigns`, `segments` (+ `[key]`: definition, run, count, members, run time), `letters` (banner, queue form, QUEUED / LETTER_STALE, body on `?letter=`). Actions: `unmergeMerge`, `runSegmentAction`, `queueLettersAction`, each one call into `unmerge` / `runSegment` / `queueLetters`.
