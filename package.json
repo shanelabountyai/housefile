@@ -25,6 +25,7 @@
     "db:status:test": "dotenv -e .env.test -e .env.local -- prisma migrate status",
     "seed:demo": "dotenv -e .env.local -- tsx scripts/seed-demo.ts",
     "seed:demo:test": "dotenv -e .env.test -e .env.local -- tsx scripts/seed-demo.ts",
+    "demo:setup": "dotenv -e .env.local -- tsx scripts/demo-setup.ts",
     "db:setup": "tsx scripts/db-setup.ts",
     "db:seed:fixtures": "dotenv -e .env.local -- tsx scripts/seed-fixtures.ts",
     "db:seed:fixtures:test": "dotenv -e .env.test -e .env.local -- tsx scripts/seed-fixtures.ts",
