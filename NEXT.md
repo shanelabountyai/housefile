@@ -1,5 +1,16 @@
 # NEXT
 
+## ▶ Next session: task 3.11 — Gate wiring; read its entry in `docs/phase-3-tasks.md`
+
+**2026-10-27 task 3.10 DONE (D-84).** Pages under `src/app/o/[org]/`: `constituents` (+ `[id]`: fields with source/as-of, aliases, household, gift chains with superseded rows struck through and their reason, pledge balances, soft credits and recognition, merge history, unmerge button with blocked state and both hashes after), `gifts` (as-of, date range, fund, campaign filters; totals are `rollups` over the filtered gifts; by-date totals; `gifts.csv`), `campaigns`, `segments` (+ `[key]`: definition, run, count, members, run time), `letters` (banner, queue form, QUEUED / LETTER_STALE, body on `?letter=`). Actions: `unmergeMerge`, `runSegmentAction`, `queueLettersAction`, each one call into `unmerge` / `runSegment` / `queueLetters`.
+- `e2e/crm-pages.spec.ts` (serial, one test per page, seeded Phase 3 org): gift list total **$375725.00 / 929 gifts / 255 donors** and every fund, GEN and AF2025 filters equal `answers.json`, CSV sums to the total; campaign and fund rows equal the oracle; lybunt run count **86** equals the reference, members listed; 929 letters queued, 0 outbox rows, member has no queue form; a correction strikes the old row with its reason and stales exactly 1 letter; H0001 name, PL002 balance, soft credit shown; merge C0005/C0006 then unmerge from the page with both hashes `==` their snapshots, member has no button. 5 / 5.
+- Caught by the harness: a Zod regex on `asOf` ran before the ownership check, so a foreign segment id was a form error, not not-found (INV-02); `asOf` is now checked by `runSegment`. Two pages first awaited `params`, not `requireOrg` (FR-06).
+- Playwright's loader cannot import JSON the commit layer reads; correction, merge and segment saves run via `scripts/e2e-crm-ops.ts` under tsx.
+- Seams: no pagination (gifts, letters), no segment editor, no gift correct/void button, no household or campaign detail page.
+- Gate (local): `npm test` 62 files **472 / 472**, typecheck, lint (6 old warnings), `fixtures:check`, `model:lint`, `money:lint`, `write:lint` OK, `import:eval` drift 0 rows, `foundation:drift` clean v1.3.0, INV harness 14 / 14 (its 180 s timeout needs a quiet machine: it timed out at load average 50-66 from another project), e2e spec 5 / 5. The rest of the e2e suite was not re-run.
+
+---
+
 ## ▶ Next session: task 3.10 — Constituent, gift, campaign, segment and letter pages; read its entry in `docs/phase-3-tasks.md`
 
 **2026-10-27 task 3.9 DONE (D-83).** `/o/[org]/imports` (upload with as-of date, batch list), `/imports/[batch]` (map, correct-the-map form, totals, full report, `preview.csv`, commit, written counts, undo state and proof line), `/o/[org]/review` (filters by batch and flag, `?decided=` notice) and `/review/[batch]/[row]` (import row beside each candidate, reasons, flags, the four actions with a reason). Actions in `imports/actions.ts` and `review/actions.ts` call `previewBatch` / `commitBatch` / `undoBatch` / `decideReview` only. Undo "blocked or available" is the real `undoBatch` rolled back at the proof step.
