@@ -1,5 +1,11 @@
 # NEXT
 
+## ▶ Next session: task 4.5 — Runner (`npm run assist:run`, port footnote `src/lib/llm/anthropic.ts`); read its entry in `docs/phase-4-tasks.md`
+
+**2026-10-29 task 4.4 DONE (D-91).** `experiments/assist/prompt.ts`: `buildPrompt(row, candidate)` → `{system, user}` (two tagged blocks, 14 `field: value` lines each, no record ids, footnote `escapeTags`), `promptHash`, `LABELS`. **98 items → 90 distinct prompts**; the 8 repeats all share truth MERGE. 4.5 must cache by item id (not prompt hash alone) and store `promptHash` per line. Output is `{decision, reason}` with no confidence field, as the task entry says; 4.6's confidence rules are over the decision. Tests `tests/unit/assist/prompt.test.ts` 4/4 (18/18 in `tests/unit/assist/`), 3 mutations killed. Gate: `model:lint`, `money:lint`, `fixtures:check`, `import:eval` exit 0, `tsc`, eslint OK. Full vitest not re-run (no `src/` change). `ANTHROPIC_API_KEY` still empty in `.env.local`; 4.5's tests stub `fetch`, the key is needed only at 4.7.
+
+---
+
 ## ▶ Next session: task 4.4 — Prompt (pure) `buildPrompt(row, candidate)`; read its entry in `docs/phase-4-tasks.md`
 
 **2026-10-28 task 4.3 DONE (D-90).** Item = (REVIEW row, candidate tied at its best score): **A 61, B 37 = 98 items** (55 + 33 rows plus 10 tie items). `tools/assist_truth.py` writes `eval/assist/truth.csv` (`file,row_id,candidate,truth,shane_label`); `--check` now runs in `fixtures:check`. Truth: **87 MERGE / 11 SAME_HOUSEHOLD / 0 KEEP_SEPARATE** — an always-MERGE assist scores 89% and makes 11 wrong merges, so P4-4's 0-wrong-merge bar is what binds. **Shane's labels on items: 28, not 30** (A-0064, A-0185 auto-merge since D-43). `experiments/assist/items.ts` `reviewItems()` returns both `MatchRecord`s as scored, ready for 4.4's prompt. `reference_matcher.run_file` got an optional `review_items` collector; its stdout is byte-identical. Tests `tests/unit/assist/items.test.ts` 3/3 (14/14 in `tests/unit/assist/`), tie mutation killed, tampered truth.csv caught. Gate: `model:lint`, `fixtures:check` (incl. assist truth OK), `import:eval` exit 0, `money:lint`, `tsc`, eslint OK. Full vitest not re-run (no `src/` change).
