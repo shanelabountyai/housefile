@@ -1,5 +1,11 @@
 # NEXT
 
+## ▶ Next session: task 4.6 — Scorer (`npm run assist:eval`, reads only `eval/assist/runs/*.jsonl` + `truth.csv`); read its entry in `docs/phase-4-tasks.md`
+
+**2026-10-29 task 4.5 DONE (D-92).** `npm run assist:run -- --model <id> [--limit n] [--date YYYY-MM-DD]`: `experiments/assist/run.ts` `runAssist` → `paidCall` → `experiments/assist/anthropic.ts` `callMessages` (footnote port, temperature 0, 429 retry inlined). Run file `eval/assist/runs/<model>-<date>.jsonl`, one line per item keyed `file:rowId:candidate` with `promptHash`, `raw`, `decision`, `reason`, tokens, `costMicroUsd`. Strict parse: exactly `{decision, reason}` or `ABSTAIN` (fenced replies too), never re-called; resume skips cached items, refuses a cached item under a different prompt hash. 4.6 should treat `ABSTAIN` as "left with a person" and count it. Tests `tests/unit/assist/run.test.ts` 8/8 (26/26 in `tests/unit/assist/`), 6 of 7 mutations killed (7th equivalent, code deleted). CLI smoke-tested with the empty key: clean refusal, exit 1, nothing written. Gate: `model:lint`, `money:lint`, `write:lint`, `fixtures:check`, `import:eval` exit 0, `tsc`, eslint OK. Full vitest not re-run (no `src/` change). `ANTHROPIC_API_KEY` still empty in `.env.local`; needed at 4.7 only.
+
+---
+
 ## ▶ Next session: task 4.5 — Runner (`npm run assist:run`, port footnote `src/lib/llm/anthropic.ts`); read its entry in `docs/phase-4-tasks.md`
 
 **2026-10-29 task 4.4 DONE (D-91).** `experiments/assist/prompt.ts`: `buildPrompt(row, candidate)` → `{system, user}` (two tagged blocks, 14 `field: value` lines each, no record ids, footnote `escapeTags`), `promptHash`, `LABELS`. **98 items → 90 distinct prompts**; the 8 repeats all share truth MERGE. 4.5 must cache by item id (not prompt hash alone) and store `promptHash` per line. Output is `{decision, reason}` with no confidence field, as the task entry says; 4.6's confidence rules are over the decision. Tests `tests/unit/assist/prompt.test.ts` 4/4 (18/18 in `tests/unit/assist/`), 3 mutations killed. Gate: `model:lint`, `money:lint`, `fixtures:check`, `import:eval` exit 0, `tsc`, eslint OK. Full vitest not re-run (no `src/` change). `ANTHROPIC_API_KEY` still empty in `.env.local`; 4.5's tests stub `fetch`, the key is needed only at 4.7.
