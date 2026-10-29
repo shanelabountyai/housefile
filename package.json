@@ -34,6 +34,7 @@
     "foundation:status": "tsx scripts/foundation-status.ts",
     "foundation:check-modules": "tsx scripts/foundation-check-modules.ts",
     "import:eval": "tsx scripts/import-eval.ts",
+    "assist:eval": "tsx scripts/assist-eval.ts",
     "assist:run": "dotenv -e .env.local -- tsx scripts/assist-run.ts",
     "import:dry-run": "tsx scripts/import-dry-run.ts",
     "import:preview": "dotenv -e .env.local -- tsx scripts/import-preview.ts",
