@@ -237,6 +237,34 @@ phase3:proof FAILED: roll-ups: total == answers.json
 
 **What this does not show.** The after-A segment counts and the letter count after A have no oracle (A's gifts are outside `answers.json`); they are snapshots printed for change detection. The proof covers per-gift letters only; household letters (212, Σ = the oracle's household giving) are proven in `tests/integration/housefile-letters.test.ts`. Pledge balances and recognition are proven against the oracle in `tests/unit/pledges.test.ts` and `tests/unit/recognition.test.ts`, and through merge, unmerge and undo in their integration tests, not here. The pages are proven by `e2e/crm-pages.spec.ts` and `e2e/imports-review.spec.ts` against the production build. All data is synthetic.
 
+## Phase 4 — LLM review-assist experiment (`npm run assist:eval`, 2026-10-30)
+
+98 review items (A 61, B 37: each REVIEW row with every candidate tied at its best score), one call per item per model, thinking off, cached in `eval/assist/runs/<model>-2026-10-30.jsonl`. `assist:eval` reads only those files and `eval/assist/truth.csv`; every number below is its output. The answer key has 87 MERGE / 11 SAME_HOUSEHOLD / 0 KEEP_SEPARATE; Shane's labels cover 28 of the items.
+
+| | claude-haiku-5-5 | claude-sonnet-5-5 |
+|---|---|---|
+| answered / ABSTAIN / missing | 98 / 0 / 0 | 98 / 0 / 0 |
+| truth MERGE → said MERGE / KEEP_SEPARATE / SAME_HOUSEHOLD | 62 / 18 / 7 | 77 / 5 / 5 |
+| truth SAME_HOUSEHOLD → said MERGE / KEEP_SEPARATE / SAME_HOUSEHOLD | 1 / 4 / 6 | 2 / 3 / 6 |
+| **wrong MERGE (answer key)** | **1** | **2** |
+| agreement with Shane's 28 | 22 (78.6%) | 27 (96.4%) |
+| rule merge-only: removes / agrees | 63 / 98 (64.3%), 62 / 63 (98.4%) | 79 / 98 (80.6%), 77 / 79 (97.5%) |
+| rule non-merge-only: removes / agrees | 35 (35.7%), 6 / 35 (17.1%) | 19 (19.4%), 6 / 19 (31.6%) |
+| rule any-label: removes / agrees | 98 (100%), 68 / 98 (69.4%) | 98 (100%), 83 / 98 (84.7%) |
+| cost | 11364 micro-USD ($0.011364), 115 per item | 229640 micro-USD ($0.229640), 2343 per item |
+| **P4-4 verdict** | **NO MEASURED GAIN** | **NO MEASURED GAIN** |
+
+**Verdict: no measured gain (P4-4, D-94).** Both models clear the removal and agreement bars on the merge-only rule (64.3% at 98.4%, 80.6% at 97.5%, against 30% at 95%) and agree with Shane far more often than the matcher's band rules (0 by construction, every item is REVIEW). Both fail the clause that binds: **0 wrong merges**. The wrong merges:
+
+- `B:B-0024:C0271` (both models): same first, middle, last name, phone and address; the CRM record carries suffix `SR`, the import row none. Truth SAME_HOUSEHOLD (a father and son). Both read the blank suffix as "nothing conflicts".
+- `B:B-0175:C0173` (Sonnet): identical email, phone and address; Sonnet read the name fields as a mis-parsed "Alexandra Van Der Berg". Truth SAME_HOUSEHOLD.
+
+These are the cases the matcher holds for a person on purpose: shared contact data, a name or generation difference. The assist is most confident exactly where a merge does the most damage.
+
+**Spend.** 196 paid calls, Σ 241004 micro-USD ($0.241) against the $10 total cap and $2 per run; `eval/assist/spend.jsonl` has one line per call and sums to the two run totals. One earlier call was rejected (400, `temperature`) before billing and logged nothing.
+
+**What the numbers do not show.** The data is synthetic and was written by one fixture author, who also wrote the prompt. n is 98 items over 88 rows, with 11 non-merges, so one wrong merge moves the verdict and "0 of 11" vs "1 of 11" is not a precise rate. There is no KEEP_SEPARATE item, so how often the assist would merge two strangers is untested here. Each model ran once: Haiku 5.5 and Sonnet 5.5 accept no `temperature`, so a re-run may answer differently; the committed cache is the record. No other prompt was tried, so this verdict is on this prompt, not on the approach.
+
 ## Which tests are oracle agreement and which are snapshots
 
 Oracle agreement (expected values come from `tools/` or the brief, not from this code): GN-01..GN-21, GA-01..GA-20, `expected_validation` on 650 rows, the Phase 3 roll-ups, segments, pledge balances, recognition and household giving against `answers.json`, and the byte-for-byte match of `import:eval` with `fixtures/samples/reference_matcher.output.txt` plus 0-row drift against `fixtures/decisions_*.csv`.

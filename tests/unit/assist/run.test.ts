@@ -44,14 +44,15 @@ afterEach(() => {
 });
 
 describe('assist runner (task 4.5)', () => {
-  it('one call per item at temperature 0, one cached line each with prompt hash, tokens and micro-USD', async () => {
+  it('one call per item with thinking off and no temperature, one cached line each with prompt hash, tokens and micro-USD', async () => {
     const r = await runAssist(opts());
     expect(r).toEqual({ called: 4, skipped: 0 });
     expect(fetchMock).toHaveBeenCalledTimes(4);
     const [url, init] = sent(0);
     expect(url).toBe('https://api.anthropic.com/v1/messages');
     const body = JSON.parse(init.body);
-    expect(body.temperature).toBe(0);
+    expect(body).not.toHaveProperty('temperature');
+    expect(body.thinking).toEqual({ type: 'disabled' });
     expect(body.model).toBe(HAIKU);
     const p = buildPrompt(first.row, first.candidateRecord);
     expect(body.system).toBe(p.system);
