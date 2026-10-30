@@ -83,6 +83,9 @@ jobs:
         if: ${{ !cancelled() }}
       - run: npm run import:eval
         if: ${{ !cancelled() }}
+      # Phase 4 (task 4.8): the P4-4 verdict re-scored from the committed run files. No key here; it calls nothing.
+      - run: npm run assist:eval
+        if: ${{ !cancelled() }}
 
   # Spec §4 / §13.3: both modules deleted by the manifest, and the tree must still generate, typecheck, build and pass drift.
   modules-removed:

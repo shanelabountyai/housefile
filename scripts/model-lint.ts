@@ -1,5 +1,6 @@
 // `npm run model:lint` (CLAUDE.md commands): schema-checks matching/model.v1.json, confirms its content hash
-// matches the one recorded in docs/decisions.md (D-16), and greps src/matching/, src/import/ and src/segments/ for anything that would break
+// matches the one recorded in docs/decisions.md (D-16), greps all of src/ for experiments/ imports and the model API host (D-95),
+// and greps src/matching/, src/import/ and src/segments/ for anything that would break
 // purity (clock, randomness, database, network, model client, template core). Exit 1 on any finding.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -22,7 +23,7 @@ const FORBIDDEN = [/\bDate\b/, /Math\.random/, /prisma/i, /\bfetch\b/, /anthropi
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((f) => {
     const p = join(dir, f);
-    return statSync(p).isDirectory() ? walk(p) : p.endsWith('.ts') ? [p] : [];
+    return statSync(p).isDirectory() ? walk(p) : /\.tsx?$/.test(p) ? [p] : [];
   });
 }
 // src/import is scanned too (review 2026-10-17), minus node:/process tokens it has no use for either; src/segments too (task 3.4, D-76).
@@ -32,6 +33,18 @@ for (const file of [...walk('src/matching'), ...walk('src/import'), ...walk('src
     .forEach((line, i) => {
       const code = line.replace(/\/\/.*$/, ''); // a comment that names the rule is not a use of it
       for (const re of FORBIDDEN) if (re.test(code)) problems.push(`${file}:${i + 1}: forbidden ${re.source}: ${line.trim()}`);
+    });
+}
+
+// Phase 4 (task 4.8, D-95): the assist experiment stays outside the product. Nothing under src/ imports experiments/
+// or names the model API host; a quoted path is caught whether it is a static import, import() or require().
+const PRODUCT_FORBIDDEN = [/['"`][^'"`]*\bexperiments\//, /api\.anthropic\.com/];
+for (const file of walk('src')) {
+  readFileSync(file, 'utf8')
+    .split('\n')
+    .forEach((line, i) => {
+      const code = line.replace(/(^|[^:])\/\/.*$/, '$1'); // strip a comment, not the // in https://
+      for (const re of PRODUCT_FORBIDDEN) if (re.test(code)) problems.push(`${file}:${i + 1}: forbidden in src/ ${re.source}: ${line.trim()}`);
     });
 }
 
