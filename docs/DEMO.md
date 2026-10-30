@@ -94,6 +94,17 @@ npm run phase3:proof:test     # seed → oracle → commit A → letters → cor
 
 The full transcript and a deliberately broken run are in `docs/EVAL.md` → *Phase 3*.
 
+**13. The AI experiment (no key needed).**
+
+```bash
+npm run assist:eval    # reads the committed run files only; no network, no key
+```
+
+Expect two lines: `P4-4 claude-haiku-5-5-2026-10-30: NO MEASURED GAIN (wrong MERGE 1; ...)` and the same for Sonnet
+(wrong MERGE 2). Say: "I asked two models to label the 98 pairs the matcher leaves for a person. They removed 64% and
+81% of the review work, but each made wrong merges, and the bar was zero. So the product does not call a model."
+Spend: $0.24 over 196 calls, logged per call. `src/` never imports `experiments/`; `npm run model:lint` enforces it.
+
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
@@ -115,5 +126,7 @@ The full transcript and a deliberately broken run are in `docs/EVAL.md` → *Pha
 - **No pagination.** The gift and letter lists render every row: fine at 1,227, not at 100,000.
 - **Letters are never sent** and make no IRS claim. There is no address block and no re-issue of a stale letter.
 - **Not deployed.** It runs on a laptop against local Postgres, on purpose.
+- **The model experiment is a negative result.** Verdict NO MEASURED GAIN on 98 synthetic pairs, one prompt, two
+  models; it says nothing about other prompts or real files. Re-running `assist:run` needs a key and costs money.
 - **Review load is the price of caution.** 68 of 400 rows go to a person. A looser threshold would cut that and start
   making wrong merges; the floor is a decision (`docs/decisions.md`), not a tuning accident.
