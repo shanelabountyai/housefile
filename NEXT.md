@@ -5,6 +5,8 @@ Phase 4 gate: PASSED 2026-10-30 (model:lint, money:lint, write:lint, fixtures:ch
 Remaining, in order: (2) exec brief via `exec-brief` skill, scope honesty near the top (synthetic, negative AI result, not deployed); (3) LinkedIn posts into the Ledger (mine Defects Found / Hardest Bug; the NO MEASURED GAIN result is a post); (4) cost review: ANTHROPIC_API_KEY in .env.local bills only on `assist:run`, nothing scheduled, no deploy, record keep/off + restore note in docs/decisions.md.
 Record every artifact URL here.
 
+**2026-10-30 closure item 2 DONE.** Exec brief: https://claude.ai/artifact/3rVWkDhCKMPAL89t1xRJxf (private until shared; no screenshots, project has no capture spec; numbers re-run today: vitest 68 files / 506, import:eval 0 wrong auto-merges in 434, recall A 0.9464 / B 0.9548). Remaining: (3) posts, (4) cost review.
+
 ---
 
 ## ▶ Next session: Phase 4 gate, then closure. Check the Phase 4 exit criteria in `docs/phase-4-tasks.md` (all met as of 4.8), then the definition-of-done deliverables: `docs/DEMO.md` updated for Phase 4 (the `assist:eval` stop), the exec brief (`exec-brief` skill), LinkedIn posts into the Ledger, and the cost review (`ANTHROPIC_API_KEY` in `.env.local` bills only on `assist:run`; nothing scheduled; no deploy). Record every artifact URL here.
