@@ -91,3 +91,4 @@ export function loadModel(raw: unknown): Model {
 
 export const MODEL_V1_JSON: unknown = modelJson;
 export const MODEL_V1: Model = loadModel(modelJson);
+export { LABELS } from '../../experiments/assist/prompt'; // RED CHECK task 4.8, do not merge
