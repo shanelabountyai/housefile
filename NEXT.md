@@ -1,5 +1,12 @@
 # NEXT
 
+## ▶ Next session: closure deliverables 2-4. DEMO.md is done (Phase 4 stop 13, assist:eval run and verified).
+Phase 4 gate: PASSED 2026-10-30 (model:lint, money:lint, write:lint, fixtures:check, assist:eval rc 0; verdict NO MEASURED GAIN both models; spend 241004 micro-USD of 10000000 cap).
+Remaining, in order: (2) exec brief via `exec-brief` skill, scope honesty near the top (synthetic, negative AI result, not deployed); (3) LinkedIn posts into the Ledger (mine Defects Found / Hardest Bug; the NO MEASURED GAIN result is a post); (4) cost review: ANTHROPIC_API_KEY in .env.local bills only on `assist:run`, nothing scheduled, no deploy, record keep/off + restore note in docs/decisions.md.
+Record every artifact URL here.
+
+---
+
 ## ▶ Next session: Phase 4 gate, then closure. Check the Phase 4 exit criteria in `docs/phase-4-tasks.md` (all met as of 4.8), then the definition-of-done deliverables: `docs/DEMO.md` updated for Phase 4 (the `assist:eval` stop), the exec brief (`exec-brief` skill), LinkedIn posts into the Ledger, and the cost review (`ANTHROPIC_API_KEY` in `.env.local` bills only on `assist:run`; nothing scheduled; no deploy). Record every artifact URL here.
 
 **2026-10-30 task 4.8 DONE (D-95). Phase 4 tasks complete (4.1–4.8).** `model:lint` scans all of `src/` (`.ts`/`.tsx`) for a quoted `experiments/` path or `api.anthropic.com`; CI `phase1-gate` runs `assist:eval` with no key.
