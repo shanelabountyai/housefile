@@ -1,5 +1,14 @@
 # NEXT
 
+## ▶ Next session: Phase 4 gate, then closure. Check the Phase 4 exit criteria in `docs/phase-4-tasks.md` (all met as of 4.8), then the definition-of-done deliverables: `docs/DEMO.md` updated for Phase 4 (the `assist:eval` stop), the exec brief (`exec-brief` skill), LinkedIn posts into the Ledger, and the cost review (`ANTHROPIC_API_KEY` in `.env.local` bills only on `assist:run`; nothing scheduled; no deploy). Record every artifact URL here.
+
+**2026-10-30 task 4.8 DONE (D-95). Phase 4 tasks complete (4.1–4.8).** `model:lint` scans all of `src/` (`.ts`/`.tsx`) for a quoted `experiments/` path or `api.anthropic.com`; CI `phase1-gate` runs `assist:eval` with no key.
+- **Red run:** https://github.com/shanelabountyai/housefile/actions/runs/41091908999 (draft PR #8, closed, branch deleted): planted `export { LABELS } from '../../experiments/assist/prompt'` in `src/matching/model.ts` → `model:lint FAIL src/matching/model.ts:94`; the `ci` job stayed green, so only this lint catches it.
+- **Green run:** https://github.com/shanelabountyai/housefile/actions/runs/41091891903 (`710e3e0`): ci, phase1-gate, modules-removed green; `assist:eval` prints Haiku and Sonnet NO MEASURED GAIN, same numbers as D-94.
+- Local red-check also caught a bug in the new scan: the comment stripper ate `//` in `https://`, so a planted host URL passed. Fixed; planted URL and `import()` now exit 1, a comment naming the host passes.
+
+---
+
 ## ▶ Next session: task 4.8 — Gate wiring (CI runs `assist:eval` from the cache with no key; `model:lint` fails on `src/` importing `experiments/` or naming `api.anthropic.com`; red + green run linked here); read its entry in `docs/phase-4-tasks.md`. Then the Phase 4 gate and closure (exec brief, posts, cost review).
 
 **2026-10-30 task 4.7 DONE (D-94). Verdict: NO MEASURED GAIN for both models.** 98 items × 2 models, run files committed (`eval/assist/runs/*-2026-10-30.jsonl`). Haiku: wrong MERGE **1**, merge-only removes 64.3% at 98.4%, Shane 22/28, $0.011. Sonnet: wrong MERGE **2**, merge-only 80.6% at 97.5%, Shane 27/28, $0.230. Both fail only P4-4's 0-wrong-merge clause (`B:B-0024:C0271` SR suffix, both; `B:B-0175:C0173`, Sonnet; truth SAME_HOUSEHOLD). Spend 241004 micro-USD over 196 calls, `spend.jsonl` Σ == run files. Call shape changed: both models 400 on `temperature`, so it is gone; thinking off via `disabled` (Haiku) / `between_tools` (Sonnet); unknown model refuses. Table and caveats in `docs/EVAL.md` → Phase 4. Gate: `tests/unit/assist` 34/34, `model:lint`, `money:lint`, `write:lint`, `fixtures:check`, `import:eval`, `tsc`, eslint exit 0. Full vitest not re-run (no `src/` change). Cost review note for closure: the API key in `.env.local` bills only when `assist:run` is invoked; nothing scheduled.
