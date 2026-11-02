@@ -5,7 +5,8 @@ Phase 4 gate: PASSED 2026-10-30 (model:lint, money:lint, write:lint, fixtures:ch
 Remaining, in order: (2) exec brief via `exec-brief` skill, scope honesty near the top (synthetic, negative AI result, not deployed); (3) LinkedIn posts into the Ledger (mine Defects Found / Hardest Bug; the NO MEASURED GAIN result is a post); (4) cost review: ANTHROPIC_API_KEY in .env.local bills only on `assist:run`, nothing scheduled, no deploy, record keep/off + restore note in docs/decisions.md.
 Record every artifact URL here.
 
-**2026-10-30 closure item 2 DONE.** Exec brief: https://claude.ai/artifact/3rVWkDhCKMPAL89t1xRJxf (private until shared; no screenshots, project has no capture spec; numbers re-run today: vitest 68 files / 506, import:eval 0 wrong auto-merges in 434, recall A 0.9464 / B 0.9548). Remaining: (4) cost review.
+**2026-10-30 closure item 2 DONE.** Exec brief: https://claude.ai/artifact/3rVWkDhCKMPAL89t1xRJxf (private until shared; no screenshots, project has no capture spec; numbers re-run today: vitest 68 files / 506, import:eval 0 wrong auto-merges in 434, recall A 0.9464 / B 0.9548). Remaining: none.
+**2026-11-02 closure item 4 DONE (D-96).** Cost review recorded: API spend $0.241004 (bills only on `assist:run`), no Vercel project, no Neon, no schedules; template cron in `vercel.json` is inert. Closure items 1-4 exist; project is closed.
 **2026-11-02 closure item 3 DONE.** Ledger posts #141 (AI: assist NO MEASURED GAIN, $0.24) and #142 (Scale: 4/3/51 became 2051) added to https://claude.ai/artifact/Ai5xKScgT2sWtqXRQ1ZA8i, source = the brief, tech null (no technical write-up). "Housefile" added to the page's project list (ledger v76). Held for later: threshold post (D-41/D-77), fingerprint-undo post (D-12/13/64).
 
 ---
