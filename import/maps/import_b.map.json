@@ -1,0 +1,14 @@
+{
+  "full": "Name",
+  "email": "E-mail",
+  "phone": "Phone",
+  "line1": "Address 1",
+  "line2": "Address 2",
+  "city": "City",
+  "state": "State",
+  "zip": "Postal",
+  "dob": "DOB",
+  "gift_date": "Date",
+  "amount": "Amt",
+  "fund": "Fund"
+}

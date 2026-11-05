@@ -17,7 +17,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/housefile_test?connection_limit=10&pool_timeout=20
       DIRECT_URL: postgresql://postgres:postgres@localhost:5432/housefile_test?connection_limit=10&pool_timeout=20
       AUTH_SECRET: ci-only-secret-not-for-real-use-0123456789abc
-      APP_URL: http://localhost:5500
+      APP_URL: http://localhost:5900
     services:
       postgres:
         image: postgres:17
@@ -46,6 +46,34 @@ jobs:
       # Production build, served — the way it ships. login.spec.ts drives a real page.
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
+
+  # Phase 1 gate (task 1.12): no database. Each step exits non-zero on its own failure.
+  phase1-gate:
+    runs-on: ubuntu-latest
+    env:
+      TZ: America/Chicago # non-UTC, so a date that leans on the runner's zone goes red here
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run fixtures:check
+        if: ${{ !cancelled() }} # every gate reports, not just the first red
+      - run: npm run model:lint
+        if: ${{ !cancelled() }}
+      - run: npm run money:lint
+        if: ${{ !cancelled() }}
+      - run: npm run typecheck:phase1
+        if: ${{ !cancelled() }}
+      - run: npm run test:phase1
+        if: ${{ !cancelled() }}
+      - run: npm run import:eval
+        if: ${{ !cancelled() }}
 
   # Spec §4 / §13.3: both modules deleted by the manifest, and the tree must still generate, typecheck, build and pass drift.
   modules-removed:

@@ -1,14 +1,13 @@
 'use server';
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { audit } from '@/core/audit';
 import { orgAction, ref } from '@/core/authz/action';
 import { inOrg, type OrgCtx } from '@/core/authz/guards';
 import { db } from '@/core/db';
-import { createShareLink, revokeShareLink } from '@/core/share/links';
 
-// The example resource and its share links (spec §7c). A clone replaces Project with its own.
+// The example resource (spec §7c). A clone replaces Project with its own.
+// D-5: Housefile shares nothing, so the share/revoke actions are removed; src/core/share stays as the template ships it.
 const page = (ctx: OrgCtx) => `/o/${ctx.slug}/projects`;
 
 export const addProject = orgAction(
@@ -22,14 +21,3 @@ export const addProject = orgAction(
     redirect(page(ctx));
   },
 );
-
-export const shareProject = orgAction('share.create', z.object({ id: ref('project'), days: z.enum(['1', '7', '30']) }), async (ctx, i) => {
-  const url = await createShareLink(ctx, 'project', i.id, Number(i.days));
-  revalidatePath(page(ctx));
-  return { notice: url }; // the raw token exists only in this response
-});
-
-export const revokeShare = orgAction('share.revoke', z.object({ id: ref('shareLink') }), async (ctx, { id }) => {
-  await revokeShareLink(ctx, id);
-  redirect(page(ctx));
-});

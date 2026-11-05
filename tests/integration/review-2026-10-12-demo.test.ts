@@ -95,8 +95,8 @@ describe('a demo session cannot destroy the demo or change who owns it', () => {
     expect(await db.membership.count({ where: { userId: member.id, role: 'member' } })).toBe(1);
   });
 
-  // Owner decision 2026-10-13. Billing is a removable module, so its half is in tests/invariants/inv-12-webhooks.test.ts.
-  // The other half (a demo session can still add and share a project) tests the example resource a clone replaces,
+  // Owner decision 2026-10-13. D-5 removed billing (and its half, tests/invariants/inv-12-webhooks.test.ts).
+  // The other half (a demo session can still add a project) tests the example resource a clone replaces,
   // so it is in review-2026-10-12-demo-projects.test.ts, which a clone deletes with `/o/[org]/projects`.
   it('creating an org is refused', async () => {
     await seedDemo();

@@ -1,0 +1,38 @@
+{
+  "version": "v1",
+  "_comment": "Brief §7 / D-17. Closed table: additive points per feature, thresholds, similarity constants, the hard block, the conflict caps, the floors and the household flag. Integers only so the file hashes through the canonical serializer (percent values are divided by 100 at load). A new feature needs a docs/decisions.md entry and a golden pair.",
+  "thresholds": { "MERGE": 70, "REVIEW": 45 },
+  "similarity": { "jaroWinkler": { "prefixScalePct": 10, "maxPrefix": 4, "closePct": 90, "diffPct": 80 } },
+  "features": {
+    "EMAIL_EXACT": 45,
+    "PHONE_EXACT": 25,
+    "FIRST_EXACT": 15,
+    "FIRST_NICKNAME": 15,
+    "FIRST_CLOSE": 10,
+    "FIRST_INITIAL": 5,
+    "FIRST_DIFF": -25,
+    "SURNAME_EXACT": 15,
+    "SURNAME_CLOSE": 10,
+    "SURNAME_DIFF": -10,
+    "NAME_TRANSPOSED": 25,
+    "SUFFIX_EXACT": 5,
+    "SUFFIX_CONFLICT": -40,
+    "SUFFIX_ONE_SIDED": -10,
+    "MIDDLE_CONFLICT": -15,
+    "ADDRESS_EXACT": 20,
+    "ADDRESS_SAME_BUILDING": 15,
+    "ZIP_EXACT": 3,
+    "DOB_EXACT": 20,
+    "DOB_DIFF": -30
+  },
+  "hardBlock": { "feature": "SUFFIX_CONFLICT", "flag": "HARD_BLOCK_SUFFIX" },
+  "caps": [
+    { "feature": "FIRST_DIFF", "flag": "FIRST_NAME_CONFLICT_CAP" },
+    { "feature": "DOB_DIFF", "flag": "DOB_CONFLICT_CAP" }
+  ],
+  "floors": [
+    { "flag": "IDENTIFIER_FLOOR", "any": ["EMAIL_EXACT", "PHONE_EXACT"] },
+    { "flag": "NAME_CHANGE_CANDIDATE", "all": ["ADDRESS_EXACT"], "any": ["FIRST_EXACT", "FIRST_NICKNAME"] }
+  ],
+  "householdCandidate": { "flag": "HOUSEHOLD_CANDIDATE", "all": ["ADDRESS_EXACT"], "any": ["FIRST_DIFF", "SUFFIX_CONFLICT"] }
+}
