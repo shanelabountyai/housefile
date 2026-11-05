@@ -92,12 +92,18 @@ model Org {
   campaigns      Campaign[] // app
   appeals        Appeal[] // app
   gifts          Gift[] // app
+  pledges        Pledge[] // app
   softCredits    SoftCredit[] // app
   importBatches  ImportBatch[] // app
   importBatchEvents ImportBatchEvent[] // app
   reviewItems    ReviewItem[] // app
   reviewDecisions ReviewDecision[] // app
   mergeEvents    MergeEvent[] // app
+  pairMemories   PairMemory[] // app
+  unmergeEvents  UnmergeEvent[] // app
+  segmentDefinitions SegmentDefinition[] // app
+  segmentRuns    SegmentRun[] // app
+  letters        Letter[] // app
 }
 
 model Membership {

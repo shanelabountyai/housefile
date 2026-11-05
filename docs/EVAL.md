@@ -1,4 +1,4 @@
-# Housefile — Evaluation (Phase 1, measured by TypeScript)
+# Housefile — Evaluation (Phases 1–3, measured by TypeScript)
 
 Every number below names the command that produced it. Run the command; the number must come back the same.
 Built 2026-10-17 on branch `phase-1`, Node 22, fixtures seed 20261014.
@@ -79,7 +79,7 @@ are byte-identical (`cmp` of the two outputs: identical, 2026-10-17).
 | gifts to add 306; pending review 58; DUP_GIFT 2; DUP_GIFT_IN_FILE 19 | gifts to add 193; pending review 32; DUP_GIFT 4; DUP_GIFT_IN_FILE 7 |
 | date+cents matched, reference differed: 7 (listed, added — D-39) | 0 (file B maps no reference column: date + cents only) |
 | field changes on existing constituents 52; alternates kept 18; aliases 63 | 38; 10; 79 |
-| beforeHash `dcd67106e94405e05fa1cbd01dc37292567b390136cceaf1e890b0db12fc23b5` | same (same CRM fixture) |
+| beforeHash `7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb` (D-53; was `dcd67106…` before task 2.2) | same (same CRM fixture) |
 
 `import:dry-run --after` was removed after review (2026-10-17): it planned against a state that never exists. The A-then-B sequence is measured by `import:eval` only (D-34).
 `FUND_UNKNOWN` is not implemented in Phase 1; the report says so.
@@ -153,8 +153,120 @@ N6 read a two-digit year below 70 as 20xx, so a DOB of `4/3/51` became 2051. Bir
 auto-merge (70 and 115). The labels were taken before the fix, when all 30 pairs were REVIEW; `import:eval` now prints
 each pair's current decision (REVIEW 28, MERGE 2) and the agreement is unchanged at 30 / 30.
 
+## Phase 2 — commit, review, merge, undo, proven by hash (`npm run phase2:proof`, 2026-10-21; review rows re-measured 2026-10-26 under D-77)
+
+Measured by `scripts/phase2-proof.ts` on a fresh org seeded from the frozen fixtures (local `housefile_test`; the same step runs in CI's `ci` job). These are snapshots of this code's own hashes (D-53): the proof is that the hash *after* an undo or unmerge equals the hash recorded *before*, not that any hash matches an oracle.
+
+```
+$ npm run phase2:proof:test
+seed: 286 constituents, 878 gifts; stateHash 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb
+A: preview: rows 400 = merged 259 + reviewed 55 + new 71 + rejected 15; review load 55/400 = 13.8%; pending-target 14; beforeHash 7d3bd174…; planHash bf0e2926…
+A: commit: constituents 71, versions 172, gifts 298 (+11 waiting, 21 skipped), merges 246, review items 74 over 68 rows; stateHash 2c035193…
+A: rows for a person 68 = reviewed 55 + target-in-review 13 (D-77); review load 68/400 = 17.0%
+B: preview: rows 250 = merged 180 + reviewed 39 + new 17 + rejected 14; review load 39/250 = 15.6%; pending-target 6; beforeHash 2c035193…; planHash f272ebb4…
+B: commit: constituents 17, versions 133, gifts 178 (+5 waiting, 11 skipped), merges 174, review items 49 over 45 rows; stateHash b6352902…
+B: rows for a person 45 = reviewed 39 + target-in-review 6 (D-77); review load 45/250 = 18.0%
+undo B: retired 17, versions restored 89, gifts voided 178, merges reversed 174
+undo B: stateHash == beforeHash: 2c035193ee43d9b4c08425e79cebfa6406c69cfb4a75a228f9ae39422a1acbd8 == 2c035193ee43d9b4c08425e79cebfa6406c69cfb4a75a228f9ae39422a1acbd8
+undo A: retired 71, versions restored 76, gifts voided 298, merges reversed 246
+undo A: stateHash == beforeHash: 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb == 7d3bd174503f2a77a35d3d820c1085de112ce2b0d3d2db73ca6fa98127205adb
+unmerge (constituent) survivor hash == snapshot: 9eab0c8a… == 9eab0c8a…
+unmerge (constituent) loser hash == snapshot: 5af937d9… == 5af937d9…
+unmerge (row 399) survivor hash == snapshot: 6af1c76a… == 6af1c76a…
+phase2:proof OK
+```
+
+**Review load (D-77, owner decision 2026-10-26).** File A against the seeded org: **68 of 400 rows (17.0%)** wait for a person, as 74 items (one per tied candidate, D-35): the plan's 55 REVIEW rows plus 13 rows the matcher would auto-merge (score ≥ 70) into an earlier row that is itself in review. Those 13 are `TARGET_IN_REVIEW` review rows; they are never followed into what the target becomes (before D-77: 55 rows, 13.8%, the 13 followed without a decision). File B after A on the database: **45 of 250 rows (18.0%)**, 49 items, 39 REVIEW + 6 `TARGET_IN_REVIEW` (before: 39, 15.6%). Merges written at commit are unchanged (A 246, B 174) and checked against the answer keys by a scratch script outside the repo: 0 wrong in each; all 19 re-queued rows are the same true person as their target row, so on this fixture D-77 adds 19 decisions and changes no outcome. B-after-A has no oracle (D-51): 180/39/17 here against 166/33/37 in the in-memory reference, because A also wrote 71 new constituents and left 55 rows open; the proof for B is the undo hash, not the counts.
+
+**Undo and unmerge, one line each:** `npm run import:undo -- --batch <id>` prints `stateHash <h> == beforeHash <h>` or `UNDO_FAILED expected <h> actual <h>`; `npm run constituents:unmerge -- --event <id>` prints both records' hashes next to their snapshots. The tamper tests (`tests/integration/housefile-tamper.test.ts`) show the failing side: a changed gift or version → `STATE_MOVED`, a changed stored plan → `PLAN_TAMPERED`, a change after commit → `UNDO_FAILED` with both hashes and nothing else written.
+
+**What this does not show.** The counts for B-after-A and the TARGET_IN_REVIEW rule (D-55, D-77) have no reference value; the proof derives the rows-for-a-person count from the plan (REVIEW + pending MERGE rows) and fails on any difference, it does not compare it to an oracle. Since D-81 a merge moves the loser's soft credits and unmerge moves them back (`tests/integration/housefile-soft-credits.test.ts`). All data is synthetic.
+
+## Phase 3 — roll-ups, segments, letters, a correction and an undo (`npm run phase3:proof`, 2026-10-27)
+
+Measured by `scripts/phase3-proof.ts` on a fresh org seeded with the CRM file plus `fixtures/phase3/` (pledges, pledge payments, soft credits, corrections applied), local `housefile_test`; the same step runs in CI's `ci` job. Here, unlike Phase 2, the seeded numbers have an oracle: roll-ups and the six reference segments are compared to `fixtures/phase3/answers.json`, which only `tools/phase3_answers.py` writes (D-74f) and `fixtures:check` regenerates and diffs.
+
+```
+$ npm run phase3:proof:test
+seed: 286 constituents, 929 gifts, 18 pledges, 42 soft credits
+seed: stateHash == fixture in memory: "c2159b32…" == "c2159b32…"
+roll-ups (asOf 2026-10-14): total $375725.00 in 929 gifts from 255 donors, average 40444 r 24 cents
+roll-ups: total == answers.json: {"average":40444,"donors":255,"gifts":929,"raised":37572500,"remainder":24} == {"average":40444,"donors":255,"gifts":929,"raised":37572500,"remainder":24}
+roll-ups: campaigns == answers.json: {"AF2024":{"appeals":{"Spring Mailer 2024":{"average":64467,"donors":100,"gif... == {"AF2024":{"appeals":{"Spring Mailer 2024":{"average":64467,"donors":100,"gif...
+roll-ups: funds == answers.json: {"BLDG":{"average":56041,"donors":120,"gifts":204,"raised":11432500,"remainde... == {"BLDG":{"average":56041,"donors":120,"gifts":204,"raised":11432500,"remainde...
+segment colorado-households: members == answers.json: {"count":6,"members":["C0001","C0002","C0011","C0012","C0038","C0039"]} == {"count":6,"members":["C0001","C0002","C0011","C0012","C0038","C0039"]}
+segment lapsed-repeat: members == answers.json: {"count":22,"members":["C0001","C0011","C0014","C0023","C0028","C0062","C0063... == {"count":22,"members":["C0001","C0011","C0014","C0023","C0028","C0062","C0063...
+segment lybunt: members == answers.json: {"count":86,"members":["C0001","C0005","C0006","C0007","C0009","C0011","C0014... == {"count":86,"members":["C0001","C0005","C0006","C0007","C0009","C0011","C0014...
+segment major-2025: members == answers.json: {"count":61,"members":["C0001","C0002","C0004","C0006","C0007","C0011","C0015... == {"count":61,"members":["C0001","C0002","C0004","C0006","C0007","C0011","C0015...
+segment south-central-2026: members == answers.json: {"count":90,"members":["C0017","C0021","C0025","C0027","C0031","C0032","C0033... == {"count":90,"members":["C0017","C0021","C0025","C0027","C0031","C0032","C0033...
+segment sybunt: members == answers.json: {"count":19,"members":["C0019","C0030","C0038","C0044","C0064","C0076","C0095... == {"count":19,"members":["C0019","C0030","C0038","C0044","C0064","C0076","C0095...
+A: preview: rows 400 = merged 259 + reviewed 55 + new 71 + rejected 15; beforeHash c2159b32…; planHash 19db954b…
+A: beforeHash == seeded stateHash: "c2159b32…" == "c2159b32…"
+A: commit: constituents 71, versions 172, gifts 298 (+11 waiting, 21 skipped), merges 246, review items 74 over 68 rows; stateHash ec39b607…
+roll-ups after A: total $475350.00 in 1227 gifts from 342 donors, average 38740 r 1020 cents
+roll-ups after A: raised moved by A's written gifts (cents): 9962500 == 9962500
+roll-ups after A: campaigns unchanged (imports never guessed into one): {"AF2024":{"appeals":{"Spring Mailer 2024":{"average":64467,"donors":100,"gif... == {"AF2024":{"appeals":{"Spring Mailer 2024":{"average":64467,"donors":100,"gif...
+segment colorado-households after A: 6 members, memberListHash d8bece7e…
+segment lapsed-repeat after A: 11 members, memberListHash 364ff611…
+segment lybunt after A: 40 members, memberListHash 37083509…
+segment major-2025 after A: 61 members, memberListHash 83908d47…
+segment south-central-2026 after A: 171 members, memberListHash fbe35449…
+segment sybunt after A: 7 members, memberListHash 4582cb70…
+letters: 1227 queued, Σ $475350.00; outbox rows 0
+letters: Σ cents == roll-up raised: 47535000 == 47535000
+letters: one per active gift: 1227 == 1227
+correct G00933 (written by A): 2500 -> 3734 cents
+correct: LETTER_STALE == the letter(s) covering G00933: ["L0930"] == ["L0930"]
+correct: roll-up raised moved by exactly 1234: 1234 == 1234
+undo A: retired 71, versions restored 76, gifts voided 298, merges reversed 246
+undo A: stateHash == beforeHash: "c2159b32…" == "c2159b32…"
+undo A: roll-ups == answers.json again: {"campaigns":{"AF2024":{"appeals":{"Spring Mailer 2024":{"average":64467,"don... == {"campaigns":{"AF2024":{"appeals":{"Spring Mailer 2024":{"average":64467,"don...
+phase3:proof OK
+```
+
+**What each line proves.** Seed: the database state hash equals the in-memory fixture's (`c2159b32…`, the Phase 3 seed hash since D-81). Roll-ups and segments at the seed: equal to the oracle, every campaign, appeal, fund and member list, to the cent. After A: total raised moves by exactly the cents of the gifts A wrote (9,962,500 = Σ the plan's non-waiting gifts) and no campaign moves, because imported gifts have no appeal (D-70). Letters: one per active gift, Σ equal to roll-up raised, 0 outbox rows. The correction (+1234 cents on a gift A wrote) makes exactly the one letter that covers it `LETTER_STALE` and moves raised by exactly 1234. Undo A voids the corrected chain with the rest of A's gifts and returns the state hash to the `beforeHash`; roll-ups equal the oracle again.
+
+**Red run (task 3.11 acceptance).** With the roll-up average changed to float division (`average: n ? raised / n : 0` in `src/derive/rollups.ts`), the proof stops at its first oracle comparison and exits 1:
+
+```
+roll-ups: total == answers.json: {"average":40444.02583423036,"donors":255,"gifts":929,"raised":37572500,"rema... != {"average":40444,"donors":255,"gifts":929,"raised":37572500,"remainder":24}
+phase3:proof FAILED: roll-ups: total == answers.json
+```
+
+`money:lint` passes that change: it guards parsing and storage of amounts, not arithmetic on them, so the oracle comparison is what catches a float average. `tests/unit/rollups.test.ts` fails on it too.
+
+**What this does not show.** The after-A segment counts and the letter count after A have no oracle (A's gifts are outside `answers.json`); they are snapshots printed for change detection. The proof covers per-gift letters only; household letters (212, Σ = the oracle's household giving) are proven in `tests/integration/housefile-letters.test.ts`. Pledge balances and recognition are proven against the oracle in `tests/unit/pledges.test.ts` and `tests/unit/recognition.test.ts`, and through merge, unmerge and undo in their integration tests, not here. The pages are proven by `e2e/crm-pages.spec.ts` and `e2e/imports-review.spec.ts` against the production build. All data is synthetic.
+
+## Phase 4 — LLM review-assist experiment (`npm run assist:eval`, 2026-10-30)
+
+98 review items (A 61, B 37: each REVIEW row with every candidate tied at its best score), one call per item per model, thinking off, cached in `eval/assist/runs/<model>-2026-10-30.jsonl`. `assist:eval` reads only those files and `eval/assist/truth.csv`; every number below is its output. The answer key has 87 MERGE / 11 SAME_HOUSEHOLD / 0 KEEP_SEPARATE; Shane's labels cover 28 of the items.
+
+| | claude-haiku-5-5 | claude-sonnet-5-5 |
+|---|---|---|
+| answered / ABSTAIN / missing | 98 / 0 / 0 | 98 / 0 / 0 |
+| truth MERGE → said MERGE / KEEP_SEPARATE / SAME_HOUSEHOLD | 62 / 18 / 7 | 77 / 5 / 5 |
+| truth SAME_HOUSEHOLD → said MERGE / KEEP_SEPARATE / SAME_HOUSEHOLD | 1 / 4 / 6 | 2 / 3 / 6 |
+| **wrong MERGE (answer key)** | **1** | **2** |
+| agreement with Shane's 28 | 22 (78.6%) | 27 (96.4%) |
+| rule merge-only: removes / agrees | 63 / 98 (64.3%), 62 / 63 (98.4%) | 79 / 98 (80.6%), 77 / 79 (97.5%) |
+| rule non-merge-only: removes / agrees | 35 (35.7%), 6 / 35 (17.1%) | 19 (19.4%), 6 / 19 (31.6%) |
+| rule any-label: removes / agrees | 98 (100%), 68 / 98 (69.4%) | 98 (100%), 83 / 98 (84.7%) |
+| cost | 11364 micro-USD ($0.011364), 115 per item | 229640 micro-USD ($0.229640), 2343 per item |
+| **P4-4 verdict** | **NO MEASURED GAIN** | **NO MEASURED GAIN** |
+
+**Verdict: no measured gain (P4-4, D-94).** Both models clear the removal and agreement bars on the merge-only rule (64.3% at 98.4%, 80.6% at 97.5%, against 30% at 95%) and agree with Shane far more often than the matcher's band rules (0 by construction, every item is REVIEW). Both fail the clause that binds: **0 wrong merges**. The wrong merges:
+
+- `B:B-0024:C0271` (both models): same first, middle, last name, phone and address; the CRM record carries suffix `SR`, the import row none. Truth SAME_HOUSEHOLD (a father and son). Both read the blank suffix as "nothing conflicts".
+- `B:B-0175:C0173` (Sonnet): identical email, phone and address; Sonnet read the name fields as a mis-parsed "Alexandra Van Der Berg". Truth SAME_HOUSEHOLD.
+
+These are the cases the matcher holds for a person on purpose: shared contact data, a name or generation difference. The assist is most confident exactly where a merge does the most damage.
+
+**Spend.** 196 paid calls, Σ 241004 micro-USD ($0.241) against the $10 total cap and $2 per run; `eval/assist/spend.jsonl` has one line per call and sums to the two run totals. One earlier call was rejected (400, `temperature`) before billing and logged nothing.
+
+**What the numbers do not show.** The data is synthetic and was written by one fixture author, who also wrote the prompt. n is 98 items over 88 rows, with 11 non-merges, so one wrong merge moves the verdict and "0 of 11" vs "1 of 11" is not a precise rate. There is no KEEP_SEPARATE item, so how often the assist would merge two strangers is untested here. Each model ran once: Haiku 5.5 and Sonnet 5.5 accept no `temperature`, so a re-run may answer differently; the committed cache is the record. No other prompt was tried, so this verdict is on this prompt, not on the approach.
+
 ## Which tests are oracle agreement and which are snapshots
 
-Oracle agreement (expected values come from `tools/` or the brief, not from this code): GN-01..GN-21, GA-01..GA-20, `expected_validation` on 650 rows, and the byte-for-byte match of `import:eval` with `fixtures/samples/reference_matcher.output.txt` plus 0-row drift against `fixtures/decisions_*.csv`.
+Oracle agreement (expected values come from `tools/` or the brief, not from this code): GN-01..GN-21, GA-01..GA-20, `expected_validation` on 650 rows, the Phase 3 roll-ups, segments, pledge balances, recognition and household giving against `answers.json`, and the byte-for-byte match of `import:eval` with `fixtures/samples/reference_matcher.output.txt` plus 0-row drift against `fixtures/decisions_*.csv`.
 
 Snapshots (expected values were measured by this TypeScript and have no independent reference): the 10-row A→B carry-over list and `rows_review 32` (`tests/unit/import/eval.test.ts`), the tie-break score of 50, and every dry-run figure in `tests/unit/import/preview.test.ts`. They catch change, not error; they are not counted toward "matches the reference".

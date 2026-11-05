@@ -17,6 +17,11 @@ enum GiftStatus {
   VOIDED
 }
 
+enum SoftCreditStatus {
+  ACTIVE
+  REMOVED
+}
+
 enum ImportBatchEventKind {
   COMMITTED
   UNDONE
@@ -45,7 +50,9 @@ model Constituent {
   createdAt      DateTime             @default(now()) @db.Timestamptz(6)
   versions       ConstituentVersion[]
   gifts          Gift[]
+  pledges        Pledge[]
   softCredits    SoftCredit[]
+  letters        Letter[]
   reviewItems    ReviewItem[]
   mergesSurvived MergeEvent[]         @relation("MergeSurvivor")
   mergesLost     MergeEvent[]         @relation("MergeLoser")
@@ -60,6 +67,7 @@ model Household {
   businessId String // H0001
   createdAt  DateTime             @default(now()) @db.Timestamptz(6)
   versions   ConstituentVersion[]
+  letters    Letter[]
 
   @@unique([orgId, businessId])
 }
@@ -107,11 +115,12 @@ model ConstituentVersion {
 }
 
 model Fund {
-  id    String @id @default(uuid()) @db.Uuid
-  orgId String @db.Uuid
-  org   Org    @relation(fields: [orgId], references: [id], onDelete: Restrict)
-  code  String // BLDG
-  gifts Gift[]
+  id      String   @id @default(uuid()) @db.Uuid
+  orgId   String   @db.Uuid
+  org     Org      @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  code    String // BLDG
+  gifts   Gift[]
+  pledges Pledge[]
 
   @@unique([orgId, code])
 }
@@ -135,6 +144,7 @@ model Appeal {
   campaign   Campaign @relation(fields: [campaignId], references: [id])
   name       String // "Year-End 2024"
   gifts      Gift[]
+  pledges    Pledge[]
 
   @@unique([orgId, name])
 }
@@ -156,6 +166,7 @@ model Gift {
   appeal           Appeal?         @relation(fields: [appealId], references: [id])
   giftType         String          @default("GIFT")
   externalRef      String          @default("")
+  pledgeRef        String          @default("") // set on a pledge payment (D-9, D-71)
   supersedesGiftId String?         @unique @db.Uuid // unique: one successor per row, so history is a chain
   supersedes       Gift?           @relation("GiftSupersedes", fields: [supersedesGiftId], references: [id])
   supersededBy     Gift?           @relation("GiftSupersedes")
@@ -175,17 +186,62 @@ model Gift {
   @@index([importBatchId])
 }
 
-/// Table only; Phase 3 writes it. Never counted in raised totals.
+/// Append-only (D-9, D-71, task 3.6), chained like Gift: a move is a new row superseding the old one, same pledgeRef.
+/// Active = no row supersedes it. Paid, balance and status are derived from the gifts carrying the pledgeRef.
+/// Writer: exactly one of mergeEventId / userId (CHECK in SQL). Imports never write pledges.
+model Pledge {
+  id                 String      @id @default(uuid()) @db.Uuid
+  orgId              String      @db.Uuid
+  org                Org         @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  pledgeRef          String // PL001; stable across supersession, the hash key
+  constituentId      String      @db.Uuid
+  constituent        Constituent @relation(fields: [constituentId], references: [id])
+  pledgeDate         DateTime    @db.Date
+  totalCents         Int // integer cents, > 0 (CHECK in SQL)
+  schedule           Json // [{ due, cents }], sums to totalCents
+  fundId             String      @db.Uuid
+  fund               Fund        @relation(fields: [fundId], references: [id])
+  appealId           String?     @db.Uuid
+  appeal             Appeal?     @relation(fields: [appealId], references: [id])
+  supersedesPledgeId String?     @unique @db.Uuid
+  supersedes         Pledge?     @relation("PledgeSupersedes", fields: [supersedesPledgeId], references: [id])
+  supersededBy       Pledge?     @relation("PledgeSupersedes")
+  reason             String? // required on a superseding row (CHECK in SQL)
+  mergeEventId       String?     @db.Uuid
+  mergeEvent         MergeEvent? @relation(fields: [mergeEventId], references: [id])
+  userId             String?     @db.Uuid
+  createdAt          DateTime    @default(now()) @db.Timestamptz(6)
+
+  @@index([orgId, pledgeRef])
+  @@index([constituentId])
+}
+
+/// Append-only (D-9, D-74c, D-81, task 3.7), chained like Pledge: a move or a removal is a new row superseding the old
+/// one, same softCreditRef. Active = no row supersedes it and status ACTIVE. Counts toward recognition (never raised
+/// totals) while its gift is active. Writer: exactly one of mergeEventId / userId (CHECK in SQL). Imports never write them.
 model SoftCredit {
-  id            String      @id @default(uuid()) @db.Uuid
-  orgId         String      @db.Uuid
-  org           Org         @relation(fields: [orgId], references: [id], onDelete: Restrict)
-  giftRef       String
-  constituentId String      @db.Uuid
-  constituent   Constituent @relation(fields: [constituentId], references: [id])
-  createdAt     DateTime    @default(now()) @db.Timestamptz(6)
+  id                     String           @id @default(uuid()) @db.Uuid
+  orgId                  String           @db.Uuid
+  org                    Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  softCreditRef          String // SC001; stable across supersession, the hash key
+  giftRef                String
+  constituentId          String           @db.Uuid
+  constituent            Constituent      @relation(fields: [constituentId], references: [id])
+  role                   String // SPOUSE | PEER_TO_PEER | …
+  amountCents            Int // its own amount (D-74c), integer cents, > 0 (CHECK in SQL)
+  status                 SoftCreditStatus @default(ACTIVE)
+  supersedesSoftCreditId String?          @unique @db.Uuid
+  supersedes             SoftCredit?      @relation("SoftCreditSupersedes", fields: [supersedesSoftCreditId], references: [id])
+  supersededBy           SoftCredit?      @relation("SoftCreditSupersedes")
+  reason                 String? // required on a superseding row (CHECK in SQL)
+  mergeEventId           String?          @db.Uuid
+  mergeEvent             MergeEvent?      @relation(fields: [mergeEventId], references: [id])
+  userId                 String?          @db.Uuid
+  createdAt              DateTime         @default(now()) @db.Timestamptz(6)
 
   @@index([orgId, giftRef])
+  @@index([orgId, softCreditRef])
+  @@index([constituentId])
 }
 
 /// Append-only header written at preview (D-10, D-47). Status is derived from ImportBatchEvent rows.
@@ -231,20 +287,23 @@ model ImportBatchEvent {
 }
 
 /// One candidate pair in the review band. Open = no decision other than DEFER (derived).
+/// The candidate is a constituent, or (D-55) an earlier row of the same batch that is itself still in review:
+/// exactly one of constituentId / candidateRowIndex (CHECK in SQL). Such an item resolves when that row is decided.
 model ReviewItem {
-  id            String           @id @default(uuid()) @db.Uuid
-  orgId         String           @db.Uuid
-  org           Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
-  importBatchId String           @db.Uuid
-  importBatch   ImportBatch      @relation(fields: [importBatchId], references: [id])
-  rowIndex      Int // the import row's position in the stored batch
-  constituentId String           @db.Uuid // the candidate
-  constituent   Constituent      @relation(fields: [constituentId], references: [id])
-  score         Int
-  reasons       Json // the matcher's reasons and points
-  flags         String[] // EXISTING_PAIR (S6), ...
-  createdAt     DateTime         @default(now()) @db.Timestamptz(6)
-  decisions     ReviewDecision[]
+  id                String           @id @default(uuid()) @db.Uuid
+  orgId             String           @db.Uuid
+  org               Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  importBatchId     String           @db.Uuid
+  importBatch       ImportBatch      @relation(fields: [importBatchId], references: [id])
+  rowIndex          Int // the import row's position in the stored batch
+  constituentId     String?          @db.Uuid // the candidate
+  constituent       Constituent?     @relation(fields: [constituentId], references: [id])
+  candidateRowIndex Int? // the candidate is this earlier row, still in review (D-55)
+  score             Int
+  reasons           Json // the matcher's reasons and points
+  flags             String[] // EXISTING_PAIR (S6), PENDING_TARGET (D-55), ...
+  createdAt         DateTime         @default(now()) @db.Timestamptz(6)
+  decisions         ReviewDecision[]
 
   @@index([importBatchId])
 }
@@ -263,8 +322,26 @@ model ReviewDecision {
   versions     ConstituentVersion[]
   gifts        Gift[]
   merges       MergeEvent[]
+  pairMemories PairMemory[]
 
   @@index([reviewItemId, at])
+}
+
+/// D-22, D-59: a KEEP_SEPARATE decision remembers the pair and the identifiers (feature codes) that agreed. A later
+/// import re-queues the pair only when an identifier outside this list agrees. Mutable on purpose (memory, not ledger):
+/// a later KEEP_SEPARATE on the same pair widens `agreed`; undoing the batch of the decision removes the row.
+model PairMemory {
+  id               String         @id @default(uuid()) @db.Uuid
+  orgId            String         @db.Uuid
+  org              Org            @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  aId              String         @db.Uuid // constituent ids, aId < bId
+  bId              String         @db.Uuid
+  agreed           String[]
+  reviewDecisionId String         @db.Uuid
+  reviewDecision   ReviewDecision @relation(fields: [reviewDecisionId], references: [id])
+  createdAt        DateTime       @default(now()) @db.Timestamptz(6)
+
+  @@unique([orgId, aId, bId])
 }
 
 /// Append-only (D-46). Both records' effective state before the merge, the survivorship choices, the gifts moved.
@@ -293,8 +370,91 @@ model MergeEvent {
   at               DateTime             @default(now()) @db.Timestamptz(6)
   versions         ConstituentVersion[]
   gifts            Gift[]
+  pledges          Pledge[]
+  softCredits      SoftCredit[]
+  unmerge          UnmergeEvent?
 
   @@index([orgId, at])
   @@index([survivorId])
   @@index([loserId])
+}
+
+/// Append-only (D-62). One per reversed merge: who, why, and the proof that each record hashed equal to its snapshot.
+/// A merge with an UnmergeEvent no longer blocks the unmerge of an earlier one (D-24 UNMERGE_BLOCKED).
+model UnmergeEvent {
+  id           String     @id @default(uuid()) @db.Uuid
+  orgId        String     @db.Uuid
+  org          Org        @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  mergeEventId String     @unique @db.Uuid
+  mergeEvent   MergeEvent @relation(fields: [mergeEventId], references: [id])
+  survivorHash String // effective-state hash of the survivor after the unmerge == its snapshot hash
+  loserHash    String // likewise for the loser (the re-created constituent for a row merge)
+  reason       String?
+  userId       String     @db.Uuid
+  at           DateTime   @default(now()) @db.Timestamptz(6)
+}
+
+// Task 3.4 (D-27, D-68, D-76): a saved segment is a chain of append-only versions under one key; a run is a
+// reproducible snapshot (members, count, asOf, both hashes), never read back as truth.
+model SegmentDefinition {
+  id             String       @id @default(uuid()) @db.Uuid
+  orgId          String       @db.Uuid
+  org            Org          @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  key            String // stable across versions, e.g. "lybunt"
+  version        Int // 1, 2, … per (orgId, key)
+  definition     Json // the validated { name, description, filters } (segments/schema.json)
+  definitionHash String // sha256 of its canonical JSON
+  userId         String       @db.Uuid
+  at             DateTime     @default(now()) @db.Timestamptz(6)
+  runs           SegmentRun[]
+
+  @@unique([orgId, key, version])
+}
+
+model SegmentRun {
+  id             String            @id @default(uuid()) @db.Uuid
+  orgId          String            @db.Uuid
+  org            Org               @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  definitionId   String            @db.Uuid
+  definition     SegmentDefinition @relation(fields: [definitionId], references: [id])
+  asOf           DateTime          @db.Date
+  members        String[] // constituent business ids, ascending
+  count          Int
+  definitionHash String
+  memberListHash String // sha256 of the canonical member list
+  userId         String            @db.Uuid
+  at             DateTime          @default(now()) @db.Timestamptz(6) // run time
+
+  @@index([definitionId, at])
+}
+
+enum LetterStatus {
+  QUEUED // the only status a letter is written with; LETTER_STALE is derived (D-82)
+}
+
+/// Task 3.8 (D-26, D-66 / P-8, D-82): a sample acknowledgement letter, queued and never sent. Clone-owned, never the
+/// foundation Outbox. Append-only: the gift rows it was rendered from are fixed, so a newer row for any covered giftRef
+/// (a correction, void, move) makes it LETTER_STALE at read time. Addressed to one constituent, or to a household when
+/// combined (exactly one, CHECK in SQL). Written by a person only.
+model Letter {
+  id            String       @id @default(uuid()) @db.Uuid
+  orgId         String       @db.Uuid
+  org           Org          @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  letterRef     String // L0001
+  constituentId String?      @db.Uuid
+  constituent   Constituent? @relation(fields: [constituentId], references: [id])
+  householdId   String?      @db.Uuid
+  household     Household?   @relation(fields: [householdId], references: [id])
+  giftRefs      String[] // covered, ascending
+  giftIds       String[]     @db.Uuid // the Gift row each giftRef was rendered from, same order
+  totalCents    Int // Σ the covered rows' cents, > 0 (CHECK in SQL)
+  asOf          DateTime     @db.Date // the letter's date; no clock in the render
+  subject       String
+  body          String
+  status        LetterStatus @default(QUEUED)
+  userId        String       @db.Uuid
+  createdAt     DateTime     @default(now()) @db.Timestamptz(6)
+
+  @@unique([orgId, letterRef])
+  @@index([orgId, createdAt])
 }

@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadConstituents, loadGifts } from '@/import/crm';
 import { loadImportFile } from '@/import/pipeline';
-import { buildPreview, stateHash, type Preview } from '@/import/preview';
+import { effectiveStateHash, fixtureState } from '@/commit/state';
+import { buildPreview, type Preview } from '@/import/preview';
 import { formatPreview } from '@/import/report';
 import { createMatchState, resolveBatch } from '@/import/resolve';
 
@@ -34,11 +35,12 @@ describe('dry-run preview', () => {
       expect(t.rows).toBe(tag === 'A' ? 400 : 250);
       expect(p.create).toHaveLength(t.new);
       expect(p.rejected).toHaveLength(t.rejected);
-      expect(p.review).toHaveLength(t.reviewed);
+      expect(new Set(p.review.map((r) => r.rowId)).size).toBe(t.reviewed); // one row may list two pairs (S6 EXISTING_PAIR, D-35 ties are items at commit)
       expect(p.gifts).toHaveLength(t.giftsToAdd);
       expect(p.skippedGifts).toHaveLength(t.dupGift + t.dupGiftInFile);
-      // every accepted non-review row either adds a gift or skips one, exactly once
-      expect(t.giftsToAdd + t.dupGift + t.dupGiftInFile).toBe(t.merged + t.new);
+      // every accepted non-review row either adds a gift, skips one, or holds one (zero/negative, D-57), exactly once
+      expect(p.heldGifts).toHaveLength(t.giftsHeld);
+      expect(t.giftsToAdd + t.dupGift + t.dupGiftInFile + t.giftsHeld).toBe(t.merged + t.new);
       expect(t.giftsPendingReview).toBe(t.reviewed);
       expect(p.changes).toHaveLength(t.fieldChanges);
     });
@@ -57,11 +59,11 @@ describe('dry-run preview', () => {
     expect([t.dupGift, t.dupGiftInFile, t.dateCentsMatchedRefDiffered]).toEqual([4, 7, 0]);
   });
   it('beforeHash is the D-11 state hash of the CRM fixture and does not move when the batch is resolved', () => {
-    const h = stateHash(crm, gifts);
+    const h = effectiveStateHash(fixtureState(crm, gifts));
     expect(h).toMatch(/^[0-9a-f]{64}$/);
     expect(preview('A').p.crm.beforeHash).toBe(h);
     expect(preview('B').p.crm.beforeHash).toBe(h);
-    const reversed = stateHash([...crm].reverse(), [...gifts].reverse());
+    const reversed = effectiveStateHash(fixtureState([...crm].reverse(), [...gifts].reverse()));
     expect(reversed).toBe(h); // sorted by business id, not input order
   });
   it('a byte-identical duplicate row skips its gift as DUP_GIFT_IN_FILE naming the first row', () => {

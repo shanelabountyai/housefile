@@ -1,10 +1,13 @@
 // Stage 8, Preview (brief §4, §8; D-11, D-12, D-25): the write plan Phase 2 will execute, computed from the
 // batch resolution and the in-memory CRM. Nothing is written. Every number in the report comes from the lists
 // below, so totals reconcile by construction: rows = merged + reviewed + new + rejected.
-import { sha256Hex } from '../lib/canonical';
+import { effectiveStateHash, fixtureState } from '../commit/state';
+import fundSynonyms from '../../import/fund-synonyms.json';
 import type { CrmConstituent, CrmGift } from './crm';
+import type { ParsedCsv } from './csv';
+import type { ColumnMap } from './map';
 import type { LoadedFile } from './pipeline';
-import type { RowDecision } from './resolve';
+import type { CandidateScore, RowDecision } from './resolve';
 import type { ImportRow } from './validate';
 import { line1Key, type MatchRecord } from '../matching/types';
 
@@ -14,8 +17,14 @@ export type PlannedField = 'email' | 'phone' | 'dob' | 'address';
 export type FieldChange = { constituentId: string; rowId: string; field: PlannedField; old: string; new: string; rule: SurvivorshipRule; asOfOld: string; asOfNew: string; loserKept: boolean };
 export type Alternate = { constituentId: string; rowId: string; field: PlannedField; value: string; asOf: string; why: string };
 export type Alias = { constituentId: string; rowId: string; alias: string; rule: 'S3' };
-export type PlannedGift = { rowId: string; constituentRef: string; giftDate: string; cents: number; fund: string; externalRef: string };
+export type PlannedGift = { rowId: string; constituentRef: string; giftDate: string; cents: number; fund: string; fundCode: string; fundKnown: boolean; externalRef: string };
+/** D-55: a row whose target is an earlier row of this batch that is itself still in review. Commit queues it until that row is decided. */
+export type PendingRow = { rowId: string; target: string; decision: 'MERGE' | 'REVIEW'; score: number };
+/** D-59: a row merging into one constituent while another candidate it matches is remembered as KEEP_SEPARATE from it, and an identifier outside the memory now agrees. */
+export type MemoryQueued = { rowId: string; mergedInto: string; target: string; agreedBefore: string[]; newlyAgreed: string[]; score: number };
 export type SkippedGift = { rowId: string; reason: 'DUP_GIFT' | 'DUP_GIFT_IN_FILE'; of: string; giftDate: string; cents: number };
+/** D-57: a gift of zero or negative cents is held, never written (D-6 CHECK amountCents > 0; brief §4: a refund candidate is shown, not auto-applied). */
+export type HeldGift = { rowId: string; constituentRef: string; giftDate: string; cents: number; reason: 'AMOUNT_NEGATIVE' | 'AMOUNT_ZERO' };
 export type Created = { rowId: string; name: string; email: string; phone: string; address: string; dob: string; bestScore: number | null; bestReasons: string[] };
 export type ReviewPair = { rowId: string; target: string; score: number; reasons: string[]; flags: string[]; tieBreak: string };
 export type Rejected = { rowId: string; reason: string };
@@ -27,6 +36,7 @@ export type Preview = {
     rows: number; merged: number; reviewed: number; new: number; rejected: number;
     giftsToAdd: number; giftsPendingReview: number; dupGift: number; dupGiftInFile: number;
     dateCentsMatchedRefDiffered: number; inFileSameGiftNotSkipped: number; fieldChanges: number; alternates: number; aliases: number;
+    pendingTarget: number; fundUnknown: number; giftsHeld: number; memoryQueued: number;
   };
   create: Created[];
   changes: FieldChange[];
@@ -34,30 +44,93 @@ export type Preview = {
   aliases: Alias[];
   gifts: PlannedGift[];
   skippedGifts: SkippedGift[];
+  heldGifts: HeldGift[];
   rejected: Rejected[];
   review: ReviewPair[];
+  pending: PendingRow[];
+  memoryQueue: MemoryQueued[];
   notImplemented: string[];
 };
 
-/** D-11: canonical JSON of every constituent (fields, minus created_at) and every gift, sorted by business id. */
-export function stateHash(constituents: CrmConstituent[], gifts: CrmGift[]): string {
-  const cons = constituents
-    .map((c) => {
-      const fields = { ...c.fields };
-      delete fields.created_at; // D-11 excludes createdAt
-      return { id: c.id, ...fields };
-    })
-    .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  const gs = gifts.map((g) => ({ ...g })).sort((a, b) => (a.gift_id < b.gift_id ? -1 : a.gift_id > b.gift_id ? 1 : 0));
-  return sha256Hex({ constituents: cons, gifts: gs });
+/** The fund code for a file's fund text (brief §4 FUND_UNKNOWN, D-56): a code or one of its synonyms in
+ *  import/fund-synonyms.json, case-insensitive; blank or unknown text falls to the default. Not a validation warning. */
+export function resolveFund(text: string): { code: string; known: boolean } {
+  const t = text.trim().toLowerCase();
+  if (!t) return { code: fundSynonyms.default, known: true };
+  for (const [code, names] of Object.entries(fundSynonyms.codes)) if (code.toLowerCase() === t || names.some((n) => n.toLowerCase() === t)) return { code, known: true };
+  return { code: fundSynonyms.default, known: false };
 }
 
-const displayName = (r: MatchRecord) => [r.name.first, r.name.middle, r.name.last, r.name.suffix.toLowerCase()].filter(Boolean).join(' ');
-const displayAddress = (r: MatchRecord) => [line1Key(r.addr), r.addr.unit, r.addr.city, r.addr.state, r.addr.zip5].filter(Boolean).join(', ');
+export const displayName = (r: MatchRecord) => [r.name.first, r.name.middle, r.name.last, r.name.suffix.toLowerCase()].filter(Boolean).join(' ');
+export const displayAddress = (r: MatchRecord) => [line1Key(r.addr), r.addr.unit, r.addr.city, r.addr.state, r.addr.zip5].filter(Boolean).join(', ');
 
-type Planned = { email: string; phone: string; dob: string; address: string; asOf: Record<PlannedField, string>; raw: Record<PlannedField, string> };
+/** A target's planned state: its current values with their asOf, updated as merges apply S1/S2 within a batch. */
+export type Planned = { email: string; phone: string; dob: string; address: string; asOf: Record<PlannedField, string>; raw: Record<PlannedField, string> };
 
-export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: CrmConstituent[], crmGifts: CrmGift[], opts: { path: string; asOf: string; after?: string }): Preview {
+export function plannedFrom(c: CrmConstituent): Planned {
+  const asOf = c.fields.created_at ?? '';
+  const addrRaw = [c.fields.address_line1, c.fields.address_line2, c.fields.city, c.fields.state, c.fields.zip].filter(Boolean).join(', ');
+  return {
+    email: c.record.email, phone: c.record.phone, dob: c.record.dob, address: line1Key(c.record.addr) ? displayAddress(c.record) : '',
+    asOf: { email: c.asOf?.email ?? asOf, phone: c.asOf?.phone ?? asOf, dob: c.asOf?.dob ?? asOf, address: c.asOf?.address ?? asOf },
+    raw: { email: c.fields.email ?? '', phone: c.fields.phone ?? '', dob: c.fields.dob ?? '', address: addrRaw },
+  };
+}
+
+/** The raw cells the preview shows next to a row's normalized values. */
+export type RawCells = Record<PlannedField, string>;
+export function rawCellsOf(map: ColumnMap, parsed: ParsedCsv, row: ImportRow): RawCells {
+  const g = (k: keyof ColumnMap) => {
+    const header = map[k];
+    return header ? (parsed.rows[row.index]?.cells[header] ?? '').trim() : '';
+  };
+  return { email: g('email'), phone: g('phone'), dob: g('dob'), address: [g('line1'), g('line2'), g('city'), g('state'), g('zip')].filter(Boolean).join(', ') };
+}
+
+export type Survivorship = { changes: FieldChange[]; alternates: Alternate[]; aliases: Alias[] };
+
+/** S1–S3 (brief §8) for one row merging into a target. Mutates `target.planned` so a later row in the batch sees the result. */
+export function rowSurvivorship(target: { id: string; planned: Planned; name: string }, row: ImportRow, raw: RawCells): Survivorship {
+  const out: Survivorship = { changes: [], alternates: [], aliases: [] };
+  const p = target.planned;
+  const change = (field: PlannedField, importValue: string, importRaw: string) => {
+    if (!importValue) return;
+    const current = p[field];
+    if (!current) {
+      out.changes.push({ constituentId: target.id, rowId: row.id, field, old: p.raw[field] || '(empty)', new: importRaw, rule: 'S1', asOfOld: p.asOf[field], asOfNew: row.giftDate, loserKept: false });
+      p[field] = importValue;
+      p.raw[field] = importRaw;
+      p.asOf[field] = row.giftDate;
+      return;
+    }
+    if (current === importValue) return;
+    if (field === 'dob') return; // S3: existing DOB wins; a conflict was already a review reason
+    if (row.giftDate > p.asOf[field]) {
+      out.changes.push({ constituentId: target.id, rowId: row.id, field, old: p.raw[field], new: importRaw, rule: 'S2', asOfOld: p.asOf[field], asOfNew: row.giftDate, loserKept: true });
+      out.alternates.push({ constituentId: target.id, rowId: row.id, field, value: p.raw[field], asOf: p.asOf[field], why: 'S2: replaced by a newer value, kept as alternate' });
+      p[field] = importValue;
+      p.raw[field] = importRaw;
+      p.asOf[field] = row.giftDate;
+    } else {
+      out.alternates.push({ constituentId: target.id, rowId: row.id, field, value: importRaw, asOf: row.giftDate, why: 'S2: not newer than the current value, kept as alternate' });
+    }
+  };
+  const rec = row.record;
+  change('email', rec.email, raw.email);
+  change('phone', rec.phone, raw.phone);
+  change('dob', rec.dob, raw.dob);
+  change('address', line1Key(rec.addr) ? displayAddress(rec) : '', raw.address);
+  const rowName = displayName(rec);
+  if (rowName && rowName !== target.name) out.aliases.push({ constituentId: target.id, rowId: row.id, alias: rowName, rule: 'S3' });
+  return out;
+}
+
+/** `opts.beforeHash`: the hash of the real effective state when the CRM came from the database (src/commit/preview);
+ *  absent, the CRM is the raw fixture and the hash is computed from it (Phase 1 dry-run). */
+export type PairMemoryMap = Map<string, string[]>; // memKey(a, b) → feature codes that agreed when the pair was kept separate (D-59)
+export const memKey = (a: string, b: string) => [a, b].sort().join('|');
+
+export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: CrmConstituent[], crmGifts: CrmGift[], opts: { path: string; asOf: string; after?: string; beforeHash?: string; pairMemory?: PairMemoryMap }): Preview {
   const byId = new Map(crm.map((c) => [c.id, c]));
   const giftsByConstituent = new Map<string, CrmGift[]>();
   for (const g of crmGifts) {
@@ -67,21 +140,11 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
   }
   const hasRef = file.map.external_ref !== undefined;
 
-  // Planned state per existing constituent: the CRM record's values with their asOf (created_at), updated as
-  // this batch's merges apply S1/S2, so a second row merging into the same target sees the first's result.
+  // Planned state per existing constituent, updated as this batch's merges apply S1/S2 (a second row into the same target sees the first's result).
   const planned = new Map<string, Planned>();
   const plannedOf = (c: CrmConstituent): Planned => {
     let p = planned.get(c.id);
-    if (!p) {
-      const asOf = c.fields.created_at ?? '';
-      const addrRaw = [c.fields.address_line1, c.fields.address_line2, c.fields.city, c.fields.state, c.fields.zip].filter(Boolean).join(', ');
-      p = {
-        email: c.record.email, phone: c.record.phone, dob: c.record.dob, address: line1Key(c.record.addr) ? displayAddress(c.record) : '',
-        asOf: { email: asOf, phone: asOf, dob: asOf, address: asOf },
-        raw: { email: c.fields.email ?? '', phone: c.fields.phone ?? '', dob: c.fields.dob ?? '', address: addrRaw },
-      };
-      planned.set(c.id, p);
-    }
+    if (!p) planned.set(c.id, (p = plannedFrom(c)));
     return p;
   };
 
@@ -90,10 +153,10 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
       path: opts.path, after: opts.after, bytes: file.parsed.bytes, contentHash: file.parsed.contentHash, encoding: file.parsed.encoding, headers: file.parsed.headers,
       map: { ...(file.map as Record<string, string>) }, extras: file.extras, asOf: opts.asOf, rows: file.rows.length,
     },
-    crm: { constituents: crm.length, gifts: crmGifts.length, beforeHash: stateHash(crm, crmGifts) },
-    totals: { rows: file.rows.length, merged: 0, reviewed: 0, new: 0, rejected: 0, giftsToAdd: 0, giftsPendingReview: 0, dupGift: 0, dupGiftInFile: 0, dateCentsMatchedRefDiffered: 0, inFileSameGiftNotSkipped: 0, fieldChanges: 0, alternates: 0, aliases: 0 },
-    create: [], changes: [], alternates: [], aliases: [], gifts: [], skippedGifts: [], rejected: [], review: [],
-    notImplemented: ['FUND_UNKNOWN (import/fund-synonyms.json and the default fund are not in the reference matcher; fund text is carried raw)'],
+    crm: { constituents: crm.length, gifts: crmGifts.length, beforeHash: opts.beforeHash ?? effectiveStateHash(fixtureState(crm, crmGifts)) },
+    totals: { rows: file.rows.length, merged: 0, reviewed: 0, new: 0, rejected: 0, giftsToAdd: 0, giftsPendingReview: 0, dupGift: 0, dupGiftInFile: 0, dateCentsMatchedRefDiffered: 0, inFileSameGiftNotSkipped: 0, fieldChanges: 0, alternates: 0, aliases: 0, pendingTarget: 0, fundUnknown: 0, giftsHeld: 0, memoryQueued: 0 },
+    create: [], changes: [], alternates: [], aliases: [], gifts: [], skippedGifts: [], heldGifts: [], rejected: [], review: [], pending: [], memoryQueue: [],
+    notImplemented: ['FUND_UNKNOWN as a validation warning (the reference matcher has none); the plan resolves each fund from import/fund-synonyms.json instead, default GEN, and counts unknown text above (D-56)'],
   };
 
   const seenRaw = new Map<string, string>(); // raw record text → first row id (S4 byte-identical duplicates)
@@ -118,36 +181,21 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
     // S4: an earlier gift planned in this batch that equals this one on constituent, date, cents and reference
     // is not skipped (only byte-identical rows are); it is counted so a person can look.
     if (out.gifts.some((g) => g.constituentRef === constituentRef && g.giftDate === row.giftDate && g.cents === row.cents && (!hasRef || g.externalRef === row.externalRef))) out.totals.inFileSameGiftNotSkipped++;
-    out.gifts.push({ rowId: row.id, constituentRef, giftDate: row.giftDate, cents: row.cents!, fund: row.fund, externalRef: row.externalRef });
-  };
-
-  const change = (c: CrmConstituent, row: ImportRow, field: PlannedField, importValue: string, importRaw: string) => {
-    if (!importValue) return;
-    const p = plannedOf(c);
-    const current = p[field];
-    if (!current) {
-      out.changes.push({ constituentId: c.id, rowId: row.id, field, old: p.raw[field] || '(empty)', new: importRaw, rule: 'S1', asOfOld: p.asOf[field], asOfNew: row.giftDate, loserKept: false });
-      p[field] = importValue;
-      p.raw[field] = importRaw;
-      p.asOf[field] = row.giftDate;
+    if (row.cents! <= 0) {
+      out.heldGifts.push({ rowId: row.id, constituentRef, giftDate: row.giftDate, cents: row.cents!, reason: row.cents! < 0 ? 'AMOUNT_NEGATIVE' : 'AMOUNT_ZERO' });
       return;
     }
-    if (current === importValue) return;
-    if (field === 'dob') return; // S3: existing DOB wins; a conflict was already a review reason
-    if (row.giftDate > p.asOf[field]) {
-      out.changes.push({ constituentId: c.id, rowId: row.id, field, old: p.raw[field], new: importRaw, rule: 'S2', asOfOld: p.asOf[field], asOfNew: row.giftDate, loserKept: true });
-      out.alternates.push({ constituentId: c.id, rowId: row.id, field, value: p.raw[field], asOf: p.asOf[field], why: 'S2: replaced by a newer value, kept as alternate' });
-      p[field] = importValue;
-      p.raw[field] = importRaw;
-      p.asOf[field] = row.giftDate;
-    } else {
-      out.alternates.push({ constituentId: c.id, rowId: row.id, field, value: importRaw, asOf: row.giftDate, why: 'S2: not newer than the current value, kept as alternate' });
-    }
+    const fund = resolveFund(row.fund);
+    if (!fund.known) out.totals.fundUnknown++;
+    out.gifts.push({ rowId: row.id, constituentRef, giftDate: row.giftDate, cents: row.cents!, fund: row.fund, fundCode: fund.code, fundKnown: fund.known, externalRef: row.externalRef });
   };
 
+  const decisionOf = new Map(decisions.map((d) => [d.rowId, d.decision]));
   for (const d of decisions) {
     const row = rowsById.get(d.rowId)!;
     const rec = row.record;
+    // D-55: the target is an earlier row of this batch that is itself waiting in review, so there is nothing to write to yet
+    if ((d.decision === 'MERGE' || d.decision === 'REVIEW') && !byId.has(d.target) && decisionOf.get(d.target) === 'REVIEW') out.pending.push({ rowId: d.rowId, target: d.target, decision: d.decision, score: d.score ?? 0 });
     switch (d.decision) {
       case 'REJECT':
         out.totals.rejected++;
@@ -164,17 +212,35 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
         planGift(row, d.rowId, d);
         break;
       case 'MERGE': {
+        // D-59 pair memory: for another candidate T remembered as KEEP_SEPARATE from the target, the identifiers that newly agree (null: no memory)
+        const newlyOf = (c: CandidateScore): string[] | null => {
+          const agreed = opts.pairMemory?.get(memKey(d.target, c.id));
+          return agreed ? c.score.reasons.filter((r) => !agreed.includes(r) && !/_(DIFF|CONFLICT|MISSING)$/.test(r)) : null;
+        };
+        // S6: a row at MERGE level against two existing constituents is never merged automatically; both pairs go to review.
+        // A remembered pair with nothing new agreeing does not count (the memory is what stops it returning).
+        const existingAtMerge = d.candidates.filter((c) => c.score.decision === 'MERGE' && byId.has(c.id) && (c.id === d.target || newlyOf(c)?.length !== 0));
+        if (existingAtMerge.length >= 2) {
+          out.totals.reviewed++;
+          out.totals.giftsPendingReview++;
+          for (const c of existingAtMerge) {
+            const newly = c.id === d.target ? null : newlyOf(c);
+            out.review.push({ rowId: d.rowId, target: c.id, score: c.score.total, reasons: c.score.reasons, flags: [...c.score.flags, 'EXISTING_PAIR', ...(newly?.length ? ['PAIR_MEMORY', `NEWLY_AGREED:${newly.join('+')}`] : [])], tieBreak: '' });
+          }
+          break;
+        }
+        for (const c of d.candidates) {
+          if (c.id === d.target || !byId.has(c.id)) continue;
+          const newly = newlyOf(c);
+          if (newly?.length) out.memoryQueue.push({ rowId: d.rowId, mergedInto: d.target, target: c.id, agreedBefore: opts.pairMemory!.get(memKey(d.target, c.id))!, newlyAgreed: newly, score: c.score.total });
+        }
         out.totals.merged++;
         const c = byId.get(d.target);
         if (c) {
-          const g = (k: keyof typeof file.map) => rowCell(file, row, k).trim();
-          change(c, row, 'email', rec.email, g('email'));
-          change(c, row, 'phone', rec.phone, g('phone'));
-          change(c, row, 'dob', rec.dob, g('dob'));
-          change(c, row, 'address', line1Key(rec.addr) ? displayAddress(rec) : '', [g('line1'), g('line2'), g('city'), g('state'), g('zip')].filter(Boolean).join(', '));
-          const crmName = displayName(c.record);
-          const rowName = displayName(rec);
-          if (rowName && rowName !== crmName) out.aliases.push({ constituentId: c.id, rowId: row.id, alias: rowName, rule: 'S3' });
+          const sv = rowSurvivorship({ id: c.id, planned: plannedOf(c), name: displayName(c.record) }, row, rawCellsOf(file.map, file.parsed, row));
+          out.changes.push(...sv.changes);
+          out.alternates.push(...sv.alternates);
+          out.aliases.push(...sv.aliases);
         }
         planGift(row, d.target, d);
         break;
@@ -188,11 +254,8 @@ export function buildPreview(file: LoadedFile, decisions: RowDecision[], crm: Cr
   out.totals.fieldChanges = out.changes.length;
   out.totals.alternates = out.alternates.length;
   out.totals.aliases = out.aliases.length;
+  out.totals.pendingTarget = out.pending.length;
+  out.totals.memoryQueued = out.memoryQueue.length;
+  out.totals.giftsHeld = out.heldGifts.length;
   return out;
-}
-
-/** The raw cell for a mapped field (the preview shows what the file said, next to the normalized value). */
-function rowCell(file: LoadedFile, row: ImportRow, field: keyof typeof file.map): string {
-  const header = file.map[field];
-  return header ? (file.parsed.rows[row.index]?.cells[header] ?? '') : '';
 }
