@@ -71,6 +71,12 @@ The PRD leaves several rules open. The golden pairs and measurements in `docs/do
 | D-31 | **Shane labels 30 review-band pairs blind** from `fixtures/decisions_a.csv` (the pair page shows both records and the reasons, not the answer key). Recorded in `eval/labels/shane-30.json` with per-pair notes. Eval prints: his agreement with the key, pairs he would have merged, pairs he would have kept separate, and whether any threshold change would follow (then O-2 is decided). | A person checks the thresholds, not the generator |
 | D-32 | **A rejected row writes nothing.** No constituent, no gift; it is not matched and not indexed, so a later duplicate of it in the same file finds nothing and becomes new (visible in §11 as `DUP_IN_FILE → NEW`). The person fixes the file and re-imports; the re-import's rows match what the first batch wrote. | A half-written row (person without gift) is the kind of silent partial write the preview exists to prevent |
 
+### Foundation
+
+| # | Decision | Why |
+|---|----------|-----|
+| D-97 | **saas-foundation v1.6.0 taken on `main` (2026-11-07), every new feature left off.** No `RLS_ENFORCE` repo variable, `RLS_MODE` unset; `sso` and `apikeys` modules kept (not removed); `export-hooks.ts` and `api-scopes.ts`/`event-types.ts` keep template defaults because `main` has no clone `orgId` tables. Numbered D-97 (not D-33) because the phase branches already use D-33..D-96. | A clone that sets nothing behaves as on 1.5.0; removing modules is a later choice, and the phase branches add the clone tables that need policies and export rows |
+
 ## Open — need Shane's call (defaults are in force until changed)
 
 | # | Question | Default | Why it's open |
