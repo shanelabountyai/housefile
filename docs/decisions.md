@@ -76,6 +76,7 @@ The PRD leaves several rules open. The golden pairs and measurements in `docs/do
 | # | Decision | Why |
 |---|----------|-----|
 | D-97 | **saas-foundation v1.6.0 taken on `main` (2026-11-07), every new feature left off.** No `RLS_ENFORCE` repo variable, `RLS_MODE` unset; `sso` and `apikeys` modules kept (not removed); `export-hooks.ts` and `api-scopes.ts`/`event-types.ts` keep template defaults because `main` has no clone `orgId` tables. Numbered D-97 (not D-33) because the phase branches already use D-33..D-96. | A clone that sets nothing behaves as on 1.5.0; removing modules is a later choice, and the phase branches add the clone tables that need policies and export rows |
+| D-98 | **saas-foundation v1.6.1 taken on `main` (2026-11-09).** `cross-org.ts` now marks the billing and notifications entries; housefile keeps both modules, so nothing is deleted. No migration, no env change. | Template CHANGELOG 1.6.1 |
 
 ## Open — need Shane's call (defaults are in force until changed)
 
