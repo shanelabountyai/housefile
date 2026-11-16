@@ -1,5 +1,11 @@
 # NEXT
 
+**2026-11-16, later (cleanup swarm, unattended, branch `phase-1`, PR #1 not merged): CI green.**
+- **saas-foundation v1.6.3 merged in** (template `main` `15c8162`, PR #19, untagged) as `21b9a6c`, merge commit, no rebase. Only conflicts `CLONES.md`, `NEXT.md` (kept ours); `tests/unit/foundation-tools.test.ts` is the template's. Billing removal (D-5) and the stub migration pair (D-101) unchanged. `FOUNDATION_VERSION` v1.6.3. **D-102 resolved by D-103.**
+- CI on `21b9a6c`: `ci (off)` success (vitest 501 passed / 20 skipped, Playwright 13 passed), `phase1-gate` success (`test:phase1` 228/228), `modules-removed` success (foundation-tools 23/23).
+- Local (no DB, sandbox): `test:phase1` 228/228, `typecheck:phase1` clean, `model:lint` OK (40312dfe…), `money:lint` OK, `fixtures:check` OK, `lint` OK, foundation-tools test 23/23, `import:eval` exit 0 and byte-identical to the `fbab45b` run (83 lines, sha256 a0e5f211…). Not run locally: full `typecheck` (Prisma engines blocked, client not generated), `foundation:check-modules` (no `rsync`), `foundation:drift` (needs the `v1.6.3` tag, not yet created). CI decides.
+- **Owed:** once the template tags `v1.6.3`, fetch the tag and run `npm run foundation:drift`; update housefile's row in the template's `CLONES.md` to v1.6.3. After PR #1 merges, merge `main` into `phase-2` (PR #5): it inherits v1.6.3 and the D-99/D-101 fixes with it.
+
 **2026-11-16 (cleanup swarm, unattended, branch `phase-1`, PR #1 not merged):**
 - **CI was red, not green, since 2026-10-19.** The gate entries below (`npm test` 382/382, "gate PASSED") were local runs; the GitHub `ci` job failed INV-14 on every push from `26fe6ca` on, because D-5 dropped the `STRIPE_*` names from `.env.example` while template-owned `src/core/env.ts` still declares them. Fixed by cherry-picking `phase-2`'s `1865159` (`44e5f45`); D-99.
 - **saas-foundation v1.4.1 -> v1.6.2 merged in** (`origin/main` merged into `phase-1`, `79055ab`; no rebase). Billing deletes kept, `org-hooks.ts` keeps `onMembershipEnded` -> `revokeKeysCreatedBy`, Projects example on `withOrg` + `emit`, `// billing` lines gone from `modules.ts` and `cross-org.ts`; billing table drop re-sequenced with a stub-table migration pair (`20261104000000` / `20261116000000`) so the v1.6.0 RLS migrations apply. D-100, D-101.
