@@ -359,6 +359,14 @@ def norm_date(raw: str) -> tuple[str, str]:
     return "", "DATE_INVALID"
 
 
+def norm_dob(raw: str, as_of: str) -> tuple[str, str]:
+    """N6 for a birth date (D-43): a two-digit year that lands after as_of is the previous century."""
+    iso, code = norm_date(raw)
+    if iso and iso > as_of and re.match(r"^\s*\d{1,2}[/\-]\d{1,2}[/\-]\d{2}\s*$", raw or ""):
+        iso = f"{int(iso[:4]) - 100:04d}{iso[4:]}"
+    return iso, code
+
+
 def _mkdate(y: int, mo: int, d: int) -> tuple[str, str]:
     try:
         return date(y, mo, d).isoformat(), ""

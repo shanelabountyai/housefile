@@ -1,0 +1,242 @@
+{
+  "_comment": "D-19: raw first name -> set of canonical names. A canonical maps to itself; an unknown name maps to itself. Edit here, then add a GN golden.",
+  "canonicals": {
+    "robert": [
+      "bob",
+      "rob",
+      "bobby",
+      "robbie"
+    ],
+    "william": [
+      "bill",
+      "will",
+      "billy",
+      "willy"
+    ],
+    "elizabeth": [
+      "liz",
+      "beth",
+      "betty",
+      "eliza",
+      "lizzie",
+      "betsy"
+    ],
+    "margaret": [
+      "peggy",
+      "meg",
+      "maggie",
+      "marge"
+    ],
+    "john": [
+      "jack",
+      "johnny"
+    ],
+    "james": [
+      "jim",
+      "jimmy",
+      "jamie"
+    ],
+    "katherine": [
+      "kate",
+      "katie",
+      "kathy",
+      "kat"
+    ],
+    "catherine": [
+      "cathy",
+      "cat",
+      "kate"
+    ],
+    "michael": [
+      "mike",
+      "mikey"
+    ],
+    "thomas": [
+      "tom",
+      "tommy"
+    ],
+    "susan": [
+      "sue",
+      "susie",
+      "suzy"
+    ],
+    "richard": [
+      "rick",
+      "dick",
+      "richie",
+      "ricky"
+    ],
+    "christopher": [
+      "chris",
+      "kit"
+    ],
+    "christine": [
+      "chris",
+      "chrissy"
+    ],
+    "david": [
+      "dave",
+      "davey"
+    ],
+    "daniel": [
+      "dan",
+      "danny"
+    ],
+    "anthony": [
+      "tony"
+    ],
+    "andrew": [
+      "andy",
+      "drew"
+    ],
+    "joseph": [
+      "joe",
+      "joey"
+    ],
+    "patricia": [
+      "pat",
+      "patty",
+      "trish",
+      "tricia"
+    ],
+    "patrick": [
+      "pat",
+      "paddy"
+    ],
+    "edward": [
+      "ed",
+      "eddie",
+      "ted",
+      "teddy"
+    ],
+    "theodore": [
+      "ted",
+      "teddy",
+      "theo"
+    ],
+    "charles": [
+      "charlie",
+      "chuck",
+      "chas"
+    ],
+    "jennifer": [
+      "jen",
+      "jenny"
+    ],
+    "rebecca": [
+      "becky",
+      "becca"
+    ],
+    "deborah": [
+      "deb",
+      "debbie"
+    ],
+    "nicholas": [
+      "nick",
+      "nicky"
+    ],
+    "matthew": [
+      "matt"
+    ],
+    "samuel": [
+      "sam",
+      "sammy"
+    ],
+    "samantha": [
+      "sam",
+      "sammy"
+    ],
+    "alexander": [
+      "alex"
+    ],
+    "alexandra": [
+      "alex",
+      "lexi"
+    ],
+    "benjamin": [
+      "ben",
+      "benny"
+    ],
+    "jonathan": [
+      "jon"
+    ],
+    "timothy": [
+      "tim",
+      "timmy"
+    ],
+    "steven": [
+      "steve"
+    ],
+    "stephen": [
+      "steve"
+    ],
+    "lawrence": [
+      "larry"
+    ],
+    "gerald": [
+      "gerry",
+      "jerry"
+    ],
+    "jerome": [
+      "jerry"
+    ],
+    "donald": [
+      "don",
+      "donny"
+    ],
+    "ronald": [
+      "ron",
+      "ronnie"
+    ],
+    "kenneth": [
+      "ken",
+      "kenny"
+    ],
+    "raymond": [
+      "ray"
+    ],
+    "frederick": [
+      "fred",
+      "freddie"
+    ],
+    "dorothy": [
+      "dot",
+      "dottie"
+    ],
+    "barbara": [
+      "barb",
+      "barbie"
+    ],
+    "virginia": [
+      "ginny"
+    ],
+    "victoria": [
+      "vicky",
+      "tori"
+    ],
+    "josephine": [
+      "jo",
+      "josie"
+    ],
+    "eleanor": [
+      "ellie",
+      "nora"
+    ],
+    "abigail": [
+      "abby"
+    ],
+    "gabriel": [
+      "gabe"
+    ],
+    "nathaniel": [
+      "nate",
+      "nathan"
+    ],
+    "leonard": [
+      "leo",
+      "lenny"
+    ],
+    "maria": [],
+    "jose": []
+  }
+}

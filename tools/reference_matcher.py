@@ -19,7 +19,7 @@ from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from matchlib import (Record, Address, parse_name, norm_email, norm_phone, norm_address,  # noqa: E402
-                      norm_date, norm_amount, score_pair, T_MERGE, T_REVIEW)
+                      norm_date, norm_dob, norm_amount, score_pair, T_MERGE, T_REVIEW)
 
 # Column maps the session's auto-mapper must also discover (brief section 4).
 MAP_A = {"first": "Donor First Name", "last": "Donor Last Name", "middle": "Middle", "suffix": "Suffix",
@@ -57,7 +57,7 @@ def to_record(rid: str, row: dict, m: dict) -> tuple[Record, list[str], str]:
         warnings.append(r)
     addr, rs = norm_address(g("line1"), g("line2"), g("city"), g("state"), g("zip"))
     warnings += [x for x in rs if x not in ("ZIP_MISSING",)]
-    dob, r = norm_date(g("dob"))
+    dob, r = norm_dob(g("dob"), "2026-10-14")
     if r and r not in ("DATE_MISSING",):
         warnings.append("DOB_" + r)
         dob = dob if r == "DATE_EXCEL_SERIAL" else ""

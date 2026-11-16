@@ -1,0 +1,18 @@
+{
+  "first": "Donor First Name",
+  "last": "Donor Last Name",
+  "middle": "Middle",
+  "suffix": "Suffix",
+  "email": "Email Address",
+  "phone": "Phone #",
+  "line1": "Street Address",
+  "line2": "Apt/Unit",
+  "city": "City",
+  "state": "ST",
+  "zip": "Zip Code",
+  "dob": "Birth Date",
+  "gift_date": "Gift Date",
+  "amount": "Gift Amount",
+  "fund": "Designation",
+  "external_ref": "Transaction ID"
+}

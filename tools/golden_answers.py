@@ -14,7 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from matchlib import (Record, Address, parse_name, norm_email, norm_phone, norm_zip, norm_date,  # noqa: E402
+from matchlib import (Record, Address, parse_name, norm_email, norm_phone, norm_zip, norm_date, norm_dob,  # noqa: E402
                       norm_amount, norm_address, score_pair, jaro_winkler, soundex)
 
 
@@ -121,6 +121,8 @@ NORMS = [
     ("GN-07", "zip: ZIP+4 truncates", norm_zip("01605-1234"), ("01605", "")),
     ("GN-08", "date: Excel serial 46113", norm_date("46113"), ("2026-04-01", "DATE_EXCEL_SERIAL")),
     ("GN-09", "date: two-digit year", norm_date("5/4/26"), ("2026-05-04", "")),
+    ("GN-21", "DOB: two-digit year after as-of is 19xx (D-43)", (norm_dob("4/3/51", "2026-10-14"), norm_dob("5/4/26", "2026-10-14"), norm_date("4/3/51")),
+     (("1951-04-03", ""), ("2026-05-04", ""), ("2051-04-03", ""))),
     ("GN-10", "date: month name", norm_date("Sep 19, 2026"), ("2026-09-19", "")),
     ("GN-11", "amount: dollars and commas", norm_amount("$1,250.00"), (125000, "")),
     ("GN-12", "amount: parentheses are negative", norm_amount("(50.00)"), (-5000, "AMOUNT_NEGATIVE")),
