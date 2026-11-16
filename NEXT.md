@@ -1,5 +1,12 @@
 # NEXT
 
+**2026-11-16 (cleanup swarm, unattended, branch `phase-1`, PR #1 not merged):**
+- **CI was red, not green, since 2026-10-19.** The gate entries below (`npm test` 382/382, "gate PASSED") were local runs; the GitHub `ci` job failed INV-14 on every push from `26fe6ca` on, because D-5 dropped the `STRIPE_*` names from `.env.example` while template-owned `src/core/env.ts` still declares them. Fixed by cherry-picking `phase-2`'s `1865159` (`44e5f45`); D-99.
+- **saas-foundation v1.4.1 -> v1.6.2 merged in** (`origin/main` merged into `phase-1`, `79055ab`; no rebase). Billing deletes kept, `org-hooks.ts` keeps `onMembershipEnded` -> `revokeKeysCreatedBy`, Projects example on `withOrg` + `emit`, `// billing` lines gone from `modules.ts` and `cross-org.ts`; billing table drop re-sequenced with a stub-table migration pair (`20261104000000` / `20261116000000`) so the v1.6.0 RLS migrations apply. D-100, D-101.
+- **Run `npm ci`, `npx prisma generate` and `npm run db:migrate` locally** (v1.6.0's ten migrations plus the two stub migrations). Then `npm run foundation:drift` (base `v1.6.2`; the tag is on `origin`).
+- **Open (D-102):** template test `tests/unit/foundation-tools.test.ts` "guards every module table" expects a `billing` schema and fails on a billing-removed clone. Left untouched; recommended fix is upstream in saas-foundation. Phase 1 gate this session (no DB): `typecheck:phase1` clean, `model:lint` OK (40312dfe…), `money:lint` OK, `fixtures:check` OK, `import:eval` exit 0, drift 0 rows, first 45 lines byte-identical to `fixtures/samples/reference_matcher.output.txt` (A 55 review / 679 pairs / R 0.9464; B 33 / 394 / R 0.9548).
+- After PR #1 merges: merge `main` into `phase-2` (PR #5); it carries `20261019212236_housefile_init`, which sorts before the stub pair and is unaffected.
+
 ## ▶ Next session: Phase 2 task 2.1 — schema and triggers
 
 **2026-10-19 Phase 1 gate PASSED; Phase 2 task list written, stopped for review.** Gate re-run this session: `fixtures:check` OK, `model:lint` OK (40312dfe…), `money:lint` OK, `typecheck:phase1` clean, `test:phase1` 228/228, `import:eval` A 259/55/71 · 679 pairs · P 1.0 · R 0.9464, B 166/33/37 · 394 pairs · P 1.0 · R 0.9548, drift 0 rows, no forbidden import under `src/matching/`. Phase 1 boxes 1.2–1.8, 1.10, 1.11 ticked (built 2026-10-17, gated today).
