@@ -1,0 +1,16 @@
+{
+  "as_of": "2026-10-14",
+  "counts": {
+    "corrections.csv": 9,
+    "pledge_payments.csv": 54,
+    "pledges.csv": 18,
+    "soft_credits.csv": 42
+  },
+  "seed": 20261014,
+  "sha256": {
+    "corrections.csv": "4f1ad4fac1593f94f1dbf315ca6af156befaf75c2227d246dd434423e7d5ebf8",
+    "pledge_payments.csv": "78ef70f17ef510095427296366c3a941a335ca10aa56e9b9c157292bf1488933",
+    "pledges.csv": "4e35d7b86a7cfbcf42c9bf61d6e9209fad54ad50fecf49bb7fb0385469fb3d2d",
+    "soft_credits.csv": "9865da968ddec6cccb73bec40e65a53b3507bf27fc4907f874630dcfd36d1f32"
+  }
+}

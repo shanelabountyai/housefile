@@ -1,0 +1,8 @@
+{
+  "name": "Major donors 2025",
+  "description": "$1,000 or more in calendar 2025",
+  "filters": [
+    { "field": "giftDate", "op": "between", "value": ["2025-01-01", "2025-12-31"] },
+    { "field": "totalInWindow", "op": "gte", "value": 100000 }
+  ]
+}

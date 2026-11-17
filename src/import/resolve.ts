@@ -2,7 +2,7 @@
 // accepted earlier in the batch. On MERGE the target absorbs the identifiers it lacked (S1) and the row's
 // blocking keys point at the target; a REVIEW or NEW row is indexed as itself; a REJECT row is not indexed.
 // The CRM records in a MatchState are mutated by those merges, so a second file resolved over the same state
-// sees the CRM as enriched by the first (the reference matcher does the same; see decisions.md, provisional).
+// sees the CRM as enriched by the first (the reference matcher does the same; D-34, resolved by owner decision 2026-10-26: sequential).
 import type { CrmConstituent } from './crm';
 import type { ImportRow } from './validate';
 import { blockingKeys } from '../matching/blocking';

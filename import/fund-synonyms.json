@@ -1,0 +1,8 @@
+{
+  "default": "GEN",
+  "codes": {
+    "GEN": ["General", "General Fund", "Unrestricted", "Annual Fund"],
+    "SCHOL": ["Scholarship", "Scholarships", "Scholarship Fund"],
+    "BLDG": ["Building", "Building Fund", "Capital"]
+  }
+}

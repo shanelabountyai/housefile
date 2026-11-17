@@ -1,0 +1,11 @@
+{
+  "_comment": "Phase 4 (P4-3) model prices, read from Anthropic's pricing page on checkedAt, never from memory. Integer micro-USD per million tokens ($2.00/MTok = 2000000), so a cost is tokens * price / 10^6 with no float. assist:run refuses when checkedAt is older than 60 days. Haiku 5.5's figures hold for prompts up to promptTokensUpTo; above that its price is $0.50 / $2.50 per MTok.",
+  "checkedAt": "2026-10-28",
+  "sources": {
+    "pricing": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "models": {
+    "claude-haiku-5-5": { "role": "small", "inputMicroUsdPerMTok": 100000, "outputMicroUsdPerMTok": 500000, "promptTokensUpTo": 100000 },
+    "claude-sonnet-5-5": { "role": "mid", "inputMicroUsdPerMTok": 2000000, "outputMicroUsdPerMTok": 10000000 }
+  }
+}

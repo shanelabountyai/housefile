@@ -49,7 +49,7 @@ describe('import:eval reproduces the reference matcher on the frozen fixtures', 
   it('is deterministic: a second run gives the same text', () => expect(runEval('fixtures').text).toBe(run.text));
 });
 
-describe('A -> B carry-over (provisional decision: the reference runs B over the CRM as enriched by A)', () => {
+describe('A -> B carry-over (D-34, resolved 2026-10-26: the reference runs B over the CRM as enriched by A)', () => {
   it('file B alone on a fresh CRM differs from decisions_b.csv on exactly these 10 rows', () => {
     const bytes = (p: string) => new Uint8Array(readFileSync(p));
     const state = createMatchState(loadConstituents(bytes('fixtures/crm_constituents.csv')));

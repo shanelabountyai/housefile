@@ -1,0 +1,10 @@
+correction_id,gift_id,action,field,new_value,reason
+CR01,G00856,CORRECT,amount_cents,2500000,keyed one zero short; bank deposit shows the larger amount
+CR02,G00527,CORRECT,fund,BLDG,donor's reply card designated a different fund
+CR03,G00832,CORRECT,gift_date,2026-09-19,"postmark date, not deposit date"
+CR04,G00424,VOID,,,check returned unpaid
+CR05,G00376,CORRECT,amount_cents,50000,keyed one zero short; bank deposit shows the larger amount
+CR06,G00776,CORRECT,fund,BLDG,donor's reply card designated a different fund
+CR07,G00651,CORRECT,gift_date,2025-03-01,"postmark date, not deposit date"
+CR08,G00693,VOID,,,check returned unpaid
+CR09,G00890,VOID,,,payment entered against the wrong pledge

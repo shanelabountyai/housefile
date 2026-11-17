@@ -1,0 +1,5 @@
+{
+  "name": "SYBUNT",
+  "description": "Gave some year before last, and neither last year nor this year (D-69)",
+  "filters": [{ "field": "sybunt", "op": "isTrue" }]
+}

@@ -85,7 +85,9 @@ def crm_record(c: dict) -> Record:
     return Record(rid=c["constituent_id"], name=name, email=email, phone=phone, addr=addr, dob=c["dob"])
 
 
-def run_file(tag: str, fixtures: str, crm: list[Record], write_decisions: bool) -> dict:
+def run_file(tag: str, fixtures: str, crm: list[Record], write_decisions: bool, review_items: list | None = None) -> dict:
+    """review_items, when given, collects (row_id, candidate_id) for every candidate tied at the best score of a
+    REVIEW row (Phase 4 pair set, P4-1); it changes nothing else."""
     rows, enc = read_csv_bytes(os.path.join(fixtures, f"import_{tag.lower()}.csv"))
     key = {k["row_id"]: k for k in csv.DictReader(open(os.path.join(fixtures, f"answer_key_{tag.lower()}.csv"), encoding="utf-8"))}
     m = MAP_A if tag == "A" else MAP_B
@@ -174,6 +176,9 @@ def run_file(tag: str, fixtures: str, crm: list[Record], write_decisions: bool) 
         elif best and best[0].decision == "REVIEW":
             rows_review += 1
             decisions.append((rid, "REVIEW", best[1].rid, best[0].total, "+".join(best[0].reasons), ";".join(best[0].flags)))
+            if review_items is not None:
+                tied = sorted(c.rid for c in cands.values() if score_pair(rec, c).total == best[0].total)
+                review_items.extend((rid, cid) for cid in tied)
             # a reviewed row still joins the index as itself so later dups find it
             for bk in rec.blocking_keys():
                 index[bk].append(rec)
