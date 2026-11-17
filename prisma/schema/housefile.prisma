@@ -1,6 +1,7 @@
-// Housefile domain tables (task 2.1). Clone-owned. Rows reference Org with onDelete: Restrict (D-52):
-// an org holding donor records cannot be deleted by cascade, because six of these tables are
-// append-only (migration 20261019212236_housefile_init) and a cascaded DELETE would hit the trigger.
+// Housefile domain tables (task 2.1). Clone-owned. Rows reference Org with onDelete: Cascade (D-104, replacing
+// D-52's Restrict): deleting the org removes every housefile row it owns. Relations between housefile tables are
+// onDelete: NoAction, so a referenced row still cannot be deleted on its own, and the append-only trigger
+// (migration 20261117000000_housefile_org_delete) lets a row go only once its org is gone.
 // userId columns carry no FK, as in AuditEvent: the record survives the user.
 
 enum ConstituentKind {
@@ -44,7 +45,7 @@ enum MergeKind {
 model Constituent {
   id             String               @id @default(uuid()) @db.Uuid
   orgId          String               @db.Uuid
-  org            Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org            Org                  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   businessId     String // C0001; stable across versions, the hash key (D-11)
   kind           ConstituentKind      @default(PERSON)
   createdAt      DateTime             @default(now()) @db.Timestamptz(6)
@@ -63,7 +64,7 @@ model Constituent {
 model Household {
   id         String               @id @default(uuid()) @db.Uuid
   orgId      String               @db.Uuid
-  org        Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org        Org                  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   businessId String // H0001
   createdAt  DateTime             @default(now()) @db.Timestamptz(6)
   versions   ConstituentVersion[]
@@ -77,9 +78,9 @@ model Household {
 model ConstituentVersion {
   id               String            @id @default(uuid()) @db.Uuid
   orgId            String            @db.Uuid
-  org              Org               @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org              Org               @relation(fields: [orgId], references: [id], onDelete: Cascade)
   constituentId    String            @db.Uuid
-  constituent      Constituent       @relation(fields: [constituentId], references: [id])
+  constituent      Constituent       @relation(fields: [constituentId], references: [id], onDelete: NoAction)
   version          Int
   status           ConstituentStatus @default(ACTIVE)
   firstName        String            @default("")
@@ -98,13 +99,13 @@ model ConstituentVersion {
   aliases          Json              @default("[]") // prior names: [{ first, middle, last, suffix, source, asOf }] (S3)
   alternates       Json              @default("[]") // losing values: [{ field, value, source, asOf }] (S2)
   householdId      String?           @db.Uuid
-  household        Household?        @relation(fields: [householdId], references: [id])
+  household        Household?        @relation(fields: [householdId], references: [id], onDelete: NoAction)
   importBatchId    String?           @db.Uuid
-  importBatch      ImportBatch?      @relation(fields: [importBatchId], references: [id])
+  importBatch      ImportBatch?      @relation(fields: [importBatchId], references: [id], onDelete: NoAction)
   mergeEventId     String?           @db.Uuid
-  mergeEvent       MergeEvent?       @relation(fields: [mergeEventId], references: [id])
+  mergeEvent       MergeEvent?       @relation(fields: [mergeEventId], references: [id], onDelete: NoAction)
   reviewDecisionId String?           @db.Uuid
-  reviewDecision   ReviewDecision?   @relation(fields: [reviewDecisionId], references: [id])
+  reviewDecision   ReviewDecision?   @relation(fields: [reviewDecisionId], references: [id], onDelete: NoAction)
   userId           String?           @db.Uuid
   createdAt        DateTime          @default(now()) @db.Timestamptz(6)
 
@@ -117,7 +118,7 @@ model ConstituentVersion {
 model Fund {
   id      String   @id @default(uuid()) @db.Uuid
   orgId   String   @db.Uuid
-  org     Org      @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org     Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
   code    String // BLDG
   gifts   Gift[]
   pledges Pledge[]
@@ -128,7 +129,7 @@ model Fund {
 model Campaign {
   id      String   @id @default(uuid()) @db.Uuid
   orgId   String   @db.Uuid
-  org     Org      @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org     Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
   code    String // AF2024
   appeals Appeal[]
 
@@ -139,9 +140,9 @@ model Campaign {
 model Appeal {
   id         String   @id @default(uuid()) @db.Uuid
   orgId      String   @db.Uuid
-  org        Org      @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org        Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
   campaignId String   @db.Uuid
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: NoAction)
   name       String // "Year-End 2024"
   gifts      Gift[]
   pledges    Pledge[]
@@ -154,30 +155,30 @@ model Appeal {
 model Gift {
   id               String          @id @default(uuid()) @db.Uuid
   orgId            String          @db.Uuid
-  org              Org             @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org              Org             @relation(fields: [orgId], references: [id], onDelete: Cascade)
   giftRef          String // G00001; stable across supersession, the hash key
   constituentId    String          @db.Uuid
-  constituent      Constituent     @relation(fields: [constituentId], references: [id])
+  constituent      Constituent     @relation(fields: [constituentId], references: [id], onDelete: NoAction)
   giftDate         DateTime        @db.Date
   amountCents      Int // integer cents, > 0 (CHECK in SQL)
   fundId           String          @db.Uuid
-  fund             Fund            @relation(fields: [fundId], references: [id])
+  fund             Fund            @relation(fields: [fundId], references: [id], onDelete: NoAction)
   appealId         String?         @db.Uuid // import files carry a fund, not an appeal
-  appeal           Appeal?         @relation(fields: [appealId], references: [id])
+  appeal           Appeal?         @relation(fields: [appealId], references: [id], onDelete: NoAction)
   giftType         String          @default("GIFT")
   externalRef      String          @default("")
   pledgeRef        String          @default("") // set on a pledge payment (D-9, D-71)
   supersedesGiftId String?         @unique @db.Uuid // unique: one successor per row, so history is a chain
-  supersedes       Gift?           @relation("GiftSupersedes", fields: [supersedesGiftId], references: [id])
+  supersedes       Gift?           @relation("GiftSupersedes", fields: [supersedesGiftId], references: [id], onDelete: NoAction)
   supersededBy     Gift?           @relation("GiftSupersedes")
   status           GiftStatus      @default(ACTIVE)
   reason           String? // required on a superseding row (CHECK in SQL)
   importBatchId    String?         @db.Uuid
-  importBatch      ImportBatch?    @relation(fields: [importBatchId], references: [id])
+  importBatch      ImportBatch?    @relation(fields: [importBatchId], references: [id], onDelete: NoAction)
   mergeEventId     String?         @db.Uuid
-  mergeEvent       MergeEvent?     @relation(fields: [mergeEventId], references: [id])
+  mergeEvent       MergeEvent?     @relation(fields: [mergeEventId], references: [id], onDelete: NoAction)
   reviewDecisionId String?         @db.Uuid
-  reviewDecision   ReviewDecision? @relation(fields: [reviewDecisionId], references: [id])
+  reviewDecision   ReviewDecision? @relation(fields: [reviewDecisionId], references: [id], onDelete: NoAction)
   userId           String?         @db.Uuid
   createdAt        DateTime        @default(now()) @db.Timestamptz(6)
 
@@ -192,23 +193,23 @@ model Gift {
 model Pledge {
   id                 String      @id @default(uuid()) @db.Uuid
   orgId              String      @db.Uuid
-  org                Org         @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org                Org         @relation(fields: [orgId], references: [id], onDelete: Cascade)
   pledgeRef          String // PL001; stable across supersession, the hash key
   constituentId      String      @db.Uuid
-  constituent        Constituent @relation(fields: [constituentId], references: [id])
+  constituent        Constituent @relation(fields: [constituentId], references: [id], onDelete: NoAction)
   pledgeDate         DateTime    @db.Date
   totalCents         Int // integer cents, > 0 (CHECK in SQL)
   schedule           Json // [{ due, cents }], sums to totalCents
   fundId             String      @db.Uuid
-  fund               Fund        @relation(fields: [fundId], references: [id])
+  fund               Fund        @relation(fields: [fundId], references: [id], onDelete: NoAction)
   appealId           String?     @db.Uuid
-  appeal             Appeal?     @relation(fields: [appealId], references: [id])
+  appeal             Appeal?     @relation(fields: [appealId], references: [id], onDelete: NoAction)
   supersedesPledgeId String?     @unique @db.Uuid
-  supersedes         Pledge?     @relation("PledgeSupersedes", fields: [supersedesPledgeId], references: [id])
+  supersedes         Pledge?     @relation("PledgeSupersedes", fields: [supersedesPledgeId], references: [id], onDelete: NoAction)
   supersededBy       Pledge?     @relation("PledgeSupersedes")
   reason             String? // required on a superseding row (CHECK in SQL)
   mergeEventId       String?     @db.Uuid
-  mergeEvent         MergeEvent? @relation(fields: [mergeEventId], references: [id])
+  mergeEvent         MergeEvent? @relation(fields: [mergeEventId], references: [id], onDelete: NoAction)
   userId             String?     @db.Uuid
   createdAt          DateTime    @default(now()) @db.Timestamptz(6)
 
@@ -222,20 +223,20 @@ model Pledge {
 model SoftCredit {
   id                     String           @id @default(uuid()) @db.Uuid
   orgId                  String           @db.Uuid
-  org                    Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org                    Org              @relation(fields: [orgId], references: [id], onDelete: Cascade)
   softCreditRef          String // SC001; stable across supersession, the hash key
   giftRef                String
   constituentId          String           @db.Uuid
-  constituent            Constituent      @relation(fields: [constituentId], references: [id])
+  constituent            Constituent      @relation(fields: [constituentId], references: [id], onDelete: NoAction)
   role                   String // SPOUSE | PEER_TO_PEER | …
   amountCents            Int // its own amount (D-74c), integer cents, > 0 (CHECK in SQL)
   status                 SoftCreditStatus @default(ACTIVE)
   supersedesSoftCreditId String?          @unique @db.Uuid
-  supersedes             SoftCredit?      @relation("SoftCreditSupersedes", fields: [supersedesSoftCreditId], references: [id])
+  supersedes             SoftCredit?      @relation("SoftCreditSupersedes", fields: [supersedesSoftCreditId], references: [id], onDelete: NoAction)
   supersededBy           SoftCredit?      @relation("SoftCreditSupersedes")
   reason                 String? // required on a superseding row (CHECK in SQL)
   mergeEventId           String?          @db.Uuid
-  mergeEvent             MergeEvent?      @relation(fields: [mergeEventId], references: [id])
+  mergeEvent             MergeEvent?      @relation(fields: [mergeEventId], references: [id], onDelete: NoAction)
   userId                 String?          @db.Uuid
   createdAt              DateTime         @default(now()) @db.Timestamptz(6)
 
@@ -248,7 +249,7 @@ model SoftCredit {
 model ImportBatch {
   id          String               @id @default(uuid()) @db.Uuid
   orgId       String               @db.Uuid
-  org         Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org         Org                  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   fileName    String
   rawBytes    Bytes
   contentHash String
@@ -274,9 +275,9 @@ model ImportBatch {
 model ImportBatchEvent {
   id            String               @id @default(uuid()) @db.Uuid
   orgId         String               @db.Uuid
-  org           Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org           Org                  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   importBatchId String               @db.Uuid
-  importBatch   ImportBatch          @relation(fields: [importBatchId], references: [id])
+  importBatch   ImportBatch          @relation(fields: [importBatchId], references: [id], onDelete: NoAction)
   kind          ImportBatchEventKind
   expectedHash  String?
   actualHash    String?
@@ -292,12 +293,12 @@ model ImportBatchEvent {
 model ReviewItem {
   id                String           @id @default(uuid()) @db.Uuid
   orgId             String           @db.Uuid
-  org               Org              @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org               Org              @relation(fields: [orgId], references: [id], onDelete: Cascade)
   importBatchId     String           @db.Uuid
-  importBatch       ImportBatch      @relation(fields: [importBatchId], references: [id])
+  importBatch       ImportBatch      @relation(fields: [importBatchId], references: [id], onDelete: NoAction)
   rowIndex          Int // the import row's position in the stored batch
   constituentId     String?          @db.Uuid // the candidate
-  constituent       Constituent?     @relation(fields: [constituentId], references: [id])
+  constituent       Constituent?     @relation(fields: [constituentId], references: [id], onDelete: NoAction)
   candidateRowIndex Int? // the candidate is this earlier row, still in review (D-55)
   score             Int
   reasons           Json // the matcher's reasons and points
@@ -312,9 +313,9 @@ model ReviewItem {
 model ReviewDecision {
   id           String               @id @default(uuid()) @db.Uuid
   orgId        String               @db.Uuid
-  org          Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org          Org                  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   reviewItemId String               @db.Uuid
-  reviewItem   ReviewItem           @relation(fields: [reviewItemId], references: [id])
+  reviewItem   ReviewItem           @relation(fields: [reviewItemId], references: [id], onDelete: NoAction)
   action       ReviewAction
   reason       String?
   userId       String               @db.Uuid
@@ -333,12 +334,12 @@ model ReviewDecision {
 model PairMemory {
   id               String         @id @default(uuid()) @db.Uuid
   orgId            String         @db.Uuid
-  org              Org            @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org              Org            @relation(fields: [orgId], references: [id], onDelete: Cascade)
   aId              String         @db.Uuid // constituent ids, aId < bId
   bId              String         @db.Uuid
   agreed           String[]
   reviewDecisionId String         @db.Uuid
-  reviewDecision   ReviewDecision @relation(fields: [reviewDecisionId], references: [id])
+  reviewDecision   ReviewDecision @relation(fields: [reviewDecisionId], references: [id], onDelete: NoAction)
   createdAt        DateTime       @default(now()) @db.Timestamptz(6)
 
   @@unique([orgId, aId, bId])
@@ -349,12 +350,12 @@ model PairMemory {
 model MergeEvent {
   id               String               @id @default(uuid()) @db.Uuid
   orgId            String               @db.Uuid
-  org              Org                  @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org              Org                  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   kind             MergeKind
   survivorId       String               @db.Uuid
-  survivor         Constituent          @relation("MergeSurvivor", fields: [survivorId], references: [id])
+  survivor         Constituent          @relation("MergeSurvivor", fields: [survivorId], references: [id], onDelete: NoAction)
   loserId          String?              @db.Uuid // null for ROW_INTO_CONSTITUENT: the loser is the import row
-  loser            Constituent?         @relation("MergeLoser", fields: [loserId], references: [id])
+  loser            Constituent?         @relation("MergeLoser", fields: [loserId], references: [id], onDelete: NoAction)
   rowIndex         Int? // set for ROW_INTO_CONSTITUENT
   survivorSnapshot Json
   loserSnapshot    Json // the loser constituent's effective state, or the import row
@@ -363,9 +364,9 @@ model MergeEvent {
   softCreditsMoved String[]
   reason           String?
   importBatchId    String?              @db.Uuid
-  importBatch      ImportBatch?         @relation(fields: [importBatchId], references: [id])
+  importBatch      ImportBatch?         @relation(fields: [importBatchId], references: [id], onDelete: NoAction)
   reviewDecisionId String?              @db.Uuid
-  reviewDecision   ReviewDecision?      @relation(fields: [reviewDecisionId], references: [id])
+  reviewDecision   ReviewDecision?      @relation(fields: [reviewDecisionId], references: [id], onDelete: NoAction)
   userId           String?              @db.Uuid
   at               DateTime             @default(now()) @db.Timestamptz(6)
   versions         ConstituentVersion[]
@@ -384,9 +385,9 @@ model MergeEvent {
 model UnmergeEvent {
   id           String     @id @default(uuid()) @db.Uuid
   orgId        String     @db.Uuid
-  org          Org        @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org          Org        @relation(fields: [orgId], references: [id], onDelete: Cascade)
   mergeEventId String     @unique @db.Uuid
-  mergeEvent   MergeEvent @relation(fields: [mergeEventId], references: [id])
+  mergeEvent   MergeEvent @relation(fields: [mergeEventId], references: [id], onDelete: NoAction)
   survivorHash String // effective-state hash of the survivor after the unmerge == its snapshot hash
   loserHash    String // likewise for the loser (the re-created constituent for a row merge)
   reason       String?
@@ -399,7 +400,7 @@ model UnmergeEvent {
 model SegmentDefinition {
   id             String       @id @default(uuid()) @db.Uuid
   orgId          String       @db.Uuid
-  org            Org          @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org            Org          @relation(fields: [orgId], references: [id], onDelete: Cascade)
   key            String // stable across versions, e.g. "lybunt"
   version        Int // 1, 2, … per (orgId, key)
   definition     Json // the validated { name, description, filters } (segments/schema.json)
@@ -414,9 +415,9 @@ model SegmentDefinition {
 model SegmentRun {
   id             String            @id @default(uuid()) @db.Uuid
   orgId          String            @db.Uuid
-  org            Org               @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org            Org               @relation(fields: [orgId], references: [id], onDelete: Cascade)
   definitionId   String            @db.Uuid
-  definition     SegmentDefinition @relation(fields: [definitionId], references: [id])
+  definition     SegmentDefinition @relation(fields: [definitionId], references: [id], onDelete: NoAction)
   asOf           DateTime          @db.Date
   members        String[] // constituent business ids, ascending
   count          Int
@@ -439,12 +440,12 @@ enum LetterStatus {
 model Letter {
   id            String       @id @default(uuid()) @db.Uuid
   orgId         String       @db.Uuid
-  org           Org          @relation(fields: [orgId], references: [id], onDelete: Restrict)
+  org           Org          @relation(fields: [orgId], references: [id], onDelete: Cascade)
   letterRef     String // L0001
   constituentId String?      @db.Uuid
-  constituent   Constituent? @relation(fields: [constituentId], references: [id])
+  constituent   Constituent? @relation(fields: [constituentId], references: [id], onDelete: NoAction)
   householdId   String?      @db.Uuid
-  household     Household?   @relation(fields: [householdId], references: [id])
+  household     Household?   @relation(fields: [householdId], references: [id], onDelete: NoAction)
   giftRefs      String[] // covered, ascending
   giftIds       String[]     @db.Uuid // the Gift row each giftRef was rendered from, same order
   totalCents    Int // Σ the covered rows' cents, > 0 (CHECK in SQL)
