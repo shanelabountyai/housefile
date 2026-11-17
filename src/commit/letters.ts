@@ -6,6 +6,7 @@ import { audit } from '@/core/audit';
 import { can } from '@/core/authz/permissions';
 import { isStale, planLetters, type LetterScope } from '../letters/letters';
 import { isoDate, loadEffectiveState, type Tx } from './db-state';
+import { serializable } from './serial';
 
 export type QueueRefusal = 'FORBIDDEN' | 'BAD_AS_OF' | 'BAD_WINDOW';
 export type QueuedLetter = { letterRef: string; recipient: string; household: boolean; giftRefs: string[]; totalCents: number };
@@ -13,7 +14,6 @@ export type QueueResult = { status: 'QUEUED'; code?: undefined; letters: QueuedL
 export type LetterRow = QueuedLetter & { asOf: string; subject: string; body: string; status: 'QUEUED' | 'LETTER_STALE' };
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
-const SERIAL = { isolationLevel: 'Serializable' as const };
 const refuse = (code: QueueRefusal) => ({ status: 'REFUSED' as const, code });
 
 /** Current row id per giftRef (voided heads included), the yardstick for LETTER_STALE. */
@@ -25,7 +25,7 @@ async function headIds(tx: Tx, orgId: string): Promise<Map<string, string>> {
 export async function queueLetters(db: PrismaClient, i: { orgId: string; userId: string; asOf: string } & LetterScope): Promise<QueueResult> {
   if (!ISO.test(i.asOf)) return refuse('BAD_AS_OF');
   if ((i.from && !ISO.test(i.from)) || (i.to && !ISO.test(i.to)) || (i.from && i.to && i.from > i.to)) return refuse('BAD_WINDOW');
-  return db.$transaction(async (tx): Promise<QueueResult> => {
+  return serializable(db, async (tx): Promise<QueueResult> => {
     const m = await tx.membership.findUnique({ where: { orgId_userId: { orgId: i.orgId, userId: i.userId } } });
     if (!m || !can(m.role, 'results.write')) return refuse('FORBIDDEN');
     const existing = await tx.letter.findMany({ where: { orgId: i.orgId }, select: { giftRefs: true, letterRef: true } });
@@ -50,7 +50,7 @@ export async function queueLetters(db: PrismaClient, i: { orgId: string; userId:
     }
     await audit({ orgId: i.orgId, userId: i.userId }, 'letters.queue', { targetType: 'Letter', targetId: i.orgId, data: { asOf: i.asOf, from: i.from ?? null, to: i.to ?? null, combine: i.combine, count: letters.length, totalCents: letters.reduce((s, l) => s + l.totalCents, 0), letterRefs: letters.map((l) => l.letterRef) } }, tx);
     return { status: 'QUEUED', letters };
-  }, SERIAL);
+  });
 }
 
 /** Every letter in the org by ref, with QUEUED or the derived LETTER_STALE. */

@@ -9,6 +9,7 @@ import { sha256Hex } from '../lib/canonical';
 import { loadEffectiveState, type Tx } from './db-state';
 import { effectiveStateHash } from './state';
 import { loadBatchCtx, writeNewConstituent, writeRowMerge, type BatchCtx } from './write';
+import { serializable } from './serial';
 
 export type CommitStatus = 'COMMITTED' | 'ALREADY_COMMITTED' | 'STATE_MOVED' | 'PLAN_TAMPERED';
 export type Written = { constituents: number; versions: number; gifts: number; giftsPending: number; giftsSkipped: number; mergeEvents: number; reviewItems: number; reviewRows: number; targetInReviewRows: number; pendingTargetRows: number; pendingTargetItems: number; memoryQueued: number };
@@ -18,7 +19,8 @@ const ZERO: Written = { constituents: 0, versions: 0, gifts: 0, giftsPending: 0,
 
 export async function commitBatch(db: PrismaClient, input: { batchId: string; userId: string }): Promise<CommitResult> {
   const { batchId, userId } = input;
-  return db.$transaction(
+  return serializable(
+    db,
     async (tx) => {
       const batch = await tx.importBatch.findUniqueOrThrow({ where: { id: batchId } });
       if (await tx.importBatchEvent.findFirst({ where: { importBatchId: batchId, kind: 'COMMITTED' } })) return { status: 'ALREADY_COMMITTED' as const, batchId, written: { ...ZERO } };
@@ -30,7 +32,7 @@ export async function commitBatch(db: PrismaClient, input: { batchId: string; us
       await tx.importBatchEvent.create({ data: { orgId: batch.orgId, importBatchId: batchId, kind: 'COMMITTED', userId } });
       return { status: 'COMMITTED' as const, batchId, written };
     },
-    { timeout: 120_000, isolationLevel: 'Serializable' },
+    { timeout: 120_000 },
   );
 }
 

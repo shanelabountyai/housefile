@@ -10,6 +10,7 @@ import { latestVersion } from './db-state';
 import { mergeConstituentsTx } from './merge';
 import { displayAddress, displayName } from '../import/preview';
 import type { StoredRows } from './preview';
+import { serializable } from './serial';
 
 export type RefusalCode = 'NOT_FOUND' | 'FORBIDDEN' | 'REASON_REQUIRED' | 'ROW_DECIDED' | 'CANDIDATE_PENDING';
 export type ReviewOutcome = { status: 'DECIDED'; code?: undefined; decisionId: string; constituentId: string | null } | { status: 'REFUSED'; code: RefusalCode; decisionId?: undefined; constituentId?: undefined };
@@ -71,7 +72,8 @@ export type DecideInput = { itemId: string; action: ReviewAction; reason?: strin
 /** One review action (D-22). Serializable transaction; refusals write nothing. */
 export async function decideReview(db: PrismaClient, input: DecideInput): Promise<ReviewOutcome> {
   const reason = input.reason?.trim() ?? '';
-  return db.$transaction(
+  return serializable(
+    db,
     async (tx) => {
       const item = await tx.reviewItem.findUnique({ where: { id: input.itemId }, include: { importBatch: true } });
       if (!item) return { status: 'REFUSED' as const, code: 'NOT_FOUND' as const };
@@ -112,7 +114,7 @@ export async function decideReview(db: PrismaClient, input: DecideInput): Promis
       // resolve to `became` through rowOutcome and wait in the queue for a person like any other review row.
       return { status: 'DECIDED' as const, decisionId: decision.id, constituentId: became };
     },
-    { timeout: 120_000, isolationLevel: 'Serializable' },
+    { timeout: 120_000 },
   );
 }
 

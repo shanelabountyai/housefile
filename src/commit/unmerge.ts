@@ -8,6 +8,7 @@ import { sha256Hex } from '../lib/canonical';
 import type { ImportRow } from '../import/validate';
 import { loadEffectiveConstituent, type ConstituentSnapshot, type Tx } from './db-state';
 import { activeGift, activePledge, headSoftCredit, loadBatchCtx, restoreVersion, supersedeGift, supersedePledge, supersedeSoftCredit, writeNewConstituent } from './write';
+import { serializable } from './serial';
 
 /** pledgeRefs and softCreditRefs enter only when present, so snapshots without them hash as they did before tasks 3.6/3.7. */
 export const snapshotHash = (s: Pick<ConstituentSnapshot, 'constituent' | 'giftRefs' | 'pledgeRefs' | 'softCreditRefs'>) =>
@@ -31,7 +32,7 @@ class ProofFailed extends Error {
 
 export async function unmerge(db: PrismaClient, input: UnmergeInput): Promise<UnmergeResult> {
   try {
-    return await db.$transaction((tx) => unmergeTx(tx, input), { timeout: 60_000, isolationLevel: 'Serializable' });
+    return await serializable(db, (tx) => unmergeTx(tx, input), { timeout: 60_000 });
   } catch (e) {
     if (e instanceof ProofFailed) return { status: 'REFUSED', code: 'PROOF_FAILED', detail: e.detail };
     throw e;

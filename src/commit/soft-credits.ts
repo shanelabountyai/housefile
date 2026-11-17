@@ -6,11 +6,11 @@ import { audit } from '@/core/audit';
 import { can } from '@/core/authz/permissions';
 import type { Tx } from './db-state';
 import { headSoftCredit, nextSeq, supersedeSoftCredit } from './write';
+import { serializable } from './serial';
 
 export type SoftCreditRefusal = 'FORBIDDEN' | 'REASON_REQUIRED' | 'NOT_FOUND' | 'GIFT_VOIDED' | 'CONSTITUENT_RETIRED' | 'HARD_DONOR' | 'DUPLICATE' | 'BAD_AMOUNT' | 'ROLE_REQUIRED' | 'ALREADY_REMOVED';
 export type SoftCreditResult = { status: 'ADDED' | 'REMOVED'; code?: undefined; softCreditRef: string } | { status: 'REFUSED'; code: SoftCreditRefusal; softCreditRef?: undefined };
 
-const SERIAL = { isolationLevel: 'Serializable' as const };
 const refuse = (code: SoftCreditRefusal) => ({ status: 'REFUSED' as const, code });
 const canWrite = async (tx: Tx, orgId: string, userId: string) => {
   const m = await tx.membership.findUnique({ where: { orgId_userId: { orgId, userId } } });
@@ -22,7 +22,7 @@ export async function addSoftCredit(db: PrismaClient, i: { orgId: string; userId
   const role = i.role.trim();
   if (!role) return refuse('ROLE_REQUIRED');
   if (!(Number.isSafeInteger(i.amountCents) && i.amountCents > 0)) return refuse('BAD_AMOUNT');
-  return db.$transaction(async (tx): Promise<SoftCreditResult> => {
+  return serializable(db, async (tx): Promise<SoftCreditResult> => {
     if (!(await canWrite(tx, i.orgId, i.userId))) return refuse('FORBIDDEN');
     const gift = await tx.gift.findFirst({ where: { orgId: i.orgId, giftRef: i.giftRef, supersededBy: null } });
     const c = await tx.constituent.findUnique({ where: { orgId_businessId: { orgId: i.orgId, businessId: i.constituent } }, include: { versions: { orderBy: { version: 'desc' }, take: 1 } } });
@@ -35,13 +35,13 @@ export async function addSoftCredit(db: PrismaClient, i: { orgId: string; userId
     const row = await tx.softCredit.create({ data: { orgId: i.orgId, softCreditRef, giftRef: i.giftRef, constituentId: c.id, role, amountCents: i.amountCents, userId: i.userId } });
     await audit({ orgId: i.orgId, userId: i.userId }, 'softCredit.add', { targetType: 'SoftCredit', targetId: row.id, data: { softCreditRef, giftRef: i.giftRef, constituent: i.constituent, role, amountCents: i.amountCents } }, tx);
     return { status: 'ADDED', softCreditRef };
-  }, SERIAL);
+  });
 }
 
 export async function removeSoftCredit(db: PrismaClient, i: { orgId: string; userId: string; softCreditRef: string; reason: string }): Promise<SoftCreditResult> {
   const reason = i.reason.trim();
   if (!reason) return refuse('REASON_REQUIRED');
-  return db.$transaction(async (tx): Promise<SoftCreditResult> => {
+  return serializable(db, async (tx): Promise<SoftCreditResult> => {
     if (!(await canWrite(tx, i.orgId, i.userId))) return refuse('FORBIDDEN');
     const cur = await headSoftCredit(tx, i.orgId, i.softCreditRef).catch(() => null);
     if (!cur) return refuse('NOT_FOUND');
@@ -49,5 +49,5 @@ export async function removeSoftCredit(db: PrismaClient, i: { orgId: string; use
     const row = await supersedeSoftCredit(tx, cur, { status: 'REMOVED' }, reason, { userId: i.userId });
     await audit({ orgId: i.orgId, userId: i.userId }, 'softCredit.remove', { targetType: 'SoftCredit', targetId: row.id, data: { softCreditRef: i.softCreditRef, supersedes: cur.id, reason, amountCents: cur.amountCents } }, tx);
     return { status: 'REMOVED', softCreditRef: i.softCreditRef };
-  }, SERIAL);
+  });
 }

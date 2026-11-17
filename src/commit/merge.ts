@@ -8,6 +8,7 @@ import type { Gift, PrismaClient } from '@/generated/prisma/client';
 import { latestVersion, loadEffectiveConstituent, type ConstituentSnapshot, type Tx } from './db-state';
 import type { EffectiveConstituent } from './state';
 import { carry, supersedeGift, supersedePledge, supersedeSoftCredit } from './write';
+import { serializable } from './serial';
 
 export type MergeWriter = { userId: string } | { reviewDecisionId: string };
 export type MergeInput = { aId: string; bId: string; reason: string } & MergeWriter;
@@ -19,7 +20,7 @@ const addressOf = (c: EffectiveConstituent) => [c.addressLine1, c.addressLine2, 
 const newestAsOf = (c: EffectiveConstituent) => Object.values(c.fieldMeta).map((m) => m.asOf).sort().at(-1) ?? '';
 
 export async function mergeConstituents(db: PrismaClient, input: MergeInput): Promise<MergeResult> {
-  return db.$transaction((tx) => mergeConstituentsTx(tx, input), { timeout: 60_000, isolationLevel: 'Serializable' });
+  return serializable(db, (tx) => mergeConstituentsTx(tx, input), { timeout: 60_000 });
 }
 
 export async function mergeConstituentsTx(tx: Tx, input: MergeInput): Promise<MergeResult> {
