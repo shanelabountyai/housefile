@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/core/db';
 import type { PrismaClient } from '@/generated/prisma/client';
-import { isSerializationFailure, SERIAL_ATTEMPTS, serializable } from '@/commit/serial';
+import { backoffMs, isSerializationFailure, SERIAL_ATTEMPTS, serializable } from '@/commit/serial';
 import type { Tx } from '@/commit/db-state';
 import { resetAuthTables } from '../helpers/auth';
 import { makeOrg } from '../helpers/org';
@@ -86,6 +86,11 @@ describe('Serializable retry (D-107)', () => {
     const other = fake(1, new Error('Gift is append-only'));
     await expect(serializable(other.client, async () => 'done')).rejects.toThrow('Gift is append-only');
     expect(other.calls()).toBe(1);
+  }, 15_000); // the exhausted case really waits out the backoff: up to ~2.3 s per run of attempts (D-108)
+
+  it('backs off 50, 100, 200, 400, 800 ms with up to 50% jitter (D-108)', () => {
+    expect([1, 2, 3, 4, 5].map((a) => backoffMs(a, () => 0))).toEqual([50, 100, 200, 400, 800]);
+    expect([1, 2, 3, 4, 5].map((a) => backoffMs(a, () => 1))).toEqual([75, 150, 300, 600, 1200]);
   });
 
   it('every Serializable transaction in src/commit/ goes through the helper', () => {

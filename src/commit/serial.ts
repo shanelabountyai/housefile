@@ -6,8 +6,17 @@
 import type { PrismaClient } from '@/generated/prisma/client';
 import type { Tx } from './db-state';
 
-export const SERIAL_ATTEMPTS = 3;
-const BACKOFF_MS = 25; // × attempt number: 25 ms, then 50 ms
+// D-108: 3 attempts 25/50 ms apart were all cancelled in CI on b83b7a4 (an import commit is ~1.3 s long and a
+// concurrent writer kept it the pivot). Six attempts, the wait doubling from 50 ms with up to 50% jitter so two
+// retrying transactions stop re-colliding in step: about 1.55 s of waiting in the worst case, then the error is thrown.
+export const SERIAL_ATTEMPTS = 6;
+const BACKOFF_BASE_MS = 50;
+
+/** The wait before attempt `attempt + 1`: 50, 100, 200, 400, 800 ms, each plus up to 50% jitter. */
+export function backoffMs(attempt: number, random: () => number = Math.random): number {
+  const base = BACKOFF_BASE_MS * 2 ** (attempt - 1);
+  return Math.round(base + base * 0.5 * random());
+}
 
 /**
  * The three shapes a serialization failure takes in Prisma 7 with the pg driver adapter: P2034 when a query is
@@ -28,7 +37,7 @@ export async function serializable<T>(db: PrismaClient, fn: (tx: Tx) => Promise<
       return await db.$transaction(fn, { ...opts, isolationLevel: 'Serializable' });
     } catch (e) {
       if (attempt >= SERIAL_ATTEMPTS || !isSerializationFailure(e)) throw e;
-      await new Promise((r) => setTimeout(r, BACKOFF_MS * attempt));
+      await new Promise((r) => setTimeout(r, backoffMs(attempt)));
     }
   }
 }
