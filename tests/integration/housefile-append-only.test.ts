@@ -43,10 +43,17 @@ describe('append-only tables (D-6, D-46, D-47, D-62)', () => {
     });
   }
 
-  it('an org holding donor records cannot be deleted by cascade (D-52)', async () => {
-    const { orgId } = await seedOne();
-    await expect(db.org.delete({ where: { id: orgId } })).rejects.toThrow();
-    expect(await db.org.count({ where: { id: orgId } })).toBe(1);
+  // Was "an org holding donor records cannot be deleted by cascade (D-52)". D-104 (2026-11-17) reverses D-52(a): the
+  // org's own deletion removes its append-only rows; the refusals above still hold while the org exists. The full
+  // contract (every housefile table, a second org untouched, the template's deleteOrg) is in housefile-org-delete-export.
+  it('deleting the org removes its append-only rows, and only through that cascade (D-104, reverses D-52(a))', async () => {
+    const { orgId, ids } = await seedOne();
+    await db.org.delete({ where: { id: orgId } });
+    expect(await db.org.count({ where: { id: orgId } })).toBe(0);
+    for (const [table, id] of Object.entries(ids)) {
+      const [row] = await db.$queryRawUnsafe<{ n: number }[]>(`SELECT count(*)::int AS n FROM "${table}" WHERE id = $1::uuid`, id);
+      expect(row?.n, table).toBe(0);
+    }
   });
 });
 
