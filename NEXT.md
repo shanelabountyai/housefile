@@ -1,5 +1,16 @@
 # NEXT
 
+## ▶ Next session: owner review of PR #5 (now based on `main`). Do not merge without reading D-104 and D-105.
+
+**2026-11-17 (scheduled run, unattended, branch `phase-2-overnight-2026-10-20`, PR #5 retargeted to `main`, not merged).**
+- **Built:** `origin/main` (`3af1221`, Phase 1 + saas-foundation v1.6.3) merged in as `304a290` (merge commit, no rebase). 7 conflicts: `.env.example`, `package.json`, `prisma/schema/core.prisma` (unions), `src/app/o/[org]/layout.tsx` (main's nav + housefile links), `tests/fixtures/app.ts` (branch body, main's INV-29 note), `docs/decisions.md` (both; D-103 moved beside D-97..D-102), `NEXT.md` (branch history, main's 2026-11-16 entries below under "From main"). Migrations apply from empty in timestamp order with no rename.
+- **Decided:** D-104: org delete cascades from `Org` to all 19 housefile tables (migration `20261117000000_housefile_org_delete`; reverses D-52(a)); FKs between housefile tables are NO ACTION; the append-only trigger lets a row go only once its org is gone; the export carries every housefile table except `ImportBatch.rawBytes`. D-105: **RLS stays off** (no policies on housefile tables; product code on `db`, not `withOrg`; the opt-in path is written in D-105).
+- **Changed test, flagged for Shane:** `housefile-append-only.test.ts` "an org holding donor records cannot be deleted by cascade (D-52)" now asserts D-104's rule on the same seed. New `tests/integration/housefile-org-delete-export.test.ts` 6/6 (3 red before the fix).
+- **Gate, local (Postgres 16: PG17 and the Prisma engines could not be downloaded here; client generated with a stub schema engine, migrations applied with psql in timestamp order):** typecheck clean; lint 0 errors (5 old warnings); vitest 79 files, 631 passed / 39 skipped; `fixtures:check` OK; `model:lint` OK; `money:lint` OK; `write:lint` OK; `test:phase1` 228/228; `import:eval` exit 0, 83 lines, sha256 `a0e5f211…`, byte-identical to `main`; `assist:eval` both NO MEASURED GAIN; `phase2:proof` OK (7d3bd174…, 2c035193…); `phase3:proof` OK (c2159b32…); Playwright 19/19 on the production build. Not run locally: `foundation:check-modules` (no rsync), `foundation:drift` (no v1.6.3 tag). GitHub CI per check: see PR #5's "Retarget (2026-11-17)" section.
+- **Left open:** PR #5 is ready for review, not merged. After it merges, delete `phase-2` (the review's step 6). D-102 still reads "Open" but D-103 resolved it.
+
+---
+
 ## From `main` (merged into this branch 2026-11-17)
 
 **2026-11-16, later (cleanup swarm, unattended, branch `phase-1`, PR #1 not merged): CI green.**
