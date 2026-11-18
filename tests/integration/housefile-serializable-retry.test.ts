@@ -6,21 +6,25 @@ import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/core/db';
 import type { PrismaClient } from '@/generated/prisma/client';
-import { backoffMs, isSerializationFailure, SERIAL_ATTEMPTS, serializable } from '@/commit/serial';
+import { backoffMs, isSerializationFailure, SERIAL_ATTEMPTS, serialWrite } from '@/commit/serial';
 import type { Tx } from '@/commit/db-state';
 import { resetAuthTables } from '../helpers/auth';
 import { makeOrg } from '../helpers/org';
 
 beforeEach(resetAuthTables);
 
-/** Both callers wait here until both have read, so their reads and writes interleave the same way every run. */
-function barrier(parties = 2) {
+/**
+ * Both callers wait here until both have read, so their reads and writes interleave the same way every run. D-109: under
+ * serialWrite() the second caller is held at the write lock and never arrives, so the first stops waiting after
+ * 250 ms and goes on alone; the control (no helper, no lock) still interleaves exactly as before.
+ */
+function barrier(parties = 2, giveUpMs = 250) {
   let n = 0;
   let open!: () => void;
   const gate = new Promise<void>((r) => (open = r));
   return async () => {
     if (++n === parties) open();
-    await gate;
+    await Promise.race([gate, new Promise((r) => setTimeout(r, giveUpMs))]);
   };
 }
 
@@ -57,7 +61,7 @@ describe('Serializable retry (D-107)', () => {
   });
 
   it('with the helper, the same write skew completes: both transactions commit, nothing doubled', async () => {
-    const { results, funds } = await writeSkew((fn) => serializable(db, fn));
+    const { results, funds } = await writeSkew((fn) => serialWrite(db, fn));
     expect(results.map((r) => r.status)).toEqual(['fulfilled', 'fulfilled']);
     expect(funds).toBe(2);
   });
@@ -66,25 +70,25 @@ describe('Serializable retry (D-107)', () => {
     const p2034 = Object.assign(new Error('Transaction failed due to a write conflict or a deadlock'), { code: 'P2034' });
     const fake = (fail: number, error: Error) => {
       let calls = 0;
-      const client = { $transaction: async (fn: (tx: Tx) => Promise<string>) => (++calls <= fail ? Promise.reject(error) : fn({} as Tx)) };
+      const client = { $transaction: async (fn: (tx: Tx) => Promise<string>) => (++calls <= fail ? Promise.reject(error) : fn({ $queryRaw: async () => [] } as unknown as Tx)) }; // $queryRaw: D-109's lock statement
       return { client: client as unknown as PrismaClient, calls: () => calls };
     };
     const ok = fake(SERIAL_ATTEMPTS - 1, p2034);
-    await expect(serializable(ok.client, async () => 'done')).resolves.toBe('done');
+    await expect(serialWrite(ok.client, async () => 'done')).resolves.toBe('done');
     expect(ok.calls()).toBe(SERIAL_ATTEMPTS);
 
     const exhausted = fake(SERIAL_ATTEMPTS, p2034);
-    await expect(serializable(exhausted.client, async () => 'done')).rejects.toBe(p2034);
+    await expect(serialWrite(exhausted.client, async () => 'done')).rejects.toBe(p2034);
     expect(exhausted.calls()).toBe(SERIAL_ATTEMPTS);
 
     // the shape Prisma 7's pg adapter throws when COMMIT itself is cancelled (seen in the control test above)
     const atCommit = Object.assign(new Error('TransactionWriteConflict'), { name: 'DriverAdapterError', cause: { kind: 'TransactionWriteConflict' } });
     const commitTime = fake(1, atCommit);
-    await expect(serializable(commitTime.client, async () => 'done')).resolves.toBe('done');
+    await expect(serialWrite(commitTime.client, async () => 'done')).resolves.toBe('done');
     expect(commitTime.calls()).toBe(2);
 
     const other = fake(1, new Error('Gift is append-only'));
-    await expect(serializable(other.client, async () => 'done')).rejects.toThrow('Gift is append-only');
+    await expect(serialWrite(other.client, async () => 'done')).rejects.toThrow('Gift is append-only');
     expect(other.calls()).toBe(1);
   }, 15_000); // the exhausted case really waits out the backoff: up to ~2.3 s per run of attempts (D-108)
 
