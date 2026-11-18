@@ -1,5 +1,15 @@
 # NEXT
 
+## ▶ Next session: owner review of PR #5 (based on `main`). Not merged.
+
+**2026-11-18 (with Shane): D-106, D-107, D-109.**
+- **D-106:** D-104 confirmed as built (org delete cascades, option A).
+- **D-107 → D-108 → D-109:** CI's e2e failed when an import commit was cancelled (P2034) by another org's concurrent writes. D-107 added a retry; D-108 (another session, `5c73f0e`/`d8670a1`) widened it to 6 jittered attempts, and CI went green. A stress test (`housefile-cross-org-commit.test.ts`) still failed 5/5. **D-109:** every write in `src/commit/` goes through `serialWrite`: one advisory lock, then Read Committed. Stress test 10/10 with default Postgres limits. Raised `max_pred_locks_*` limits were measured and not adopted (~112 MB of shared memory, no effect at Read Committed).
+- **Gate, local (PG16):** vitest 81 files, 639 passed / 39 skipped; `phase2:proof`/`phase3:proof` hashes unchanged; `import:eval` `a0e5f211`, 83 lines; `fixtures:check`, `model:lint`, `money:lint`, `write:lint`, `test:phase1`, `assist:eval` OK; Playwright 19/19.
+- **Left open:** PR #5 could not be set to draft (the integration lacks that permission). After merge, delete `phase-2`. D-102 still reads "Open" (resolved by D-103).
+
+---
+
 ## ▶ Next session: owner review of PR #5 (now based on `main`). Do not merge without reading D-104 and D-105.
 
 **2026-11-17 (scheduled run, unattended, branch `phase-2-overnight-2026-10-20`, PR #5 retargeted to `main`, not merged).**
