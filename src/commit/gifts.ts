@@ -1,5 +1,5 @@
 // Gift correction and void by hand (D-6, D-60, D-72, task 3.5). Each writes one superseding row on the gift's active
-// row with a reason and the actor as its writer, audited in the same serializable transaction. The original row is never
+// row with a reason and the actor as its writer, audited in the same locked write transaction (serialWrite, D-109). The original row is never
 // touched (triggers refuse it anyway). Zero or negative amounts stay refused (D-57: no refund path). Appeal is not
 // correctable here: seam. A letter queued before the correction goes LETTER_STALE by derivation (P-8, task 3.8).
 import type { PrismaClient } from '@/generated/prisma/client';
@@ -7,7 +7,7 @@ import { audit } from '@/core/audit';
 import { can } from '@/core/authz/permissions';
 import { isoDate, type Tx } from './db-state';
 import { supersedeGift } from './write';
-import { serializable } from './serial';
+import { serialWrite } from './serial';
 
 export type GiftChange = { amountCents?: number; giftDate?: string; fundCode?: string };
 export type GiftRefusal = 'FORBIDDEN' | 'REASON_REQUIRED' | 'NOT_FOUND' | 'VOIDED' | 'NO_CHANGE' | 'BAD_AMOUNT' | 'BAD_DATE' | 'UNKNOWN_FUND';
@@ -32,7 +32,7 @@ export async function correctGift(db: PrismaClient, i: Input & { change: GiftCha
   const { amountCents, giftDate, fundCode } = i.change;
   if (amountCents !== undefined && !(Number.isSafeInteger(amountCents) && amountCents > 0)) return refuse('BAD_AMOUNT');
   if (giftDate !== undefined && !validDate(giftDate)) return refuse('BAD_DATE');
-  return serializable(db, async (tx): Promise<GiftResult> => {
+  return serialWrite(db, async (tx): Promise<GiftResult> => {
     const cur = await head(tx, i);
     if (cur.status === 'REFUSED') return cur;
     const fund = fundCode === undefined ? null : await tx.fund.findUnique({ where: { orgId_code: { orgId: i.orgId, code: fundCode } } });
@@ -52,7 +52,7 @@ export async function correctGift(db: PrismaClient, i: Input & { change: GiftCha
 export async function voidGift(db: PrismaClient, i: Input): Promise<GiftResult> {
   const reason = i.reason.trim();
   if (!reason) return refuse('REASON_REQUIRED');
-  return serializable(db, async (tx): Promise<GiftResult> => {
+  return serialWrite(db, async (tx): Promise<GiftResult> => {
     const cur = await head(tx, i);
     if (cur.status === 'REFUSED') return cur;
     const row = await supersedeGift(tx, cur, { status: 'VOIDED' }, reason, { userId: i.userId });

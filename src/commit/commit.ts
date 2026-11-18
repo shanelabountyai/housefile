@@ -9,7 +9,7 @@ import { sha256Hex } from '../lib/canonical';
 import { loadEffectiveState, type Tx } from './db-state';
 import { effectiveStateHash } from './state';
 import { loadBatchCtx, writeNewConstituent, writeRowMerge, type BatchCtx } from './write';
-import { serializable } from './serial';
+import { serialWrite } from './serial';
 
 export type CommitStatus = 'COMMITTED' | 'ALREADY_COMMITTED' | 'STATE_MOVED' | 'PLAN_TAMPERED';
 export type Written = { constituents: number; versions: number; gifts: number; giftsPending: number; giftsSkipped: number; mergeEvents: number; reviewItems: number; reviewRows: number; targetInReviewRows: number; pendingTargetRows: number; pendingTargetItems: number; memoryQueued: number };
@@ -19,7 +19,7 @@ const ZERO: Written = { constituents: 0, versions: 0, gifts: 0, giftsPending: 0,
 
 export async function commitBatch(db: PrismaClient, input: { batchId: string; userId: string }): Promise<CommitResult> {
   const { batchId, userId } = input;
-  return serializable(
+  return serialWrite(
     db,
     async (tx) => {
       const batch = await tx.importBatch.findUniqueOrThrow({ where: { id: batchId } });

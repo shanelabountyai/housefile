@@ -1,4 +1,4 @@
-// Queueing sample acknowledgement letters (D-26, D-66 / P-8, D-82, task 3.8). One serializable transaction: plan over the
+// Queueing sample acknowledgement letters (D-26, D-66 / P-8, D-82, task 3.8). One locked write transaction (serialWrite, D-109): plan over the
 // effective state (src/letters), write one append-only Letter row per draft with the gift rows it was rendered from,
 // one audit row. Letters are not in the state hash and nothing here sends: the Outbox and email are never imported.
 import type { PrismaClient } from '@/generated/prisma/client';
@@ -6,7 +6,7 @@ import { audit } from '@/core/audit';
 import { can } from '@/core/authz/permissions';
 import { isStale, planLetters, type LetterScope } from '../letters/letters';
 import { isoDate, loadEffectiveState, type Tx } from './db-state';
-import { serializable } from './serial';
+import { serialWrite } from './serial';
 
 export type QueueRefusal = 'FORBIDDEN' | 'BAD_AS_OF' | 'BAD_WINDOW';
 export type QueuedLetter = { letterRef: string; recipient: string; household: boolean; giftRefs: string[]; totalCents: number };
@@ -25,7 +25,7 @@ async function headIds(tx: Tx, orgId: string): Promise<Map<string, string>> {
 export async function queueLetters(db: PrismaClient, i: { orgId: string; userId: string; asOf: string } & LetterScope): Promise<QueueResult> {
   if (!ISO.test(i.asOf)) return refuse('BAD_AS_OF');
   if ((i.from && !ISO.test(i.from)) || (i.to && !ISO.test(i.to)) || (i.from && i.to && i.from > i.to)) return refuse('BAD_WINDOW');
-  return serializable(db, async (tx): Promise<QueueResult> => {
+  return serialWrite(db, async (tx): Promise<QueueResult> => {
     const m = await tx.membership.findUnique({ where: { orgId_userId: { orgId: i.orgId, userId: i.userId } } });
     if (!m || !can(m.role, 'results.write')) return refuse('FORBIDDEN');
     const existing = await tx.letter.findMany({ where: { orgId: i.orgId }, select: { giftRefs: true, letterRef: true } });

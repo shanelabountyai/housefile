@@ -10,7 +10,7 @@ import { latestVersion } from './db-state';
 import { mergeConstituentsTx } from './merge';
 import { displayAddress, displayName } from '../import/preview';
 import type { StoredRows } from './preview';
-import { serializable } from './serial';
+import { serialWrite } from './serial';
 
 export type RefusalCode = 'NOT_FOUND' | 'FORBIDDEN' | 'REASON_REQUIRED' | 'ROW_DECIDED' | 'CANDIDATE_PENDING';
 export type ReviewOutcome = { status: 'DECIDED'; code?: undefined; decisionId: string; constituentId: string | null } | { status: 'REFUSED'; code: RefusalCode; decisionId?: undefined; constituentId?: undefined };
@@ -69,10 +69,10 @@ export async function batchStatus(tx: Tx, batchId: string): Promise<BatchStatus>
 
 export type DecideInput = { itemId: string; action: ReviewAction; reason?: string; userId: string };
 
-/** One review action (D-22). Serializable transaction; refusals write nothing. */
+/** One review action (D-22). One locked write transaction (serialWrite, D-109); refusals write nothing. */
 export async function decideReview(db: PrismaClient, input: DecideInput): Promise<ReviewOutcome> {
   const reason = input.reason?.trim() ?? '';
-  return serializable(
+  return serialWrite(
     db,
     async (tx) => {
       const item = await tx.reviewItem.findUnique({ where: { id: input.itemId }, include: { importBatch: true } });

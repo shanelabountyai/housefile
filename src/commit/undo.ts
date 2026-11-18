@@ -11,7 +11,7 @@ import { effectiveOf, loadEffectiveConstituent, loadEffectiveState, type Tx } fr
 import { effectiveStateHash } from './state';
 import { snapshotHash } from './unmerge';
 import { activePledge, headSoftCredit, restoreVersion, supersedeGift, supersedePledge, supersedeSoftCredit } from './write';
-import { serializable } from './serial';
+import { serialWrite } from './serial';
 
 export type UndoRefusal = 'NOT_FOUND' | 'NOT_COMMITTED' | 'ALREADY_UNDONE' | 'UNDO_BLOCKED_BY_LATER_BATCH' | 'UNDO_BLOCKED_BY_LATER_WRITE';
 export type Reverted = { constituentsRetired: number; versionsRestored: number; giftsVoided: number; giftsRestored: number; pledgesRestored: number; softCreditsRestored: number; mergesReversed: number; pairMemoriesRemoved: number };
@@ -30,7 +30,7 @@ class UndoProofFailed extends Error {
 
 export async function undoBatch(db: PrismaClient, input: UndoInput): Promise<UndoResult> {
   try {
-    return await serializable(db, (tx) => undoTx(tx, input), { timeout: 120_000 });
+    return await serialWrite(db, (tx) => undoTx(tx, input), { timeout: 120_000 });
   } catch (e) {
     if (!(e instanceof UndoProofFailed)) throw e;
     // D-13: the mismatch is recorded outside the rolled-back transaction, with both hashes

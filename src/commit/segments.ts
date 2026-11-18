@@ -1,12 +1,12 @@
 // Saved segments and runs (D-27, D-68, D-76, task 3.4). Saving validates against segments/schema.json and appends a
 // version under the key (an unchanged definition appends nothing); a run evaluates one version at an explicit asOf over
-// the effective state and records members, count and both hashes. Both gated by results.write, audited, serializable.
+// the effective state and records members, count and both hashes. Both gated by results.write, audited, one locked write transaction (serialWrite, D-109).
 import type { PrismaClient } from '@/generated/prisma/client';
 import { audit } from '@/core/audit';
 import { can } from '@/core/authz/permissions';
 import { definitionHash, evaluateSegment, validateSegment, type SegmentRefusal, type SegmentResult } from '../segments/segment';
 import { loadEffectiveState, type Tx } from './db-state';
-import { serializable } from './serial';
+import { serialWrite } from './serial';
 
 export type SaveRefusal = SegmentRefusal | 'FORBIDDEN' | 'BAD_KEY';
 export type SaveResult = { status: 'SAVED' | 'UNCHANGED'; code?: undefined; definitionId: string; version: number; definitionHash: string } | { status: 'REFUSED'; code: SaveRefusal; detail?: string; definitionId?: undefined; version?: undefined; definitionHash?: undefined };
@@ -25,7 +25,7 @@ export async function saveSegment(db: PrismaClient, input: { orgId: string; user
   const v = validateSegment(input.definition);
   if (!v.ok) return { status: 'REFUSED', code: v.code, detail: v.detail };
   const hash = definitionHash(v.def);
-  return serializable(db, async (tx): Promise<SaveResult> => {
+  return serialWrite(db, async (tx): Promise<SaveResult> => {
     if (!(await allowed(tx, input.orgId, input.userId))) return { status: 'REFUSED', code: 'FORBIDDEN' };
     const last = await tx.segmentDefinition.findFirst({ where: { orgId: input.orgId, key: input.key }, orderBy: { version: 'desc' } });
     if (last?.definitionHash === hash) return { status: 'UNCHANGED', definitionId: last.id, version: last.version, definitionHash: hash };
@@ -38,7 +38,7 @@ export async function saveSegment(db: PrismaClient, input: { orgId: string; user
 /** Runs one saved version (by id) at asOf. The stored definition is re-validated, so a row that bypassed save cannot run. */
 export async function runSegment(db: PrismaClient, input: { definitionId: string; userId: string; asOf: string }): Promise<RunResult> {
   if (!ISO.test(input.asOf)) return { status: 'REFUSED', code: 'BAD_AS_OF' };
-  return serializable(db, async (tx): Promise<RunResult> => {
+  return serialWrite(db, async (tx): Promise<RunResult> => {
     const d = await tx.segmentDefinition.findUnique({ where: { id: input.definitionId } });
     if (!d) return { status: 'REFUSED', code: 'NOT_FOUND' };
     if (!(await allowed(tx, d.orgId, input.userId))) return { status: 'REFUSED', code: 'FORBIDDEN' };

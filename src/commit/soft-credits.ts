@@ -1,12 +1,12 @@
 // Soft credits by hand (D-9, D-74c, D-81, task 3.7): add writes a new chain (next SC ref), remove writes one superseding
-// row with status REMOVED and a reason. Both by a member who can write results, audited in the same serializable
+// row with status REMOVED and a reason. Both by a member who can write results, audited in the same locked write (serialWrite, D-109)
 // transaction; nothing is updated or deleted (triggers refuse it anyway). Merge, unmerge and undo move them (./merge).
 import type { PrismaClient } from '@/generated/prisma/client';
 import { audit } from '@/core/audit';
 import { can } from '@/core/authz/permissions';
 import type { Tx } from './db-state';
 import { headSoftCredit, nextSeq, supersedeSoftCredit } from './write';
-import { serializable } from './serial';
+import { serialWrite } from './serial';
 
 export type SoftCreditRefusal = 'FORBIDDEN' | 'REASON_REQUIRED' | 'NOT_FOUND' | 'GIFT_VOIDED' | 'CONSTITUENT_RETIRED' | 'HARD_DONOR' | 'DUPLICATE' | 'BAD_AMOUNT' | 'ROLE_REQUIRED' | 'ALREADY_REMOVED';
 export type SoftCreditResult = { status: 'ADDED' | 'REMOVED'; code?: undefined; softCreditRef: string } | { status: 'REFUSED'; code: SoftCreditRefusal; softCreditRef?: undefined };
@@ -22,7 +22,7 @@ export async function addSoftCredit(db: PrismaClient, i: { orgId: string; userId
   const role = i.role.trim();
   if (!role) return refuse('ROLE_REQUIRED');
   if (!(Number.isSafeInteger(i.amountCents) && i.amountCents > 0)) return refuse('BAD_AMOUNT');
-  return serializable(db, async (tx): Promise<SoftCreditResult> => {
+  return serialWrite(db, async (tx): Promise<SoftCreditResult> => {
     if (!(await canWrite(tx, i.orgId, i.userId))) return refuse('FORBIDDEN');
     const gift = await tx.gift.findFirst({ where: { orgId: i.orgId, giftRef: i.giftRef, supersededBy: null } });
     const c = await tx.constituent.findUnique({ where: { orgId_businessId: { orgId: i.orgId, businessId: i.constituent } }, include: { versions: { orderBy: { version: 'desc' }, take: 1 } } });
@@ -41,7 +41,7 @@ export async function addSoftCredit(db: PrismaClient, i: { orgId: string; userId
 export async function removeSoftCredit(db: PrismaClient, i: { orgId: string; userId: string; softCreditRef: string; reason: string }): Promise<SoftCreditResult> {
   const reason = i.reason.trim();
   if (!reason) return refuse('REASON_REQUIRED');
-  return serializable(db, async (tx): Promise<SoftCreditResult> => {
+  return serialWrite(db, async (tx): Promise<SoftCreditResult> => {
     if (!(await canWrite(tx, i.orgId, i.userId))) return refuse('FORBIDDEN');
     const cur = await headSoftCredit(tx, i.orgId, i.softCreditRef).catch(() => null);
     if (!cur) return refuse('NOT_FOUND');
